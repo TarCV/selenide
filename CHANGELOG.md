@@ -1,9 +1,26 @@
 # Changelog
 
-## 5.18.2 (planned to 14.02.2021)
+## 5.20.1 (released 23.03.2021)
+* #1438 Added $$.should() method + JavaDoc fixes  --  thanks to Oleg Berezhnoy @bereg2k
+* #1439 rename containTexts() to containExactTextsCaseSensitive()  --  thanks to Oleg Berezhnoy @bereg2k and Pavel Fokin @fokinp
+
+## 5.20.0 (released 20.03.2021)
+* #1409 Added method for getting clipboard content  --  thanks to Dmitriy Budim @dbudim
+* #1422 add headless mode to Microsoft Edge browser (chromium-based)  --  see PR #1424
+* #1423 Microsoft Edge User Agent Test Failed  --  see PR #1425
+* #1389 add method $$.as()  --  see PR #1431
+* #1426 Added CollectionCondition.containTexts method  --  thanks to Oleg Berezhnoy @bereg2k
+* #1436 Fix ignored prefs in FirefoxOptions  -- thanks to for Dmitriy Budim PR #1437
+* #1428 Do not log extended "find" methods (e.g. parent, sibling and so)  --  thanks to Pavel Fokin @fokinp
+
+## 5.19.0 (released 24.02.2021)
+* #1110 Implement drag and drop method with JavaScript (used by default, works in all browsers)  --  thanks to Dmitriy Budim for PR #1412
+* #1406 fix method `$.click(usingJavascript())` in Internet Explorer  --  see PR #1419
 * #1402 improve collection description for $$.snapshot()
+* #1415 add method $.getAlias()  --  thanks to @pavelpp
 * #1395 add @Nullable annotations to WebDriverRunner
 * #1383 add events "refresh", "back", "forward", "updateHash", "confirm", "dismiss", "prompt", "clearCookies" to Selenide log 
+* #1408 fix Selenide own tests when running on machine with user language other than EN  --  thanks to Vicente Rossello Jaume
 
 ## 5.18.1 (released 11.02.2021)
 * #1400 add method Selenide.getSessionStorage()  --  thanks to Dmitriy Budim @dbudim
