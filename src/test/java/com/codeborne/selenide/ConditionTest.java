@@ -425,8 +425,7 @@ final class ConditionTest {
   void shouldHaveText_doesNotAccept_nullParameter() {
     //noinspection ConstantConditions
     assertThatThrownBy(() -> text(null))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessage("Argument must not be null or empty string. Use $.shouldBe(empty) or $.shouldHave(exactText(\"\").");
+      .isInstanceOf(NullPointerException.class);
   }
 
   @Test

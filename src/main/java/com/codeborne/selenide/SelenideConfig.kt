@@ -133,8 +133,8 @@ class SelenideConfig : Config {
         return this
     }
 
-    override fun reportsUrl(): String {
-        return reportsUrl!!
+    override fun reportsUrl(): String? {
+        return reportsUrl
     }
 
     fun reportsUrl(reportsUrl: String?): SelenideConfig {
@@ -241,7 +241,7 @@ class SelenideConfig : Config {
         return this
     }
 
-    override fun browserSize(): String {
+    override fun browserSize(): String? {
         return browserSize
     }
 
@@ -250,7 +250,7 @@ class SelenideConfig : Config {
         return this
     }
 
-    override fun browserVersion(): String {
+    override fun browserVersion(): String? {
         return browserVersion
     }
 

@@ -11,7 +11,9 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 object Screenshots {
+    @JvmField
     var screenshots: ScreenShotLaboratory = ScreenShotLaboratory.getInstance()
+
     @CheckReturnValue
     fun saveScreenshotAndPageSource(): String {
         return screenshots.takeScreenshot(WebDriverRunner.driver()).summary()
@@ -52,6 +54,7 @@ object Screenshots {
      * @return a temporary file, not guaranteed to be stored after tests complete.
      */
     @CheckReturnValue
+    @JvmStatic
     fun takeScreenShot(iframe: WebElement, element: WebElement): File? {
         return screenshots.takeScreenshot(WebDriverRunner.driver(), iframe, element)
     }
@@ -62,6 +65,7 @@ object Screenshots {
      * @return buffered image
      */
     @CheckReturnValue
+    @JvmStatic
     fun takeScreenShotAsImage(iframe: WebElement, element: WebElement): BufferedImage? {
         return screenshots.takeScreenshotAsImage(WebDriverRunner.driver(), iframe, element)
     }

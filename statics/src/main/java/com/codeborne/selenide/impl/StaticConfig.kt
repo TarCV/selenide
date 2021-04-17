@@ -87,8 +87,8 @@ class StaticConfig : Config {
         return downloadsFolder
     }
 
-    override fun reportsUrl(): String {
-        return reportsUrl!!
+    override fun reportsUrl(): String? {
+        return reportsUrl
     }
 
     override fun fastSetValue(): Boolean {
@@ -135,12 +135,12 @@ class StaticConfig : Config {
         return remote!!
     }
 
-    override fun browserSize(): String {
+    override fun browserSize(): String? {
         return browserSize
     }
 
-    override fun browserVersion(): String {
-        return browserVersion!!
+    override fun browserVersion(): String? {
+        return browserVersion
     }
 
     override fun browserPosition(): String {

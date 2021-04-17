@@ -100,7 +100,8 @@ abstract class AbstractDriverFactory : DriverFactory {
     }
 
     @CheckReturnValue
-    fun majorVersion(browserVersion: String): Int {
+    fun majorVersion(browserVersion: String?): Int {
+        if (browserVersion == null) return 0
         if (StringUtils.isBlank(browserVersion)) return 0
         val matcher = REGEX_VERSION.matcher(browserVersion)
         return if (matcher.matches()) matcher.replaceFirst("$1").toInt() else 0

@@ -47,7 +47,7 @@ open class SelenideDriver {
 
     @JvmOverloads
     constructor(
-        config: Config, webDriver: WebDriver, selenideProxy: SelenideProxyServer,
+        config: Config, webDriver: WebDriver, selenideProxy: SelenideProxyServer?,
         browserDownloadsFolder: DownloadsFolder = SharedDownloadsFolder(config.downloadsFolder())
     ) {
         this.config = config

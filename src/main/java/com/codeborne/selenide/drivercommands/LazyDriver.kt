@@ -100,7 +100,7 @@ class LazyDriver internal constructor(
     }
 
     // TODO: why this is not sync in Java?
-    internal fun createDriver(): WebDriver = synchronized(this) {
+    fun createDriver(): WebDriver = synchronized(this) {
         val result = createDriverCommand.createDriver(config, factory, userProvidedProxy, listeners)
         _webDriver = result.webDriver
         proxy = result.selenideProxyServer

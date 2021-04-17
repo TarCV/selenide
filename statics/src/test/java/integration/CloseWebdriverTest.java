@@ -13,7 +13,6 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import static com.codeborne.selenide.Selenide.closeWebDriver;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.WebDriverRunner.isChrome;
-import static com.codeborne.selenide.WebDriverRunner.isFirefox;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assumptions.assumeThat;
@@ -21,16 +20,15 @@ import static org.assertj.core.api.Assumptions.assumeThat;
 final class CloseWebdriverTest extends IntegrationTest {
   @BeforeEach
   void givenNoOpenedBrowsers() {
-    assumeThat(isChrome() || isFirefox()).isTrue();
+    assumeThat(isChrome()).isTrue();
     closeWebDriver();
   }
 
   @Test
   void canCloseWebdriver_createdByHimself() {
-    if (isFirefox()) WebDriverManager.firefoxdriver().setup();
     if (isChrome()) WebDriverManager.chromedriver().setup();
 
-    WebDriver driver = isFirefox() ?
+    WebDriver driver = false ?
       new FirefoxDriver(addSslErrorIgnoreCapabilities(addHeadless(new FirefoxOptions()))) :
       new ChromeDriver(addSslErrorIgnoreCapabilities(addHeadless(new ChromeOptions())));
     WebDriverRunner.setWebDriver(driver);

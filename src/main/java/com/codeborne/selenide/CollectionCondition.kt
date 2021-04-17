@@ -121,6 +121,7 @@ abstract class CollectionCondition : Predicate<List<WebElement>> {
          *
          * NB! Ignores multiple whitespaces between words
          */
+        @JvmStatic
         @CheckReturnValue
         fun texts(vararg expectedTexts: String): CollectionCondition {
             return Texts(*expectedTexts)
@@ -144,6 +145,7 @@ abstract class CollectionCondition : Predicate<List<WebElement>> {
          *
          * NB! Ignores multiple whitespaces between words
          */
+        @JvmStatic
         @CheckReturnValue
         fun textsInAnyOrder(vararg expectedTexts: String): CollectionCondition {
             return TextsInAnyOrder(*expectedTexts)
@@ -168,6 +170,7 @@ abstract class CollectionCondition : Predicate<List<WebElement>> {
          * NB! Ignores multiple whitespaces between words
          */
         @CheckReturnValue
+        @JvmStatic
         fun exactTexts(vararg expectedTexts: String): CollectionCondition {
             return ExactTexts(*expectedTexts)
         }
@@ -251,6 +254,7 @@ abstract class CollectionCondition : Predicate<List<WebElement>> {
          * @param expectedTexts the expected texts that the collection should contain
          */
         @CheckReturnValue
+        @JvmStatic
         fun containExactTextsCaseSensitive(vararg expectedTexts: String): CollectionCondition {
             return ContainExactTextsCaseSensitive(*expectedTexts)
         }
@@ -288,6 +292,7 @@ abstract class CollectionCondition : Predicate<List<WebElement>> {
          * @param expectedTexts Expected texts in any order in the collection
          */
         @CheckReturnValue
+        @JvmStatic
         fun exactTextsCaseSensitiveInAnyOrder(expectedTexts: List<String>): CollectionCondition {
             return ExactTextsCaseSensitiveInAnyOrder(expectedTexts)
         }

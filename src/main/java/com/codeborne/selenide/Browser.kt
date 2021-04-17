@@ -13,6 +13,6 @@ class Browser(val name: String, @get:CheckReturnValue val isHeadless: Boolean) {
 
     @CheckReturnValue
     fun supportsInsecureCerts(): Boolean {
-        return false
+        return true
     }
 }

@@ -22,14 +22,6 @@ final class GetInnerTextCommandTest implements WithAssertions {
   }
 
   @Test
-  void uses_innerText_attribute_if_IE() {
-    when(locator.driver()).thenReturn(new DriverStub("ie"));
-
-    when(mockedElement.getAttribute("innerText")).thenReturn("hello");
-    assertThat(getInnerTextCommand.execute(proxy, locator, null)).isEqualTo("hello");
-  }
-
-  @Test
   void uses_textContent_attribute_if_not_IE() {
     when(locator.driver()).thenReturn(new DriverStub("firefox"));
 

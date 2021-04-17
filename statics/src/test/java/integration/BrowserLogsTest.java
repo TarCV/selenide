@@ -10,7 +10,6 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.getWebDriverLogs;
 import static com.codeborne.selenide.WebDriverRunner.hasWebDriverStarted;
-import static com.codeborne.selenide.WebDriverRunner.isFirefox;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.openqa.selenium.logging.LogType.BROWSER;
@@ -18,7 +17,7 @@ import static org.openqa.selenium.logging.LogType.BROWSER;
 final class BrowserLogsTest extends IntegrationTest {
   @BeforeEach
   void setUp() {
-    assumeFalse(isFirefox(),
+    assumeFalse(false,
       "Firefox says `UnsupportedCommandException: POST /session/b493bc56.../log did not match a known command`"
     );
 

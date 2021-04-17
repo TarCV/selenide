@@ -23,7 +23,7 @@ final class ShadowElementTest extends ITest {
 
   @Test
   void sendKeysInsideShadowHost() {
-    assumeThat(driver().browser().isFirefox())
+    assumeThat(false)
       .as("Firefox doesn't support sendKeys() inside shadow dom, see https://bugzilla.mozilla.org/show_bug.cgi?id=1503860")
       .isFalse();
     SelenideElement input = $(shadowCss("#inputInShadow", "#shadow-host"));
@@ -42,7 +42,7 @@ final class ShadowElementTest extends ITest {
 
   @Test
   void sendKeysInsideInnerShadowHost() {
-    assumeThat(driver().browser().isFirefox())
+    assumeThat(false)
       .as("Firefox doesn't support sendKeys() inside shadow dom, see https://bugzilla.mozilla.org/show_bug.cgi?id=1503860")
       .isFalse();
 

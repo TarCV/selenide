@@ -17,10 +17,9 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.net.URL;
 
-import static com.codeborne.selenide.Browsers.FIREFOX;
+import static com.codeborne.selenide.Browsers.CHROME;
 import static com.codeborne.selenide.FileDownloadMode.HTTPGET;
 import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.WebDriverRunner.webdriverContainer;
 import static java.lang.Thread.currentThread;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.any;
@@ -51,8 +50,8 @@ final class WebDriverRunnerTest implements WithAssertions {
   void resetSettings() {
     WebDriverRunner.closeWebDriver();
     driver = null;
-    Configuration.browser = System.getProperty("browser", FIREFOX);
-    webdriverContainer = new WebDriverThreadLocalContainer();
+    Configuration.browser = System.getProperty("browser", CHROME);
+    WebDriverRunner.webdriverContainer = new WebDriverThreadLocalContainer();
   }
 
   @Test
@@ -60,7 +59,7 @@ final class WebDriverRunnerTest implements WithAssertions {
     WebDriverRunner.closeWebDriver();
     Configuration.browser = CustomWebDriverProvider.class.getName();
 
-    assertThat(WebDriverRunner.getAndCheckWebDriver())
+    assertThat(WebDriverRunner.getGetAndCheckWebDriver())
       .isEqualTo(driver);
   }
 

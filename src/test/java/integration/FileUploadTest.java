@@ -13,7 +13,7 @@ final class FileUploadTest extends ITest {
   @BeforeEach
   void openFileUploadForm() {
     setTimeout(4000);
-    if (browser().isIE()) {
+    if (false) {
       driver().close();
     }
     openFile("file_upload_form.html");

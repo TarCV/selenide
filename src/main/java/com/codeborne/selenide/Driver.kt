@@ -30,6 +30,7 @@ interface Driver {
     fun close()
 
     @CheckReturnValue
+    @JvmDefault
     fun supportsJavascript(): Boolean {
         return hasWebDriverStarted() && webDriver is JavascriptExecutor
     }
@@ -42,6 +43,7 @@ interface Driver {
         return (webDriver as JavascriptExecutor).executeAsyncScript(jsCode, *arguments) as T
     }
 
+    @JvmDefault
     fun clearCookies() {
         if (hasWebDriverStarted()) {
             webDriver.manage().deleteAllCookies()
@@ -53,25 +55,29 @@ interface Driver {
         get() = executeJavaScript("return navigator.userAgent;")
 
     @CheckReturnValue
+    @JvmDefault
     fun source(): String {
         return webDriver.pageSource
     }
 
     @CheckReturnValue
+    @JvmDefault
     fun url(): String {
         return webDriver.currentUrl
     }
 
-    @get:CheckReturnValue
-    val currentFrameUrl: String
-        get() = executeJavaScript<Any>("return window.location.href").toString()
+    @CheckReturnValue
+    @JvmDefault
+    fun getCurrentFrameUrl(): String = executeJavaScript<Any>("return window.location.href").toString()
 
     @CheckReturnValue
+    @JvmDefault
     fun switchTo(): SelenideTargetLocator {
         return SelenideTargetLocator(this)
     }
 
     @CheckReturnValue
+    @JvmDefault
     fun actions(): Actions {
         return Actions(webDriver)
     }

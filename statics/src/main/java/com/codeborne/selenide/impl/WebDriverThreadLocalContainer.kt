@@ -23,8 +23,13 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class WebDriverThreadLocalContainer : WebDriverContainer {
     private val listeners: MutableList<WebDriverEventListener?> = ArrayList()
+
+    @JvmField
     val allWebDriverThreads: MutableCollection<Thread> = ConcurrentLinkedQueue()
+
+    @JvmField
     val threadWebDriver: MutableMap<Long, WebDriver> = ConcurrentHashMap(4)
+
     private val threadProxyServer: MutableMap<Long, SelenideProxyServer> = ConcurrentHashMap(4)
     private val threadDownloadsFolder: MutableMap<Long, DownloadsFolder> = ConcurrentHashMap(4)
     private var userProvidedProxy: Proxy? = null
@@ -33,6 +38,8 @@ class WebDriverThreadLocalContainer : WebDriverContainer {
     private val factory = WebDriverFactory()
     private val closeDriverCommand = CloseDriverCommand()
     private val createDriverCommand = CreateDriverCommand()
+
+    @JvmField
     val cleanupThreadStarted = AtomicBoolean(false)
     override fun addListener(listener: WebDriverEventListener?) {
         listeners.add(listener)

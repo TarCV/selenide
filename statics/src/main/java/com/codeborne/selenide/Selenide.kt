@@ -34,6 +34,7 @@ object Selenide {
      * If not starting with "http://" or "https://" or "file://", it's considered to be relative URL.
      * In this case, it's prepended by baseUrl
      */
+    @JvmStatic
     fun open(relativeOrAbsoluteUrl: String) {
         WebDriverRunner.selenideDriver.open(relativeOrAbsoluteUrl)
     }
@@ -41,6 +42,7 @@ object Selenide {
     /**
      * @see Selenide.open
      */
+    @JvmStatic
     fun open(absoluteUrl: URL) {
         WebDriverRunner.selenideDriver.open(absoluteUrl)
     }
@@ -63,6 +65,7 @@ object Selenide {
      *
      * In this case, it's prepended by baseUrl
      */
+    @JvmStatic
     fun open(relativeOrAbsoluteUrl: String, domain: String, login: String, password: String) {
         WebDriverRunner.selenideDriver.open(relativeOrAbsoluteUrl, domain, login, password)
     }
@@ -83,6 +86,7 @@ object Selenide {
      *
      * @see AuthenticationType
      */
+    @JvmStatic
     fun open(
         relativeOrAbsoluteUrl: String,
         authenticationType: AuthenticationType,
@@ -111,6 +115,7 @@ object Selenide {
      *
      * @see Credentials
      */
+    @JvmStatic
     fun open(relativeOrAbsoluteUrl: String, authenticationType: AuthenticationType, credentials: Credentials) {
         WebDriverRunner.selenideDriver.open(relativeOrAbsoluteUrl, authenticationType, credentials)
     }
@@ -118,6 +123,7 @@ object Selenide {
     /**
      * @see Selenide.open
      */
+    @JvmStatic
     fun open(absoluteUrl: URL, domain: String, login: String, password: String) {
         WebDriverRunner.selenideDriver.open(absoluteUrl, domain, login, password)
     }
@@ -126,10 +132,12 @@ object Selenide {
      * Open an empty browser (without opening any pages).
      * E.g. useful for starting mobile applications in Appium.
      */
+    @JvmStatic
     fun open() {
         WebDriverRunner.selenideDriver.open()
     }
 
+    @JvmStatic
     fun using(webDriver: WebDriver, lambda: Runnable) {
         WebDriverRunner.using(webDriver, lambda)
     }
@@ -140,6 +148,7 @@ object Selenide {
      *
      * @param hash value for window.location.hash - Accept either "#hash" or "hash".
      */
+    @JvmStatic
     fun updateHash(hash: String) {
         WebDriverRunner.selenideDriver.updateHash(hash)
     }
@@ -149,6 +158,7 @@ object Selenide {
      * @return PageObject of given class
      */
     @CheckReturnValue
+    @JvmStatic
     fun <PageObjectClass> open(
         relativeOrAbsoluteUrl: String,
         pageObjectClassClass: Class<PageObjectClass>
@@ -161,6 +171,7 @@ object Selenide {
      * @return PageObject of given class
      */
     @CheckReturnValue
+    @JvmStatic
     fun <PageObjectClass> open(
         absoluteUrl: URL,
         pageObjectClassClass: Class<PageObjectClass>
@@ -173,7 +184,8 @@ object Selenide {
      * @return PageObject of given class
      */
     @CheckReturnValue
-    fun <PageObjectClass> open(
+    @JvmStatic
+    fun<PageObjectClass> open(
         relativeOrAbsoluteUrl: String,
         domain: String, login: String, password: String,
         pageObjectClassClass: Class<PageObjectClass>
@@ -187,7 +199,8 @@ object Selenide {
      * @return PageObject of given class
      */
     @CheckReturnValue
-    fun <PageObjectClass> open(
+    @JvmStatic
+    fun<PageObjectClass> open(
         absoluteUrl: URL, domain: String, login: String, password: String,
         pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
@@ -199,6 +212,7 @@ object Selenide {
      *
      * @see WebDriver.close
      */
+    @JvmStatic
     fun closeWindow() {
         WebDriverRunner.closeWindow()
     }
@@ -212,11 +226,13 @@ object Selenide {
      *
      * @see WebDriver.quit
      */
+    @JvmStatic
     fun closeWebDriver() {
         WebDriverRunner.closeWebDriver()
     }
 
     @Deprecated("Use either {@link #closeWindow()} or {@link #closeWebDriver()}")
+    @JvmStatic
     fun close() {
         closeWebDriver()
     }
@@ -224,6 +240,7 @@ object Selenide {
     /**
      * Reload current page
      */
+    @JvmStatic
     fun refresh() {
         WebDriverRunner.selenideDriver.refresh()
     }
@@ -231,6 +248,7 @@ object Selenide {
     /**
      * Navigate browser back to previous page
      */
+    @JvmStatic
     fun back() {
         WebDriverRunner.selenideDriver.back()
     }
@@ -238,6 +256,7 @@ object Selenide {
     /**
      * Navigate browser forward to next page
      */
+    @JvmStatic
     fun forward() {
         WebDriverRunner.selenideDriver.forward()
     }
@@ -247,6 +266,7 @@ object Selenide {
      * @return title of the page
      */
     @CheckReturnValue
+    @JvmStatic
     fun title(): String? {
         return WebDriverRunner.selenideDriver.title()
     }
@@ -255,6 +275,7 @@ object Selenide {
      * Not recommended. Test should not sleep, but should wait for some condition instead.
      * @param milliseconds Time to sleep in milliseconds
      */
+    @JvmStatic
     fun sleep(milliseconds: Long) {
         try {
             Thread.sleep(milliseconds)
@@ -270,6 +291,7 @@ object Selenide {
      * @return The name of resulting file
      */
     @CheckReturnValue
+    @JvmStatic
     fun screenshot(fileName: String): String? {
         return WebDriverRunner.selenideDriver.screenshot(fileName)
     }
@@ -281,6 +303,7 @@ object Selenide {
      * or null if webdriver does not support taking screenshots.
      */
     @CheckReturnValue
+    @JvmStatic
     fun <T> screenshot(outputType: OutputType<T>): T? {
         return WebDriverRunner.selenideDriver.screenshot(outputType)
     }
@@ -293,6 +316,7 @@ object Selenide {
      * @return given WebElement wrapped into SelenideElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$`(webElement: WebElement): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(webElement)
     }
@@ -304,6 +328,7 @@ object Selenide {
      * @return SelenideElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$`(cssSelector: String): SelenideElement {
         return WebDriverRunner.selenideDriver.find(cssSelector)
     }
@@ -315,6 +340,7 @@ object Selenide {
      * @return SelenideElement which locates elements via XPath
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$x`(xpathExpression: String): SelenideElement {
         return WebDriverRunner.selenideDriver.`$x`(xpathExpression)
     }
@@ -326,6 +352,7 @@ object Selenide {
      * @return SelenideElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$`(seleniumSelector: By): SelenideElement {
         return WebDriverRunner.selenideDriver.find(seleniumSelector)
     }
@@ -334,6 +361,7 @@ object Selenide {
      * @see .getElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$`(seleniumSelector: By, index: Int): SelenideElement {
         return WebDriverRunner.selenideDriver.find(seleniumSelector, index)
     }
@@ -349,6 +377,7 @@ object Selenide {
     (method will not be removed until 4.x or later)
     """
     )
+    @JvmStatic
     fun `$`(parent: WebElement, cssSelector: String): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(parent).find(cssSelector)
     }
@@ -361,6 +390,7 @@ object Selenide {
      * @return SelenideElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$`(cssSelector: String, index: Int): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(cssSelector, index)
     }
@@ -378,6 +408,7 @@ object Selenide {
     (method will not be removed until 4.x or later)
     """
     )
+    @JvmStatic
     fun `$`(parent: WebElement, cssSelector: String, index: Int): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(parent).find(cssSelector, index)
     }
@@ -395,6 +426,7 @@ object Selenide {
     """
     )
     // TODO: why this hadn't Nullable in Java code?
+    @JvmStatic
     fun `$`(parent: WebElement, seleniumSelector: By): SelenideElement? {
         return WebDriverRunner.selenideDriver.`$`(parent).find(seleniumSelector)
     }
@@ -412,6 +444,7 @@ object Selenide {
     (method will not be removed until 4.x or later)
     """
     )
+    @JvmStatic
     fun `$`(parent: WebElement, seleniumSelector: By, index: Int): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(parent).find(seleniumSelector, index)
     }
@@ -420,6 +453,7 @@ object Selenide {
      * Initialize collection with Elements
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$$`(elements: Collection<WebElement>): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$$`(elements)
     }
@@ -435,6 +469,7 @@ object Selenide {
      * @return empty list if element was no found
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$$`(cssSelector: String): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$$`(cssSelector)
     }
@@ -449,6 +484,7 @@ object Selenide {
      * @return ElementsCollection which locates elements via XPath
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$$x`(xpathExpression: String): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$$x`(xpathExpression)
     }
@@ -464,6 +500,7 @@ object Selenide {
      * @return empty list if element was no found
      */
     @CheckReturnValue
+    @JvmStatic
     fun `$$`(seleniumSelector: By): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$$`(seleniumSelector)
     }
@@ -480,6 +517,7 @@ object Selenide {
     (method will not be removed until 4.x or later)
     """
     )
+    @JvmStatic
     fun `$$`(parent: WebElement, cssSelector: String): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$`(parent).findAll(cssSelector)
     }
@@ -494,6 +532,7 @@ object Selenide {
     (method will not be removed until 4.x or later)
     """
     )
+    @JvmStatic
     fun `$$`(parent: WebElement, seleniumSelector: By): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$`(parent).findAll(seleniumSelector)
     }
@@ -506,6 +545,7 @@ object Selenide {
      * @return given WebElement wrapped into SelenideElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun element(webElement: WebElement): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(webElement)
     }
@@ -517,6 +557,7 @@ object Selenide {
      * @return SelenideElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun element(cssSelector: String): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(cssSelector)
     }
@@ -528,6 +569,7 @@ object Selenide {
      * @return SelenideElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun element(seleniumSelector: By): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(seleniumSelector)
     }
@@ -540,6 +582,7 @@ object Selenide {
      * @return SelenideElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun element(seleniumSelector: By, index: Int): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(seleniumSelector, index)
     }
@@ -552,6 +595,7 @@ object Selenide {
      * @return SelenideElement
      */
     @CheckReturnValue
+    @JvmStatic
     fun element(cssSelector: String, index: Int): SelenideElement {
         return WebDriverRunner.selenideDriver.`$`(cssSelector, index)
     }
@@ -564,6 +608,7 @@ object Selenide {
      * @return given WebElement collection wrapped into SelenideElement collection
      */
     @CheckReturnValue
+    @JvmStatic
     fun elements(elements: Collection<WebElement>): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$$`(elements)
     }
@@ -579,6 +624,7 @@ object Selenide {
      * @return empty list if element was no found
      */
     @CheckReturnValue
+    @JvmStatic
     fun elements(cssSelector: String): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$$`(cssSelector)
     }
@@ -594,6 +640,7 @@ object Selenide {
      * @return empty list if element was no found
      */
     @CheckReturnValue
+    @JvmStatic
     fun elements(seleniumSelector: By): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$$`(seleniumSelector)
     }
@@ -610,6 +657,7 @@ object Selenide {
     ATTENTION! This method doesn't start any search yet!
     """
     )
+    @JvmStatic
     fun getElement(criteria: By): SelenideElement {
         return WebDriverRunner.selenideDriver.find(criteria)
     }
@@ -627,6 +675,7 @@ object Selenide {
     ATTENTION! This method doesn't start any search yet!
     """
     )
+    @JvmStatic
     fun getElement(criteria: By, index: Int): SelenideElement {
         return WebDriverRunner.selenideDriver.find(criteria, index)
     }
@@ -643,6 +692,7 @@ object Selenide {
     ATTENTION! This method doesn't start any search yet!
     """
     )
+    @JvmStatic
     fun getElements(criteria: By): ElementsCollection {
         return WebDriverRunner.selenideDriver.findAll(criteria)
     }
@@ -650,6 +700,7 @@ object Selenide {
     /**
      * @see JavascriptExecutor.executeScript
      */
+    @JvmStatic
     fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T? {
         return WebDriverRunner.selenideDriver.executeJavaScript(jsCode, *arguments)
     }
@@ -657,6 +708,7 @@ object Selenide {
     /**
      * @see JavascriptExecutor.executeAsyncScript
      */
+    @JvmStatic
     fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T? {
         return WebDriverRunner.selenideDriver.executeAsyncJavaScript(jsCode, *arguments)
     }
@@ -666,6 +718,7 @@ object Selenide {
      * @return null if nothing selected
      */
     @CheckReturnValue
+    @JvmStatic
     fun getSelectedRadio(radioField: By): SelenideElement? {
         return WebDriverRunner.selenideDriver.getSelectedRadio(radioField)
     }
@@ -674,7 +727,8 @@ object Selenide {
      * Accept (Click "Yes" or "Ok") in the confirmation dialog (javascript 'alert' or 'confirm').
      * @return actual dialog text
      */
-    fun confirm(): String? {
+    @JvmStatic
+    fun confirm(): String {
         return WebDriverRunner.selenideDriver.modal().confirm()
     }
 
@@ -685,7 +739,8 @@ object Selenide {
      * @throws DialogTextMismatch if confirmation message differs from expected message
      * @return actual dialog text
      */
-    fun confirm(expectedDialogText: String): String? {
+    @JvmStatic
+    fun confirm(expectedDialogText: String): String {
         return WebDriverRunner.selenideDriver.modal().confirm(expectedDialogText)
     }
 
@@ -693,7 +748,8 @@ object Selenide {
      * Accept (Click "Yes" or "Ok") in the confirmation dialog (javascript 'prompt').
      * @return actual dialog text
      */
-    fun prompt(): String? {
+    @JvmStatic
+    fun prompt(): String {
         return WebDriverRunner.selenideDriver.modal().prompt()
     }
 
@@ -702,7 +758,8 @@ object Selenide {
      * @param inputText if not null, sets value in prompt dialog input
      * @return actual dialog text
      */
-    fun prompt(inputText: String): String? {
+    @JvmStatic
+    fun prompt(inputText: String): String {
         return WebDriverRunner.selenideDriver.modal().prompt(inputText)
     }
 
@@ -714,6 +771,7 @@ object Selenide {
      * @throws DialogTextMismatch if confirmation message differs from expected message
      * @return actual dialog text
      */
+    @JvmStatic
     fun prompt(expectedDialogText: String, inputText: String): String? {
         return WebDriverRunner.selenideDriver.modal().prompt(expectedDialogText, inputText)
     }
@@ -722,6 +780,7 @@ object Selenide {
      * Dismiss (click "No" or "Cancel") in the confirmation dialog (javascript 'alert' or 'confirm').
      * @return actual dialog text
      */
+    @JvmStatic
     fun dismiss(): String? {
         return WebDriverRunner.selenideDriver.modal().dismiss()
     }
@@ -733,6 +792,7 @@ object Selenide {
      * @throws DialogTextMismatch if confirmation message differs from expected message
      * @return actual dialog text
      */
+    @JvmStatic
     fun dismiss(expectedDialogText: String): String? {
         return WebDriverRunner.selenideDriver.modal().dismiss(expectedDialogText)
     }
@@ -747,6 +807,7 @@ object Selenide {
      * @return SelenideTargetLocator
      */
     @CheckReturnValue
+    @JvmStatic
     fun switchTo(): SelenideTargetLocator {
         return WebDriverRunner.selenideDriver.driver().switchTo()
     }
@@ -763,6 +824,7 @@ object Selenide {
      * Create a Page Object instance
      */
     @CheckReturnValue
+    @JvmStatic
     fun <PageObjectClass> page(pageObjectClass: Class<PageObjectClass>): PageObjectClass {
         return WebDriverRunner.selenideDriver.page(pageObjectClass)
     }
@@ -771,6 +833,7 @@ object Selenide {
      * Initialize a given Page Object instance
      */
     @CheckReturnValue
+    @JvmStatic
     fun <PageObjectClass, T : PageObjectClass> page(pageObject: T): PageObjectClass {
         return WebDriverRunner.selenideDriver.page(pageObject)
     }
@@ -785,6 +848,7 @@ object Selenide {
      * @return instance of org.openqa.selenium.support.ui.FluentWait
      */
     @CheckReturnValue
+    @JvmStatic
     fun Wait(): SelenideWait {
         return WebDriverRunner.selenideDriver.Wait()
     }
@@ -803,6 +867,7 @@ object Selenide {
     </pre> *
      */
     @CheckReturnValue
+    @JvmStatic
     fun actions(): Actions {
         return WebDriverRunner.selenideDriver.driver().actions()
     }
@@ -811,6 +876,7 @@ object Selenide {
      * Zoom current page (in or out).
      * @param factor e.g. 1.1 or 2.0 or 0.5
      */
+    @JvmStatic
     fun zoom(factor: Double) {
         WebDriverRunner.selenideDriver.zoom(factor)
     }
@@ -819,6 +885,7 @@ object Selenide {
      * Same as com.codeborne.selenide.Selenide#getWebDriverLogs(java.lang.String, java.util.logging.Level)
      */
     @CheckReturnValue
+    @JvmStatic
     fun getWebDriverLogs(logType: String): List<String> {
         return WebDriverRunner.selenideDriver.webDriverLogs.logs(logType)
     }
@@ -853,6 +920,7 @@ object Selenide {
      * @see Level
      */
     @CheckReturnValue
+    @JvmStatic
     fun getWebDriverLogs(logType: String, logLevel: Level): List<String> {
         return WebDriverRunner.selenideDriver.webDriverLogs.logs(logType, logLevel)
     }
@@ -862,6 +930,7 @@ object Selenide {
      *
      * It can be useful e.g. if you are trying to avoid restarting browser between tests
      */
+    @JvmStatic
     fun clearBrowserCookies() {
         WebDriverRunner.selenideDriver.clearCookies()
     }
@@ -871,6 +940,7 @@ object Selenide {
      *
      * In case if you need to be sure that browser's localStorage is empty
      */
+    @JvmStatic
     fun clearBrowserLocalStorage() {
         WebDriverRunner.selenideDriver.clearBrowserLocalStorage()
     }
@@ -890,6 +960,7 @@ object Selenide {
      * Useful if you need to scroll down by x pixels unknown number of times.
      */
     @CheckReturnValue
+    @JvmStatic
     fun atBottom(): Boolean {
         return WebDriverRunner.selenideDriver.atBottom()
     }
@@ -902,6 +973,7 @@ object Selenide {
      */
     @CheckReturnValue
     @Throws(IOException::class, URISyntaxException::class)
+    @JvmStatic
     fun download(url: String): File {
         return WebDriverRunner.selenideDriver.download(url)
     }
@@ -911,6 +983,7 @@ object Selenide {
      */
     @CheckReturnValue
     @Throws(IOException::class)
+    @JvmStatic
     fun download(url: URI): File {
         return WebDriverRunner.selenideDriver.download(url)
     }
@@ -920,6 +993,7 @@ object Selenide {
      */
     @CheckReturnValue
     @Throws(IOException::class)
+    @JvmStatic
     fun download(url: URI, timeoutMs: Long): File {
         return WebDriverRunner.selenideDriver.download(url, timeoutMs)
     }
@@ -941,6 +1015,7 @@ object Selenide {
      */
     @CheckReturnValue
     @Throws(IOException::class, URISyntaxException::class)
+    @JvmStatic
     fun download(url: String, timeoutMs: Long): File {
         return WebDriverRunner.selenideDriver.download(URI(url), timeoutMs)
     }
@@ -953,6 +1028,7 @@ object Selenide {
      * @since 5.15.0
      */
     @CheckReturnValue
+    @JvmStatic
     fun localStorage(): LocalStorage {
         return WebDriverRunner.selenideDriver.localStorage
     }
@@ -965,6 +1041,7 @@ object Selenide {
      * @since 5.18.1
      */
     @CheckReturnValue
+    @JvmStatic
     fun sessionStorage(): SessionStorage {
         return WebDriverRunner.selenideDriver.sessionStorage
     }
@@ -982,6 +1059,7 @@ object Selenide {
      * @return Clipboard
      */
     @CheckReturnValue
+    @JvmStatic
     fun clipboard(): Clipboard {
         return WebDriverRunner.selenideDriver.clipboard
     }

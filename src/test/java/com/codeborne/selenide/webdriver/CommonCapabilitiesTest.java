@@ -18,9 +18,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 
-import static com.codeborne.selenide.Browsers.EDGE;
-import static com.codeborne.selenide.Browsers.IE;
-import static com.codeborne.selenide.Browsers.INTERNET_EXPLORER;
 import static org.mockito.Mockito.mock;
 import static org.openqa.selenium.remote.CapabilityType.ACCEPT_INSECURE_CERTS;
 import static org.openqa.selenium.remote.CapabilityType.ACCEPT_SSL_CERTS;
@@ -38,33 +35,6 @@ final class CommonCapabilitiesTest implements WithAssertions {
     assertThat(asBool(commonCapabilities.getCapability(ACCEPT_INSECURE_CERTS))).isTrue();
     assertThat(asBool(commonCapabilities.getCapability(ACCEPT_SSL_CERTS))).isTrue();
     assertThat(commonCapabilities.getCapability(PAGE_LOAD_STRATEGY)).isEqualTo(config.pageLoadStrategy());
-  }
-
-  @Test
-  void transferCapabilitiesFromConfigurationInternetExplorer() {
-    SelenideConfig config = new SelenideConfig();
-    config.browser(INTERNET_EXPLORER);
-    Capabilities commonCapabilities = driverFactory.createCommonCapabilities(config, browser(config), proxy);
-    assertThat(asBool(commonCapabilities.getCapability(ACCEPT_INSECURE_CERTS))).isFalse();
-    assertThat(asBool(commonCapabilities.getCapability(ACCEPT_SSL_CERTS))).isTrue();
-  }
-
-  @Test
-  void transferCapabilitiesFromConfigurationIE() {
-    SelenideConfig config = new SelenideConfig();
-    config.browser(IE);
-    Capabilities commonCapabilities = driverFactory.createCommonCapabilities(config, browser(config), proxy);
-    assertThat(asBool(commonCapabilities.getCapability(ACCEPT_INSECURE_CERTS))).isFalse();
-    assertThat(asBool(commonCapabilities.getCapability(ACCEPT_SSL_CERTS))).isTrue();
-  }
-
-  @Test
-  void transferCapabilitiesFromConfigurationEdge() {
-    SelenideConfig config = new SelenideConfig();
-    config.browser(EDGE);
-    Capabilities commonCapabilities = driverFactory.createCommonCapabilities(config, browser(config), proxy);
-    assertThat(asBool(commonCapabilities.getCapability(ACCEPT_INSECURE_CERTS))).isFalse();
-    assertThat(asBool(commonCapabilities.getCapability(ACCEPT_SSL_CERTS))).isTrue();
   }
 
   private boolean asBool(Object raw) {

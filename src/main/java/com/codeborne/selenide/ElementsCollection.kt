@@ -30,7 +30,6 @@ import java.util.stream.Collectors
 import javax.annotation.CheckReturnValue
 import javax.annotation.ParametersAreNonnullByDefault
 
-@ParametersAreNonnullByDefault
 class ElementsCollection(private val collection: CollectionSource) : AbstractList<SelenideElement>() {
     constructor(driver: Driver, elements: Collection<WebElement>) : this(
         WebElementsCollectionWrapper(

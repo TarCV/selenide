@@ -1,5 +1,6 @@
 plugins {
   id 'org.jetbrains.kotlin.jvm'
+  id "org.jetbrains.kotlin.plugin.allopen"
 }
 dependencies {
   compileOnly("org.junit.jupiter:junit-jupiter-api:$junitVersion")
@@ -14,10 +15,12 @@ repositories {
 compileKotlin {
   kotlinOptions {
     jvmTarget = "1.8"
+    freeCompilerArgs += '-Xjvm-default=enable'
   }
 }
 compileTestKotlin {
   kotlinOptions {
     jvmTarget = "1.8"
+    freeCompilerArgs += '-Xjvm-default=enable'
   }
 }

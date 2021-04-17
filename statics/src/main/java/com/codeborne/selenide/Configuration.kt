@@ -42,6 +42,7 @@ object Configuration {
      * <br></br>
      * Default value: http://localhost:8080
      */
+    @JvmField
     var baseUrl = defaults.baseUrl()
 
     /**
@@ -50,6 +51,7 @@ object Configuration {
      * <br></br>
      * Default value: 4000 (milliseconds)
      */
+    @JvmField
     var timeout = defaults.timeout()
 
     /**
@@ -66,6 +68,7 @@ object Configuration {
      * <br></br>
      * Default value: false.
      */
+    @JvmField
     var holdBrowserOpen = defaults.holdBrowserOpen()
 
     /**
@@ -77,6 +80,7 @@ object Configuration {
      * <br></br>
      * Default value: true
      */
+    @JvmField
     var reopenBrowserOnFail = defaults.reopenBrowserOnFail()
 
     /**
@@ -86,6 +90,7 @@ object Configuration {
      * <br></br>
      * Default value: "chrome"
      */
+    @JvmField
     var browser: String = defaults.browser()
 
     /**
@@ -110,7 +115,8 @@ object Configuration {
      * <br></br>
      * Default value: 1366x768
      */
-    var browserSize: String = defaults.browserSize()
+    @JvmField
+    var browserSize: String? = defaults.browserSize()
 
     /**
      * The browser window position on screen.
@@ -118,6 +124,7 @@ object Configuration {
      * <br></br>
      * Default value: none
      */
+    @JvmField
     var browserPosition: String? = defaults.browserPosition()
 
     /**
@@ -126,6 +133,7 @@ object Configuration {
      * <br></br>
      * Default value: false
      */
+    @JvmField
     var startMaximized = defaults.startMaximized()
 
     /**
@@ -173,6 +181,7 @@ object Configuration {
      * <br></br>
      * Default value: false
      */
+    @JvmField
     var clickViaJs = defaults.clickViaJs()
 
     /**
@@ -197,6 +206,7 @@ object Configuration {
      * <br></br>
      * Default value: "build/reports/tests" (this is default for Gradle projects)
      */
+    @JvmField
     var reportsFolder: String = defaults.reportsFolder()
 
     /**
@@ -205,6 +215,7 @@ object Configuration {
      * <br></br>
      * Default value: "build/downloads" (this is default for Gradle projects)
      */
+    @JvmField
     var downloadsFolder: String = defaults.downloadsFolder()
 
     /**
@@ -217,6 +228,7 @@ object Configuration {
      * "http://ci.mycompany.com/job/my-job/446/artifact/build/reports/tests/my_test.png" - it's useful to analyze test
      * failures in CI server.
      */
+    @JvmField
     var reportsUrl: String? = defaults.reportsUrl()
 
     /**
@@ -232,6 +244,7 @@ object Configuration {
      * <br></br>
      * Default value: false
      */
+    @JvmField
     var fastSetValue = defaults.fastSetValue()
 
     /**
@@ -247,6 +260,7 @@ object Configuration {
      * <br></br>
      * Default value: false
      */
+    @JvmField
     var versatileSetValue = defaults.versatileSetValue()
 
     /**
@@ -280,6 +294,7 @@ object Configuration {
      *
      * @see AssertionMode
      */
+    @JvmField
     var assertionMode: AssertionMode = defaults.assertionMode()
 
     /**
@@ -288,6 +303,7 @@ object Configuration {
      * <br></br>
      * Default: HTTPGET
      */
+    @JvmField
     var fileDownload: FileDownloadMode = defaults.fileDownload()
 
     /**
@@ -300,6 +316,7 @@ object Configuration {
      * <br></br>
      * Default: false
      */
+    @JvmField
     var proxyEnabled = defaults.proxyEnabled()
 
     /**
@@ -311,6 +328,7 @@ object Configuration {
      *
      * @see com.browserup.bup.client.ClientUtil.getConnectableAddress
      */
+    @JvmField
     var proxyHost: String = defaults.proxyHost()
 
     /**
@@ -320,6 +338,7 @@ object Configuration {
      * <br></br>
      * Default: 0 (meaning that Selenide will choose a random free port on current machine)
      */
+    @JvmField
     var proxyPort = defaults.proxyPort()
 
     /**
@@ -358,6 +377,7 @@ object Configuration {
      * <br></br>
      * Default: false
      */
+    @JvmField
     var headless = defaults.headless()
 
     /**

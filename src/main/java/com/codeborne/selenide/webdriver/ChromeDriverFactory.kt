@@ -107,7 +107,7 @@ open class ChromeDriverFactory : AbstractDriverFactory() {
     }
 
     private fun hasExtensions(capabilities: Capabilities): Boolean {
-        val chromeOptions = capabilities.getCapability("goog:chromeOptions") as Map<*, *>
+        val chromeOptions = capabilities.getCapability("goog:chromeOptions") as Map<*, *>?
             ?: return false
         val extensions = chromeOptions["extensions"] as List<*>?
         return extensions != null && !extensions.isEmpty()
@@ -166,7 +166,7 @@ open class ChromeDriverFactory : AbstractDriverFactory() {
     }
 
     @CheckReturnValue
-    private fun parseArguments(arguments: String): List<String> {
+    private fun parseArguments(arguments: String?): List<String> {
         return parseCSV(arguments).stream()
             .map { value: String -> removeQuotes(value) }
             .collect(Collectors.toList())

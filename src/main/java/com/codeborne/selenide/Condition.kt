@@ -175,6 +175,7 @@ abstract class Condition @JvmOverloads constructor(
          * @param attributeName name of attribute, not null
          * @return true iff attribute exists
          */
+        @JvmStatic
         @CheckReturnValue
             fun attribute(attributeName: String): Condition {
             return Attribute(attributeName)
@@ -249,6 +250,7 @@ abstract class Condition @JvmOverloads constructor(
          * @param expectedValue expected value of the property
          */
         @CheckReturnValue
+        @JvmStatic
             fun pseudo(pseudoElementName: String, propertyName: String, expectedValue: String): Condition {
             return PseudoElementPropertyWithValue(pseudoElementName, propertyName, expectedValue)
         }

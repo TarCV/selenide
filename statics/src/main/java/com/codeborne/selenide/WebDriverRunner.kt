@@ -17,6 +17,7 @@ import javax.annotation.ParametersAreNonnullByDefault
  */
 @ParametersAreNonnullByDefault
 object WebDriverRunner : Browsers {
+    @JvmField
     var webdriverContainer: WebDriverContainer = WebDriverThreadLocalContainer()
 
     @get:CheckReturnValue
@@ -27,14 +28,17 @@ object WebDriverRunner : Browsers {
      *
      * @param listener your listener of webdriver events
      */
+    @JvmStatic
     fun addListener(listener: WebDriverEventListener) {
         webdriverContainer.addListener(listener)
     }
 
+    @JvmStatic
     fun setWebDriver(webDriver: WebDriver, selenideProxy: SelenideProxyServer) {
         webdriverContainer.setWebDriver(webDriver, selenideProxy)
     }
 
+    @JvmStatic
     fun setWebDriver(
         webDriver: WebDriver,
         selenideProxy: SelenideProxyServer,
@@ -83,6 +87,7 @@ object WebDriverRunner : Browsers {
      *
      */
     @get:CheckReturnValue
+    @JvmStatic
     var webDriver: WebDriver
         get() = webdriverContainer.webDriver
         set(webDriver) {
@@ -92,7 +97,8 @@ object WebDriverRunner : Browsers {
     /**
      * Sets Selenium Proxy instance
      */
-    fun setProxy(webProxy: Proxy) {
+    @JvmStatic
+    fun setProxy(webProxy: Proxy?) {
         webdriverContainer.setProxy(webProxy)
     }
 
@@ -102,6 +108,7 @@ object WebDriverRunner : Browsers {
      * @return null if proxy server is not started
      */
     @get:CheckReturnValue
+    @JvmStatic
     val selenideProxy: SelenideProxyServer?
       get() {
         return webdriverContainer.proxyServer
@@ -114,14 +121,17 @@ object WebDriverRunner : Browsers {
      * @return new instance of WebDriver if the previous one has been closed meanwhile.
      */
     @get:CheckReturnValue
+    @JvmStatic
     val getAndCheckWebDriver: WebDriver
         get() = webdriverContainer.andCheckWebDriver
 
     @CheckReturnValue
+    @JvmStatic
     fun driver(): Driver {
         return selenideDriver.driver()
     }
 
+    @JvmStatic
     @get:CheckReturnValue
     val browserDownloadsFolder: DownloadsFolder
         get() = webdriverContainer.browserDownloadsFolder
@@ -131,6 +141,7 @@ object WebDriverRunner : Browsers {
      *
      * @see WebDriver.close
      */
+    @JvmStatic
     fun closeWindow() {
         webdriverContainer.closeWindow()
     }
@@ -144,6 +155,7 @@ object WebDriverRunner : Browsers {
      *
      * @see WebDriver.quit
      */
+    @JvmStatic
     fun closeWebDriver() {
         webdriverContainer.closeWebDriver()
     }
@@ -152,10 +164,12 @@ object WebDriverRunner : Browsers {
      * @return true if instance of Selenium WebDriver is started in current thread
      */
     @CheckReturnValue
+    @JvmStatic
     fun hasWebDriverStarted(): Boolean {
         return webdriverContainer.hasWebDriverStarted()
     }
 
+    @JvmStatic
     fun using(driver: WebDriver, lambda: Runnable) {
         if (hasWebDriverStarted()) {
             val previous = webDriver
@@ -184,13 +198,20 @@ object WebDriverRunner : Browsers {
      * Is Selenide configured to use Chrome browser
      */
     @get:CheckReturnValue
+    @JvmStatic
     val isChrome: Boolean
         get() = browser().isChrome
+
+  @get:CheckReturnValue
+  @JvmStatic
+  val isFirefox: Boolean
+    get() = false
 
     /**
      * Is Selenide configured to use headless browser
      */
     @get:CheckReturnValue
+    @get:JvmStatic
     val isHeadless: Boolean
         get() = browser().isHeadless
 
@@ -198,6 +219,7 @@ object WebDriverRunner : Browsers {
      * Does this browser support javascript
      */
     @CheckReturnValue
+    @JvmStatic
     fun supportsJavascript(): Boolean {
         return driver().supportsJavascript()
     }
@@ -205,6 +227,7 @@ object WebDriverRunner : Browsers {
     /**
      * Delete all the browser cookies
      */
+    @JvmStatic
     fun clearBrowserCache() {
         webdriverContainer.clearBrowserCache()
     }
@@ -213,6 +236,7 @@ object WebDriverRunner : Browsers {
      * @return the source (HTML) of current page
      */
     @CheckReturnValue
+    @JvmStatic
     fun source(): String {
         return webdriverContainer.pageSource
     }
@@ -221,6 +245,7 @@ object WebDriverRunner : Browsers {
      * @return the URL of current page
      */
     @CheckReturnValue
+    @JvmStatic
     fun url(): String {
         return webdriverContainer.currentUrl
     }
@@ -229,6 +254,7 @@ object WebDriverRunner : Browsers {
      * @return the URL of current frame
      */
     @CheckReturnValue
+    @JvmStatic
     fun currentFrameUrl(): String {
         return webdriverContainer.currentFrameUrl
     }
