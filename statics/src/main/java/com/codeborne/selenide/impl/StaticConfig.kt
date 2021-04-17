@@ -1,178 +1,177 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.AssertionMode;
-import com.codeborne.selenide.Config;
-import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.FileDownloadMode;
-import com.codeborne.selenide.SelectorMode;
-import org.openqa.selenium.MutableCapabilities;
+import com.codeborne.selenide.AssertionMode
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.Configuration.assertionMode
+import com.codeborne.selenide.Configuration.baseUrl
+import com.codeborne.selenide.Configuration.browser
+import com.codeborne.selenide.Configuration.browserBinary
+import com.codeborne.selenide.Configuration.browserCapabilities
+import com.codeborne.selenide.Configuration.browserPosition
+import com.codeborne.selenide.Configuration.browserSize
+import com.codeborne.selenide.Configuration.browserVersion
+import com.codeborne.selenide.Configuration.clickViaJs
+import com.codeborne.selenide.Configuration.downloadsFolder
+import com.codeborne.selenide.Configuration.driverManagerEnabled
+import com.codeborne.selenide.Configuration.fastSetValue
+import com.codeborne.selenide.Configuration.fileDownload
+import com.codeborne.selenide.Configuration.headless
+import com.codeborne.selenide.Configuration.holdBrowserOpen
+import com.codeborne.selenide.Configuration.pageLoadStrategy
+import com.codeborne.selenide.Configuration.pageLoadTimeout
+import com.codeborne.selenide.Configuration.pollingInterval
+import com.codeborne.selenide.Configuration.proxyEnabled
+import com.codeborne.selenide.Configuration.proxyHost
+import com.codeborne.selenide.Configuration.proxyPort
+import com.codeborne.selenide.Configuration.remote
+import com.codeborne.selenide.Configuration.reopenBrowserOnFail
+import com.codeborne.selenide.Configuration.reportsFolder
+import com.codeborne.selenide.Configuration.reportsUrl
+import com.codeborne.selenide.Configuration.savePageSource
+import com.codeborne.selenide.Configuration.screenshots
+import com.codeborne.selenide.Configuration.selectorMode
+import com.codeborne.selenide.Configuration.startMaximized
+import com.codeborne.selenide.Configuration.timeout
+import com.codeborne.selenide.Configuration.versatileSetValue
+import com.codeborne.selenide.Configuration.webdriverLogsEnabled
+import com.codeborne.selenide.FileDownloadMode
+import com.codeborne.selenide.SelectorMode
+import org.openqa.selenium.MutableCapabilities
 
 /**
- * A non-static facade for static fields in {@link com.codeborne.selenide.Configuration}
+ * A non-static facade for static fields in [com.codeborne.selenide.Configuration]
  *
  * It was created only to keep backward compatibility in Selenide 5.0.0: every time when somebody modifies, say,
- * {@link com.codeborne.selenide.Configuration#timeout}, it will immediately reflect in {@link StaticConfig#timeout()}
+ * [com.codeborne.selenide.Configuration.timeout], it will immediately reflect in [StaticConfig.timeout]
  *
  * This class should not be normally used in end user's code.
  */
-public class StaticConfig implements Config {
-  @Override
-  public String baseUrl() {
-    return Configuration.baseUrl;
-  }
+class StaticConfig : Config {
+    override fun baseUrl(): String {
+        return baseUrl
+    }
 
-  @Override
-  public long timeout() {
-    return Configuration.timeout;
-  }
+    override fun timeout(): Long {
+        return timeout
+    }
 
-  @Override
-  public long pollingInterval() {
-    return Configuration.pollingInterval;
-  }
+    override fun pollingInterval(): Long {
+        return pollingInterval
+    }
 
-  @Override
-  public boolean holdBrowserOpen() {
-    return Configuration.holdBrowserOpen;
-  }
+    override fun holdBrowserOpen(): Boolean {
+        return holdBrowserOpen
+    }
 
-  @Override
-  public boolean reopenBrowserOnFail() {
-    return Configuration.reopenBrowserOnFail;
-  }
+    override fun reopenBrowserOnFail(): Boolean {
+        return reopenBrowserOnFail
+    }
 
-  @Override
-  public boolean clickViaJs() {
-    return Configuration.clickViaJs;
-  }
+    override fun clickViaJs(): Boolean {
+        return clickViaJs
+    }
 
-  @Override
-  public boolean screenshots() {
-    return Configuration.screenshots;
-  }
+    override fun screenshots(): Boolean {
+        return screenshots
+    }
 
-  @Override
-  public boolean savePageSource() {
-    return Configuration.savePageSource;
-  }
+    override fun savePageSource(): Boolean {
+        return savePageSource
+    }
 
-  @Override
-  public String reportsFolder() {
-    return Configuration.reportsFolder;
-  }
+    override fun reportsFolder(): String {
+        return reportsFolder
+    }
 
-  @Override
-  public String downloadsFolder() {
-    return Configuration.downloadsFolder;
-  }
+    override fun downloadsFolder(): String {
+        return downloadsFolder
+    }
 
-  @Override
-  public String reportsUrl() {
-    return Configuration.reportsUrl;
-  }
+    override fun reportsUrl(): String {
+        return reportsUrl!!
+    }
 
-  @Override
-  public boolean fastSetValue() {
-    return Configuration.fastSetValue;
-  }
+    override fun fastSetValue(): Boolean {
+        return fastSetValue
+    }
 
-  @Override
-  public boolean versatileSetValue() {
-    return Configuration.versatileSetValue;
-  }
+    override fun versatileSetValue(): Boolean {
+        return versatileSetValue
+    }
 
-  @Override
-  public SelectorMode selectorMode() {
-    return Configuration.selectorMode;
-  }
+    override fun selectorMode(): SelectorMode {
+        return selectorMode
+    }
 
-  @Override
-  public AssertionMode assertionMode() {
-    return Configuration.assertionMode;
-  }
+    override fun assertionMode(): AssertionMode {
+        return assertionMode
+    }
 
-  @Override
-  public FileDownloadMode fileDownload() {
-    return Configuration.fileDownload;
-  }
+    override fun fileDownload(): FileDownloadMode {
+        return fileDownload
+    }
 
-  @Override
-  public boolean proxyEnabled() {
-    return Configuration.proxyEnabled;
-  }
+    override fun proxyEnabled(): Boolean {
+        return proxyEnabled
+    }
 
-  @Override
-  public String proxyHost() {
-    return Configuration.proxyHost;
-  }
+    override fun proxyHost(): String {
+        return proxyHost
+    }
 
-  @Override
-  public int proxyPort() {
-    return Configuration.proxyPort;
-  }
+    override fun proxyPort(): Int {
+        return proxyPort
+    }
 
-  @Override
-  public String browser() {
-    return Configuration.browser;
-  }
+    override fun browser(): String {
+        return browser
+    }
 
-  @Override
-  public boolean headless() {
-    return Configuration.headless;
-  }
+    override fun headless(): Boolean {
+        return headless
+    }
 
-  @Override
-  public String remote() {
-    return Configuration.remote;
-  }
+    override fun remote(): String {
+        return remote!!
+    }
 
-  @Override
-  public String browserSize() {
-    return Configuration.browserSize;
-  }
+    override fun browserSize(): String {
+        return browserSize
+    }
 
-  @Override
-  public String browserVersion() {
-    return Configuration.browserVersion;
-  }
+    override fun browserVersion(): String {
+        return browserVersion!!
+    }
 
-  @Override
-  public String browserPosition() {
-    return Configuration.browserPosition;
-  }
+    override fun browserPosition(): String {
+        return browserPosition!!
+    }
 
-  @Override
-  public boolean startMaximized() {
-    return Configuration.startMaximized;
-  }
+    override fun startMaximized(): Boolean {
+        return startMaximized
+    }
 
-  @Override
-  public boolean driverManagerEnabled() {
-    return Configuration.driverManagerEnabled;
-  }
+    override fun driverManagerEnabled(): Boolean {
+        return driverManagerEnabled
+    }
 
-  @Override
-  public boolean webdriverLogsEnabled() {
-    return Configuration.webdriverLogsEnabled;
-  }
+    override fun webdriverLogsEnabled(): Boolean {
+        return webdriverLogsEnabled
+    }
 
-  @Override
-  public String browserBinary() {
-    return Configuration.browserBinary;
-  }
+    override fun browserBinary(): String {
+        return browserBinary
+    }
 
-  @Override
-  public String pageLoadStrategy() {
-    return Configuration.pageLoadStrategy;
-  }
+    override fun pageLoadStrategy(): String {
+        return pageLoadStrategy
+    }
 
-  @Override
-  public long pageLoadTimeout() {
-    return Configuration.pageLoadTimeout;
-  }
+    override fun pageLoadTimeout(): Long {
+        return pageLoadTimeout
+    }
 
-  @Override
-  public MutableCapabilities browserCapabilities() {
-    return Configuration.browserCapabilities;
-  }
+    override fun browserCapabilities(): MutableCapabilities {
+        return browserCapabilities
+    }
 }

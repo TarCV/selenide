@@ -1,57 +1,58 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.DownloadsFolder;
-import com.codeborne.selenide.proxy.SelenideProxyServer;
-import org.openqa.selenium.Proxy;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.events.WebDriverEventListener;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.DownloadsFolder
+import com.codeborne.selenide.WebDriverRunner
+import com.codeborne.selenide.proxy.SelenideProxyServer
+import com.google.errorprone.annotations.CheckReturnValue
+import org.openqa.selenium.Proxy
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.support.events.WebDriverEventListener
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public interface WebDriverContainer {
-  void addListener(WebDriverEventListener listener);
-  void setWebDriver(WebDriver webDriver);
-  void setWebDriver(WebDriver webDriver, @Nullable SelenideProxyServer selenideProxy);
-  void setWebDriver(WebDriver webDriver, @Nullable SelenideProxyServer selenideProxy, DownloadsFolder browserDownloadsFolder);
-  void resetWebDriver();
+interface WebDriverContainer {
+    fun addListener(listener: WebDriverEventListener?)
+    fun setWebDriver(webDriver: WebDriver, selenideProxy: SelenideProxyServer?)
+    fun setWebDriver(
+        webDriver: WebDriver,
+        selenideProxy: SelenideProxyServer?,
+        browserDownloadsFolder: DownloadsFolder
+    )
 
-  @CheckReturnValue
-  @Nonnull
-  WebDriver getWebDriver();
+    fun resetWebDriver()
 
-  @CheckReturnValue
-  @Nullable
-  SelenideProxyServer getProxyServer();
+    @get:CheckReturnValue
+    var webDriver: WebDriver
 
-  void setProxy(Proxy webProxy);
+    /**
+ * Get selenide proxy. It's activated only if Configuration.proxyEnabled == true
+ *
+ * @return null if proxy server is not started
+ */
+    @get:CheckReturnValue
+    val proxyServer: SelenideProxyServer?
+    get() {
+        return WebDriverRunner.webdriverContainer.proxyServer
+    }
+    fun setProxy(webProxy: Proxy?)
 
-  @CheckReturnValue
-  @Nonnull
-  WebDriver getAndCheckWebDriver();
+    @get:CheckReturnValue
+    val andCheckWebDriver: WebDriver
 
-  @CheckReturnValue
-  @Nonnull
-  DownloadsFolder getBrowserDownloadsFolder();
+    @get:CheckReturnValue
+    val browserDownloadsFolder: DownloadsFolder
 
-  void closeWindow();
-  void closeWebDriver();
-  boolean hasWebDriverStarted();
+    fun closeWindow()
+    fun closeWebDriver()
+    fun hasWebDriverStarted(): Boolean
+    fun clearBrowserCache()
 
-  void clearBrowserCache();
+    @get:CheckReturnValue
+    val pageSource: String
 
-  @CheckReturnValue
-  @Nonnull
-  String getPageSource();
+    @get:CheckReturnValue
+    val currentUrl: String
 
-  @CheckReturnValue
-  @Nonnull
-  String getCurrentUrl();
-
-  @CheckReturnValue
-  @Nonnull
-  String getCurrentFrameUrl();
+    @get:CheckReturnValue
+    val currentFrameUrl: String
 }

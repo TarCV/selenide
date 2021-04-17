@@ -1,74 +1,56 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.DownloadsFolder;
-import com.codeborne.selenide.proxy.SelenideProxyServer;
-import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.codeborne.selenide.DownloadsFolder
+import com.codeborne.selenide.proxy.SelenideProxyServer
+import org.openqa.selenium.WebDriver
+import org.slf4j.LoggerFactory
 
-import java.util.Collection;
-import java.util.Map;
-
-class UnusedWebdriversCleanupThread extends Thread {
-  private static final Logger log = LoggerFactory.getLogger(UnusedWebdriversCleanupThread.class);
-
-  private final Collection<Thread> allWebDriverThreads;
-  private final Map<Long, WebDriver> threadWebDriver;
-  private final Map<Long, SelenideProxyServer> threadProxyServer;
-  private final Map<Long, DownloadsFolder> threadDownloadsFolder;
-
-  UnusedWebdriversCleanupThread(Collection<Thread> allWebDriverThreads,
-                                Map<Long, WebDriver> threadWebDriver,
-                                Map<Long, SelenideProxyServer> threadProxyServer,
-                                Map<Long, DownloadsFolder> threadDownloadsFolder) {
-    this.allWebDriverThreads = allWebDriverThreads;
-    this.threadWebDriver = threadWebDriver;
-    this.threadProxyServer = threadProxyServer;
-    this.threadDownloadsFolder = threadDownloadsFolder;
-    setDaemon(true);
-    setName("Webdrivers killer thread");
-  }
-
-  @Override
-  public void run() {
-    while (true) {
-      closeUnusedWebdrivers();
-      try {
-        Thread.sleep(100);
-      }
-      catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        break;
-      }
-    }
-  }
-
-  private void closeUnusedWebdrivers() {
-    for (Thread thread : allWebDriverThreads) {
-      if (!thread.isAlive()) {
-        log.info("Thread {} is dead. Let's close webdriver {}", thread.getId(), threadWebDriver.get(thread.getId()));
-        closeWebDriver(thread);
-      }
-    }
-  }
-
-  private void closeWebDriver(Thread thread) {
-    allWebDriverThreads.remove(thread);
-    WebDriver driver = threadWebDriver.remove(thread.getId());
-
-    if (driver == null) {
-      log.info("No webdriver found for thread: {} - nothing to close", thread.getId());
-    }
-    else {
-      driver.quit();
+internal class UnusedWebdriversCleanupThread(
+    private val allWebDriverThreads: MutableCollection<Thread>,
+    private val threadWebDriver: MutableMap<Long, WebDriver>,
+    private val threadProxyServer: MutableMap<Long, SelenideProxyServer>,
+    private val threadDownloadsFolder: MutableMap<Long, DownloadsFolder>
+) : Thread() {
+    override fun run() {
+        while (true) {
+            closeUnusedWebdrivers()
+            try {
+                sleep(100)
+            } catch (e: InterruptedException) {
+                currentThread().interrupt()
+                break
+            }
+        }
     }
 
-    SelenideProxyServer proxy = threadProxyServer.remove(thread.getId());
-    if (proxy != null) {
-      proxy.shutdown();
+    private fun closeUnusedWebdrivers() {
+        for (thread in allWebDriverThreads) {
+            if (!thread.isAlive) {
+                log.info("Thread {} is dead. Let's close webdriver {}", thread.id, threadWebDriver[thread.id])
+                closeWebDriver(thread)
+            }
+        }
     }
 
-    threadDownloadsFolder.remove(thread.getId());
-  }
+    private fun closeWebDriver(thread: Thread) {
+        allWebDriverThreads.remove(thread)
+        val driver = threadWebDriver.remove(thread.id)
+        if (driver == null) {
+            log.info("No webdriver found for thread: {} - nothing to close", thread.id)
+        } else {
+            driver.quit()
+        }
+        val proxy = threadProxyServer.remove(thread.id)
+        proxy?.shutdown()
+        threadDownloadsFolder.remove(thread.id)
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(UnusedWebdriversCleanupThread::class.java)
+    }
+
+    init {
+        isDaemon = true
+        name = "Webdrivers killer thread"
+    }
 }
-

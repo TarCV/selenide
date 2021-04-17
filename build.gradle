@@ -1,3 +1,12 @@
+buildscript {
+  ext.kotlin_version = '1.4.32'
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
+}
 plugins {
   id 'java-library'
   id 'idea'
@@ -11,6 +20,7 @@ plugins {
 allprojects {
   apply plugin: 'java'
 }
+apply plugin: 'kotlin'
 
 group = 'com.codeborne'
 archivesBaseName = 'selenide'
@@ -24,3 +34,19 @@ apply from: rootProject.file('gradle/tests.gradle')
 apply from: rootProject.file('gradle/deploy.gradle')
 
 defaultTasks 'check', 'test', 'install'
+repositories {
+  mavenCentral()
+}
+dependencies {
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+compileKotlin {
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}
+compileTestKotlin {
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}

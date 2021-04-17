@@ -1,79 +1,62 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Browser;
-import com.codeborne.selenide.Config;
-import com.codeborne.selenide.DownloadsFolder;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.WebDriverRunner;
-import com.codeborne.selenide.proxy.SelenideProxyServer;
-import org.openqa.selenium.WebDriver;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Browser
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.DownloadsFolder
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.WebDriverRunner
+import com.codeborne.selenide.proxy.SelenideProxyServer
+import org.openqa.selenium.WebDriver
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 /**
  * A `Driver` implementation which uses thread-local
  * webdriver and proxy from `WebDriverRunner`.
  *
  * @see WebDriverRunner
+ *
  * @see StaticConfig
  */
 @ParametersAreNonnullByDefault
-public class StaticDriver implements Driver {
-  private final Config config = new StaticConfig();
+class StaticDriver : Driver {
+    private val config: Config = StaticConfig()
+    @CheckReturnValue
+    override fun config(): Config {
+        return config
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Config config() {
-    return config;
-  }
+    @CheckReturnValue
+    override fun browser(): Browser {
+        return Browser(config.browser(), config.headless())
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Browser browser() {
-    return new Browser(config.browser(), config.headless());
-  }
+    @CheckReturnValue
+    override fun hasWebDriverStarted(): Boolean {
+        return WebDriverRunner.hasWebDriverStarted()
+    }
 
-  @Override
-  @CheckReturnValue
-  public boolean hasWebDriverStarted() {
-    return WebDriverRunner.hasWebDriverStarted();
-  }
+    @CheckReturnValue
+    override fun getWebDriver(): WebDriver {
+        return WebDriverRunner.webDriver
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebDriver getWebDriver() {
-    return WebDriverRunner.getWebDriver();
-  }
+    @CheckReturnValue
+    override fun getProxy(): SelenideProxyServer? {
+        return WebDriverRunner.selenideProxy
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nullable
-  public SelenideProxyServer getProxy() {
-    return WebDriverRunner.getSelenideProxy();
-  }
+    @CheckReturnValue
+    override fun getAndCheckWebDriver(): WebDriver {
+        return WebDriverRunner.getAndCheckWebDriver
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebDriver getAndCheckWebDriver() {
-    return WebDriverRunner.getAndCheckWebDriver();
-  }
+    @CheckReturnValue
+    override fun browserDownloadsFolder(): DownloadsFolder {
+        return WebDriverRunner.browserDownloadsFolder
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nullable
-  public DownloadsFolder browserDownloadsFolder() {
-    return WebDriverRunner.getBrowserDownloadsFolder();
-  }
-
-  @Override
-  public void close() {
-    WebDriverRunner.closeWebDriver();
-  }
+    override fun close() {
+        WebDriverRunner.closeWebDriver()
+    }
 }
