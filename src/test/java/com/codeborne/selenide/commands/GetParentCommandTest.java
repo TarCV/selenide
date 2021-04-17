@@ -22,7 +22,7 @@ final class GetParentCommandTest implements WithAssertions {
   @BeforeEach
   void setup() {
     when(locator.getWebElement()).thenReturn(mockedElement);
-    when(findMock.execute(proxy, locator, By.xpath(".."), 0)).thenReturn(mockedElement);
+    when(findMock.execute(proxy, locator, new Object[]{ By.xpath(".."), 0 })).thenReturn(mockedElement);
   }
 
   @Test

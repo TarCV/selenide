@@ -1,27 +1,20 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.BySelectorCollection;
-import com.codeborne.selenide.impl.WebElementSource;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static com.codeborne.selenide.commands.Util.firstOf;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.ElementsCollection
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.BySelectorCollection
+import com.codeborne.selenide.impl.WebElementSource
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class FindAll implements Command<ElementsCollection> {
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public ElementsCollection execute(SelenideElement parent, WebElementSource locator, @Nullable Object[] args) {
-    Object selector = firstOf(args);
-    return new ElementsCollection(
-      new BySelectorCollection(locator.driver(), parent, WebElementSource.getSelector(selector))
-    );
-  }
+class FindAll : Command<ElementsCollection> {
+    @CheckReturnValue
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): ElementsCollection {
+        val selector = Util.firstOf<Any>(args)
+        return ElementsCollection(
+            BySelectorCollection(locator.driver(), proxy, WebElementSource.getSelector(selector))
+        )
+    }
 }

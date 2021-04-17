@@ -1,34 +1,18 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.WebElementSource;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static com.codeborne.selenide.commands.Util.argsToConditions;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.WebElementSource
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class ShouldNot implements Command<SelenideElement> {
-  private final String prefix;
+open class ShouldNot protected constructor(private val prefix: String) : Command<SelenideElement> {
+    constructor() : this("") {}
 
-  public ShouldNot() {
-    this("");
-  }
-
-  protected ShouldNot(String prefix) {
-    this.prefix = prefix;
-  }
-
-  @Override
-  @Nonnull
-  public SelenideElement execute(SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) {
-    for (Condition condition : argsToConditions(args)) {
-      locator.checkCondition(prefix, condition, true);
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): SelenideElement {
+        for (condition in Util.argsToConditions(args)) {
+            locator.checkCondition(prefix, condition, true)
+        }
+        return proxy
     }
-    return proxy;
-  }
 }

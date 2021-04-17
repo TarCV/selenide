@@ -1,24 +1,20 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.WebElementSource;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.WebElementSource
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Find implements Command<SelenideElement> {
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement execute(SelenideElement proxy, WebElementSource locator, @Nullable Object... args) {
-    assert args != null;
-
-    return args.length == 1 ?
-        locator.find(proxy, args[0], 0) :
-        locator.find(proxy, args[0], (Integer) args[1]);
-  }
+class Find : Command<SelenideElement> {
+    @CheckReturnValue
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): SelenideElement {
+      checkNotNull(args)
+      return if (args.size == 1) locator.find(proxy, args[0], 0) else locator.find(
+            proxy,
+            args[0],
+            (args[1] as Int?)!!
+        )
+    }
 }

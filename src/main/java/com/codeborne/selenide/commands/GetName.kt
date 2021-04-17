@@ -1,19 +1,15 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.WebElementSource;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.WebElementSource
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class GetName implements Command<String> {
-  @Override
-  @CheckReturnValue
-  @Nullable
-  public String execute(SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) {
-    return locator.getWebElement().getAttribute("name");
-  }
+class GetName : Command<String?> {
+    @CheckReturnValue
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): String? {
+        return locator.webElement.getAttribute("name")
+    }
 }

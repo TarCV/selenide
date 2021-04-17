@@ -7,10 +7,10 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 interface Command<T> {
     @Throws(IOException::class)
-    fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>): T?
+    fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): T?
 
     companion object {
         @JvmField
-        val NO_ARGS = arrayOfNulls<Any>(0)
+        val NO_ARGS = emptyArray<Any>()
     }
 }

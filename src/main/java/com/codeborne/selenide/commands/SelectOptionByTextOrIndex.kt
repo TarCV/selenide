@@ -1,55 +1,56 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.ex.ElementNotFound;
-import com.codeborne.selenide.impl.WebElementSource;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.support.ui.Select;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static com.codeborne.selenide.Condition.exist;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.ex.ElementNotFound
+import com.codeborne.selenide.impl.WebElementSource
+import org.openqa.selenium.NoSuchElementException
+import org.openqa.selenium.support.ui.Select
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class SelectOptionByTextOrIndex implements Command<Void> {
-  @Override
-  @Nullable
-  public Void execute(SelenideElement proxy, WebElementSource selectField, @Nullable Object[] args) {
-    if (args == null || args.length == 0) {
-      throw new IllegalArgumentException("Missing arguments");
+class SelectOptionByTextOrIndex : Command<Void?> {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): Void? {
+        require(!(args == null || args.isEmpty())) { "Missing arguments" }
+      val firstArg = args[0]
+      if (firstArg is Array<*> && firstArg[0] is String) { // TODO: why check in Java code was incomplete?
+            selectOptionsByTexts(locator, firstArg as Array<String>)
+        } else if (firstArg is IntArray) {
+            selectOptionsByIndexes(locator, firstArg)
+        }
+        return null
     }
-    else if (args[0] instanceof String[]) {
-      selectOptionsByTexts(selectField, (String[]) args[0]);
-    }
-    else if (args[0] instanceof int[]) {
-      selectOptionsByIndexes(selectField, (int[]) args[0]);
-    }
-    return null;
-  }
 
-  private void selectOptionsByTexts(WebElementSource selectField, String[] texts) {
-    Select select = new Select(selectField.getWebElement());
-    for (String text : texts) {
-      try {
-        select.selectByVisibleText(text);
-      }
-      catch (NoSuchElementException e) {
-        throw new ElementNotFound(selectField.driver(), selectField.description() + "/option[text:" + text + ']', exist, e);
-      }
+    private fun selectOptionsByTexts(selectField: WebElementSource, texts: Array<String>) {
+        val select = Select(selectField.webElement)
+        for (text in texts) {
+            try {
+                select.selectByVisibleText(text)
+            } catch (e: NoSuchElementException) {
+                throw ElementNotFound(
+                    selectField.driver(),
+                    selectField.description() + "/option[text:" + text + ']',
+                    Condition.exist,
+                    e
+                )
+            }
+        }
     }
-  }
 
-  private void selectOptionsByIndexes(WebElementSource selectField, int[] indexes) {
-    Select select = new Select(selectField.getWebElement());
-    for (int index : indexes) {
-      try {
-        select.selectByIndex(index);
-      }
-      catch (NoSuchElementException e) {
-        throw new ElementNotFound(selectField.driver(), selectField.description() + "/option[index:" + index + ']', exist, e);
-      }
+    private fun selectOptionsByIndexes(selectField: WebElementSource, indexes: IntArray) {
+        val select = Select(selectField.webElement)
+        for (index in indexes) {
+            try {
+                select.selectByIndex(index)
+            } catch (e: NoSuchElementException) {
+                throw ElementNotFound(
+                    selectField.driver(),
+                    selectField.description() + "/option[index:" + index + ']',
+                    Condition.exist,
+                    e
+                )
+            }
+        }
     }
-  }
 }

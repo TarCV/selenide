@@ -1,168 +1,165 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.WebElementSource;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static com.codeborne.selenide.impl.Plugins.inject;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.Plugins
+import com.codeborne.selenide.impl.WebElementSource
+import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Commands {
-  private static Commands instance;
-
-  public static synchronized Commands getInstance() {
-    if (instance == null) {
-      instance = inject(Commands.class);
+open class Commands protected constructor() {
+    private val commands: MutableMap<String, Command<*>> = ConcurrentHashMap(128)
+    private fun addTechnicalCommands() {
+        add("as", As())
+        add("getAlias", GetAlias())
+        add("toString", ToString())
+        add("toWebElement", ToWebElement())
+        add("getWrappedElement", GetWrappedElement())
+        add("screenshot", TakeScreenshot())
+        add("screenshotAsImage", TakeScreenshotAsImage())
+        add("getSearchCriteria", GetSearchCriteria())
+        add("execute", Execute<Any>())
     }
-    return instance;
-  }
 
-  private final Map<String, Command<?>> commands = new ConcurrentHashMap<>(128);
-
-  protected Commands() {
-    addFindCommands();
-    addClickCommands();
-    addModifyCommands();
-    addInfoCommands();
-    addSelectCommands();
-    addKeyboardCommands();
-    addActionsCommands();
-    addShouldCommands();
-    addShouldNotCommands();
-    addFileCommands();
-    addTechnicalCommands();
-  }
-
-  private void addTechnicalCommands() {
-    add("as", new As());
-    add("getAlias", new GetAlias());
-    add("toString", new ToString());
-    add("toWebElement", new ToWebElement());
-    add("getWrappedElement", new GetWrappedElement());
-    add("screenshot", new TakeScreenshot());
-    add("screenshotAsImage", new TakeScreenshotAsImage());
-    add("getSearchCriteria", new GetSearchCriteria());
-    add("execute", new Execute<>());
-  }
-
-  private void addActionsCommands() {
-    add("dragAndDropTo", new DragAndDropTo());
-    add("hover", new Hover());
-    add("scrollTo", new ScrollTo());
-    add("scrollIntoView", new ScrollIntoView());
-  }
-
-  private void addInfoCommands() {
-    add("attr", new GetAttribute());
-    add("getAttribute", new GetAttribute());
-    add("getCssValue", new GetCssValue());
-    add("data", new GetDataAttribute());
-    add("exists", new Exists());
-    add("getOwnText", new GetOwnText());
-    add("innerText", new GetInnerText());
-    add("innerHtml", new GetInnerHtml());
-    add("has", new Matches());
-    add("is", new Matches());
-    add("isDisplayed", new IsDisplayed());
-    add("isImage", new IsImage());
-    add("getText", new GetText());
-    add("name", new GetName());
-    add("text", new GetText());
-    add("getValue", new GetValue());
-    add("pseudo", new GetPseudoValue());
-  }
-
-  private void addClickCommands() {
-    add("click", new Click());
-    add("contextClick", new ContextClick());
-    add("doubleClick", new DoubleClick());
-  }
-
-  private void addModifyCommands() {
-    add("selectRadio", new SelectRadio());
-    add("setSelected", new SetSelected());
-    add("setValue", new SetValue());
-    add("val", new Val());
-    add("append", new Append());
-  }
-
-  private void addFindCommands() {
-    add("find", new Find());
-    add("$", new Find());
-    add("$x", new FindByXpath());
-    add("findAll", new FindAll());
-    add("$$", new FindAll());
-    add("$$x", new FindAllByXpath());
-    add("closest", new GetClosest());
-    add("parent", new GetParent());
-    add("sibling", new GetSibling());
-    add("preceding", new GetPreceding());
-    add("lastChild", new GetLastChild());
-  }
-
-  private void addKeyboardCommands() {
-    add("pressEnter", new PressEnter());
-    add("pressEscape", new PressEscape());
-    add("pressTab", new PressTab());
-  }
-
-  private void addSelectCommands() {
-    add("getSelectedOption", new GetSelectedOption());
-    add("getSelectedOptions", new GetSelectedOptions());
-    add("getSelectedText", new GetSelectedText());
-    add("getSelectedValue", new GetSelectedValue());
-    add("selectOption", new SelectOptionByTextOrIndex());
-    add("selectOptionContainingText", new SelectOptionContainingText());
-    add("selectOptionByValue", new SelectOptionByValue());
-  }
-
-  private void addFileCommands() {
-    add("download", new DownloadFile());
-    add("uploadFile", new UploadFile());
-    add("uploadFromClasspath", new UploadFileFromClasspath());
-  }
-
-  private void addShouldNotCommands() {
-    add("shouldNot", new ShouldNot());
-    add("shouldNotHave", new ShouldNotHave());
-    add("shouldNotBe", new ShouldNotBe());
-    add("waitWhile", new WaitWhile());
-  }
-
-  private void addShouldCommands() {
-    add("should", new Should());
-    add("shouldHave", new ShouldHave());
-    add("shouldBe", new ShouldBe());
-    add("waitUntil", new WaitUntil());
-  }
-
-  public final void add(String method, Command<?> command) {
-    commands.put(method, command);
-  }
-
-  @Nullable
-  public <T> T execute(Object proxy, WebElementSource webElementSource, String methodName,
-                       @Nullable Object[] args) throws IOException {
-    Command<T> command = getCommand(methodName);
-    return command.execute((SelenideElement) proxy, webElementSource, args);
-  }
-
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  @Nonnull
-  private <T> Command<T> getCommand(String methodName) {
-    Command<T> command = (Command<T>) commands.get(methodName);
-    if (command == null) {
-      throw new IllegalArgumentException("Unknown Selenide method: " + methodName);
+    private fun addActionsCommands() {
+        add("dragAndDropTo", DragAndDropTo())
+        add("hover", Hover())
+        add("scrollTo", ScrollTo())
+        add("scrollIntoView", ScrollIntoView())
     }
-    return command;
-  }
+
+    private fun addInfoCommands() {
+        add("attr", GetAttribute())
+        add("getAttribute", GetAttribute())
+        add("getCssValue", GetCssValue())
+        add("data", GetDataAttribute())
+        add("exists", Exists())
+        add("getOwnText", GetOwnText())
+        add("innerText", GetInnerText())
+        add("innerHtml", GetInnerHtml())
+        add("has", Matches())
+        add("is", Matches())
+        add("isDisplayed", IsDisplayed())
+        add("isImage", IsImage())
+        add("getText", GetText())
+        add("name", GetName())
+        add("text", GetText())
+        add("getValue", GetValue())
+        add("pseudo", GetPseudoValue())
+    }
+
+    private fun addClickCommands() {
+        add("click", Click())
+        add("contextClick", ContextClick())
+        add("doubleClick", DoubleClick())
+    }
+
+    private fun addModifyCommands() {
+        add("selectRadio", SelectRadio())
+        add("setSelected", SetSelected())
+        add("setValue", SetValue())
+        add("val", Val())
+        add("append", Append())
+    }
+
+    private fun addFindCommands() {
+        add("find", Find())
+        add("$", Find())
+        add("\$x", FindByXpath())
+        add("findAll", FindAll())
+        add("$$", FindAll())
+        add("$\$x", FindAllByXpath())
+        add("closest", GetClosest())
+        add("parent", GetParent())
+        add("sibling", GetSibling())
+        add("preceding", GetPreceding())
+        add("lastChild", GetLastChild())
+    }
+
+    private fun addKeyboardCommands() {
+        add("pressEnter", PressEnter())
+        add("pressEscape", PressEscape())
+        add("pressTab", PressTab())
+    }
+
+    private fun addSelectCommands() {
+        add("getSelectedOption", GetSelectedOption())
+        add("getSelectedOptions", GetSelectedOptions())
+        add("getSelectedText", GetSelectedText())
+        add("getSelectedValue", GetSelectedValue())
+        add("selectOption", SelectOptionByTextOrIndex())
+        add("selectOptionContainingText", SelectOptionContainingText())
+        add("selectOptionByValue", SelectOptionByValue())
+    }
+
+    private fun addFileCommands() {
+        add("download", DownloadFile())
+        add("uploadFile", UploadFile())
+        add("uploadFromClasspath", UploadFileFromClasspath())
+    }
+
+    private fun addShouldNotCommands() {
+        add("shouldNot", ShouldNot())
+        add("shouldNotHave", ShouldNotHave())
+        add("shouldNotBe", ShouldNotBe())
+        add("waitWhile", WaitWhile())
+    }
+
+    private fun addShouldCommands() {
+        add("should", Should())
+        add("shouldHave", ShouldHave())
+        add("shouldBe", ShouldBe())
+        add("waitUntil", WaitUntil())
+    }
+
+    fun add(method: String, command: Command<*>) {
+        commands[method] = command
+    }
+
+    @Throws(IOException::class)
+    fun <T> execute(
+        proxy: Any, webElementSource: WebElementSource, methodName: String,
+        args: Array<Any>?
+    ): T? {
+        val command: Command<T> = getCommand(methodName)
+        return command.execute((proxy as SelenideElement), webElementSource, args)
+    }
+
+    @CheckReturnValue
+    private fun <T> getCommand(methodName: String): Command<T> {
+        return commands[methodName] as Command<T>?
+            ?: throw IllegalArgumentException("Unknown Selenide method: $methodName")
+    }
+
+    companion object {
+        @JvmStatic
+        @get:Synchronized
+        var instance: Commands? = null
+            get() {
+                if (field == null) {
+                    field = Plugins.inject(
+                        Commands::class.java
+                    )
+                }
+                return field
+            }
+            private set
+    }
+
+    init {
+        addFindCommands()
+        addClickCommands()
+        addModifyCommands()
+        addInfoCommands()
+        addSelectCommands()
+        addKeyboardCommands()
+        addActionsCommands()
+        addShouldCommands()
+        addShouldNotCommands()
+        addFileCommands()
+        addTechnicalCommands()
+    }
 }

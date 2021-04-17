@@ -1,10 +1,6 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class ShouldNotBe extends ShouldNot {
-  public ShouldNotBe() {
-    super("be ");
-  }
-}
+class ShouldNotBe : ShouldNot("be ")

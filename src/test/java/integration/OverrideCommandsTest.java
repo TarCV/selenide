@@ -37,7 +37,7 @@ final class OverrideCommandsTest extends ITest {
   @ParametersAreNonnullByDefault
   private class MyClick extends Click {
     @Override
-    protected void click(Driver driver, WebElement element) {
+    public void click(Driver driver, WebElement element) {
       super.click(driver, element);
       clickCounter.incrementAndGet();
     }

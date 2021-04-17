@@ -1,50 +1,35 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.WebElementSource;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-
-import static com.codeborne.selenide.commands.Util.firstOf;
-import static java.lang.Thread.currentThread;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.WebElementSource
+import java.io.File
+import java.io.IOException
+import java.net.URISyntaxException
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class UploadFileFromClasspath implements Command<File> {
-  UploadFile uploadFile = new UploadFile();
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public File execute(SelenideElement proxy, WebElementSource inputField, @Nullable Object[] args) throws IOException {
-    String[] fileName = firstOf(args);
-    File[] files = new File[fileName.length];
-    for (int i = 0; i < fileName.length; i++) {
-      files[i] = findFileInClasspath(fileName[i]);
+open class UploadFileFromClasspath : Command<File?> {
+    var uploadFile = UploadFile()
+    @CheckReturnValue
+    @Throws(IOException::class)
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): File {
+        val fileName = Util.firstOf<Array<String>>(args)
+        val files = Array(fileName.size) { i ->
+            findFileInClasspath(fileName[i])
+        }
+        return uploadFile.execute(proxy, locator, files as Array<Any>)
     }
 
-    return uploadFile.execute(proxy, inputField, files);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  protected File findFileInClasspath(String name) {
-    URL resource = currentThread().getContextClassLoader().getResource(name);
-    if (resource == null) {
-      throw new IllegalArgumentException("File not found in classpath: " + name);
+    @CheckReturnValue
+    protected fun findFileInClasspath(name: String): File {
+        val resource = Thread.currentThread().contextClassLoader.getResource(name)
+            ?: throw IllegalArgumentException("File not found in classpath: $name")
+        return try {
+            File(resource.toURI())
+        } catch (e: URISyntaxException) {
+            throw IllegalArgumentException(e)
+        }
     }
-    try {
-      return new File(resource.toURI());
-    }
-    catch (URISyntaxException e) {
-      throw new IllegalArgumentException(e);
-    }
-  }
 }

@@ -1,106 +1,94 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.Config;
-import com.codeborne.selenide.DownloadOptions;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.files.FileFilter;
-import com.codeborne.selenide.files.FileFilters;
-import com.codeborne.selenide.impl.DownloadFileToFolder;
-import com.codeborne.selenide.impl.DownloadFileWithHttpRequest;
-import com.codeborne.selenide.impl.DownloadFileWithProxyServer;
-import com.codeborne.selenide.impl.WebElementSource;
-import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
-import java.io.IOException;
-
-import static com.codeborne.selenide.DownloadOptions.using;
-import static com.codeborne.selenide.impl.Plugins.inject;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.DownloadOptions
+import com.codeborne.selenide.DownloadOptions.Companion.using
+import com.codeborne.selenide.FileDownloadMode
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.files.FileFilter
+import com.codeborne.selenide.files.FileFilters
+import com.codeborne.selenide.impl.DownloadFileToFolder
+import com.codeborne.selenide.impl.DownloadFileWithHttpRequest
+import com.codeborne.selenide.impl.DownloadFileWithProxyServer
+import com.codeborne.selenide.impl.Plugins
+import com.codeborne.selenide.impl.WebElementSource
+import org.slf4j.LoggerFactory
+import java.io.File
+import java.io.IOException
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class DownloadFile implements Command<File> {
-  private static final Logger log = LoggerFactory.getLogger(DownloadFile.class);
-
-  private final DownloadFileWithHttpRequest downloadFileWithHttpRequest;
-  private final DownloadFileWithProxyServer downloadFileWithProxyServer;
-  private final DownloadFileToFolder downloadFileToFolder;
-
-  public DownloadFile() {
-    this(new DownloadFileWithHttpRequest(), new DownloadFileWithProxyServer(), inject(DownloadFileToFolder.class));
-  }
-
-  DownloadFile(DownloadFileWithHttpRequest httpget, DownloadFileWithProxyServer proxy, DownloadFileToFolder folder) {
-    downloadFileWithHttpRequest = httpget;
-    downloadFileWithProxyServer = proxy;
-    downloadFileToFolder = folder;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public File execute(SelenideElement selenideElement, WebElementSource linkWithHref, @Nullable Object[] args) throws IOException {
-    WebElement link = linkWithHref.findAndAssertElementIsInteractable();
-    Config config = linkWithHref.driver().config();
-    DownloadOptions options = getDownloadOptions(config, args);
-    long timeout = options.getTimeout(config.timeout());
-
-    log.debug("Download file: {}", options);
-
-    switch (options.getMethod()) {
-      case HTTPGET: {
-        return downloadFileWithHttpRequest.download(linkWithHref.driver(), link, timeout, options.getFilter());
-      }
-      case PROXY: {
-        return downloadFileWithProxyServer.download(linkWithHref, link, timeout, options.getFilter());
-      }
-      case FOLDER: {
-        return downloadFileToFolder.download(linkWithHref, link, timeout, options.getFilter());
-      }
-      default: {
-        throw new IllegalArgumentException("Unknown file download mode: " + options.getMethod());
-      }
+class DownloadFile internal constructor(
+    private val downloadFileWithHttpRequest: DownloadFileWithHttpRequest,
+    private val downloadFileWithProxyServer: DownloadFileWithProxyServer,
+    private val downloadFileToFolder: DownloadFileToFolder
+) : Command<File?> {
+    constructor() : this(
+        DownloadFileWithHttpRequest(), DownloadFileWithProxyServer(), Plugins.inject<DownloadFileToFolder>(
+            DownloadFileToFolder::class.java
+        )
+    ) {
     }
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  private DownloadOptions getDownloadOptions(Config config, @Nullable Object[] args) {
-    if (args != null && args.length > 0 && args[0] instanceof DownloadOptions) {
-      return (DownloadOptions) args[0];
+    @CheckReturnValue
+    @Throws(IOException::class)
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): File {
+        val link = locator.findAndAssertElementIsInteractable()
+        val config = locator.driver().config()
+        val options = getDownloadOptions(config, args)
+        val timeout = options.getTimeout(config.timeout())
+        log.debug("Download file: {}", options)
+        return when (options.method) {
+            FileDownloadMode.HTTPGET -> {
+                downloadFileWithHttpRequest.download(locator.driver(), link, timeout, options.filter)
+            }
+            FileDownloadMode.PROXY -> {
+                downloadFileWithProxyServer.download(locator, link, timeout, options.filter)
+            }
+            FileDownloadMode.FOLDER -> {
+                downloadFileToFolder.download(locator, link, timeout, options.filter)
+            }
+            else -> {
+                throw IllegalArgumentException("Unknown file download mode: " + options.method)
+            }
+        }
     }
-    return using(config.fileDownload())
-      .withFilter(getFileFilter(args))
-      .withTimeout(getTimeout(config, args));
-  }
 
-  @CheckReturnValue
-  long getTimeout(Config config, @Nullable Object[] args) {
-    if (args != null && args.length > 0 && args[0] instanceof Long) {
-      return (long) args[0];
+    @CheckReturnValue
+    private fun getDownloadOptions(config: Config, args: Array<Any>?): DownloadOptions {
+        return if (args != null && args.isNotEmpty() && args[0] is DownloadOptions) {
+            args[0] as DownloadOptions
+        } else using(
+            config.fileDownload()!!
+        )
+            .withFilter(getFileFilter(args))
+            .withTimeout(getTimeout(config, args))
     }
-    else {
-      return config.timeout();
-    }
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  FileFilter getFileFilter(@Nullable Object[] args) {
-    if (args != null && args.length > 0 && args[0] instanceof FileFilter) {
-      return (FileFilter) args[0];
+    @CheckReturnValue
+    fun getTimeout(config: Config, args: Array<Any>?): Long {
+        return if (args != null && args.isNotEmpty() && args[0] is Long) {
+            args[0] as Long
+        } else {
+            config.timeout()
+        }
     }
-    if (args != null && args.length > 1 && args[1] instanceof FileFilter) {
-      return (FileFilter) args[1];
+
+    @CheckReturnValue
+    fun getFileFilter(args: Array<Any>?): FileFilter {
+        if (args != null && args.isNotEmpty() && args[0] is FileFilter) {
+            return args[0] as FileFilter
+        }
+        return if (args != null && args.size > 1 && args[1] is FileFilter) {
+            args[1] as FileFilter
+        } else {
+            FileFilters.none()
+        }
     }
-    else {
-      return FileFilters.none();
+
+    companion object {
+        private val log = LoggerFactory.getLogger(DownloadFile::class.java)
     }
-  }
 }

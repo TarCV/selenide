@@ -1,36 +1,31 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.WebElementSource;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.WebElementSource
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Val implements Command<Object> {
-  private final GetValue getValue;
-  private final SetValue setValue;
+class Val : Command<Any?> {
+    private val getValue: GetValue
+    private val setValue: SetValue
 
-  public Val() {
-    this.getValue = new GetValue();
-    this.setValue = new SetValue();
-  }
-
-  public Val(GetValue getValue, SetValue setValue) {
-    this.getValue = getValue;
-    this.setValue = setValue;
-  }
-
-  @Override
-  @Nullable
-  public Object execute(SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) {
-    if (args == null || args.length == 0) {
-      return getValue.execute(proxy, locator, NO_ARGS);
+    constructor() {
+        getValue = GetValue()
+        setValue = SetValue()
     }
-    else {
-      setValue.execute(proxy, locator, args);
-      return proxy;
+
+    constructor(getValue: GetValue, setValue: SetValue) {
+        this.getValue = getValue
+        this.setValue = setValue
     }
-  }
+
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): Any? {
+        return if (args == null || args.isEmpty()) {
+            getValue.execute(proxy, locator, Command.NO_ARGS)
+        } else {
+            setValue.execute(proxy, locator, args)
+            proxy
+        }
+    }
 }

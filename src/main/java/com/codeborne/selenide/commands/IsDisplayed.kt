@@ -1,34 +1,33 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.ex.ElementNotFound;
-import com.codeborne.selenide.impl.Cleanup;
-import com.codeborne.selenide.impl.WebElementSource;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.ex.ElementNotFound
+import com.codeborne.selenide.impl.Cleanup
+import com.codeborne.selenide.impl.WebElementSource
+import org.openqa.selenium.WebDriverException
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class IsDisplayed implements Command<Boolean> {
-  @Override
-  @CheckReturnValue
-  public Boolean execute(SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) {
-    try {
-      WebElement element = locator.getWebElement();
-      return element.isDisplayed();
+class IsDisplayed : Command<Boolean> {
+    @CheckReturnValue
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): Boolean {
+        return try {
+            val element = locator.webElement
+            element.isDisplayed
+        } catch (elementNotFound: WebDriverException) {
+            if (Cleanup.of.isInvalidSelectorError(elementNotFound)) {
+                throw Cleanup.of.wrap(elementNotFound)
+            }
+            false
+        } catch (elementNotFound: ElementNotFound) {
+            if (Cleanup.of.isInvalidSelectorError(elementNotFound)) {
+                throw Cleanup.of.wrap(elementNotFound)
+            }
+            false
+        } catch (invalidElementIndex: IndexOutOfBoundsException) {
+            false
+        }
     }
-    catch (WebDriverException | ElementNotFound elementNotFound) {
-      if (Cleanup.of.isInvalidSelectorError(elementNotFound)) {
-        throw Cleanup.of.wrap(elementNotFound);
-      }
-      return false;
-    }
-    catch (IndexOutOfBoundsException invalidElementIndex) {
-      return false;
-    }
-  }
 }

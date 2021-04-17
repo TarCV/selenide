@@ -1,10 +1,6 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class WaitUntil extends Should {
-  public WaitUntil() {
-    super("");
-  }
-}
+class WaitUntil : Should("")

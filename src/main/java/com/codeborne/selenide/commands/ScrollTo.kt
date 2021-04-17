@@ -1,21 +1,15 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.WebElementSource;
-import org.openqa.selenium.Point;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.WebElementSource
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class ScrollTo implements Command<SelenideElement> {
-  @Override
-  @Nonnull
-  public SelenideElement execute(SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) {
-    Point location = locator.getWebElement().getLocation();
-    locator.driver().executeJavaScript("window.scrollTo(" + location.getX() + ", " + location.getY() + ')');
-    return proxy;
-  }
+class ScrollTo : Command<SelenideElement> {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): SelenideElement {
+        val location = locator.webElement.location
+        locator.driver().executeJavaScript<Any>("window.scrollTo(" + location.getX() + ", " + location.getY() + ')')
+        return proxy
+    }
 }

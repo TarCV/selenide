@@ -36,7 +36,7 @@ final class FindAllByXpathCommandTest implements WithAssertions {
 
   @Test
   void executeMethodWithNoArgsPassed() {
-    assertThatThrownBy(() -> findAllByXpathCommand.execute(parentSelenideElement, locator))
+    assertThatThrownBy(() -> findAllByXpathCommand.execute(parentSelenideElement, locator, new Object[0]))
       .isInstanceOf(IllegalArgumentException.class)
       .hasMessage("Missing arguments");
   }
@@ -44,7 +44,7 @@ final class FindAllByXpathCommandTest implements WithAssertions {
   @Test
   void executeMethodWithZeroLengthArgs() {
     when(parentWebElement.findElement(any())).thenReturn(webElement);
-    ElementsCollection findAllCommandCollection = findAllByXpathCommand.execute(parentSelenideElement, locator, ".");
+    ElementsCollection findAllCommandCollection = findAllByXpathCommand.execute(parentSelenideElement, locator, new String[] { "." });
 
     assertThat(findAllCommandCollection.first().getText()).isEqualTo("Default Text");
 
@@ -55,7 +55,7 @@ final class FindAllByXpathCommandTest implements WithAssertions {
   @Test
   void executeMethodWithMoreThenOneArgsList() {
     when(parentWebElement.findElement(any())).thenReturn(webElement);
-    ElementsCollection findAllCommandCollection = findAllByXpathCommand.execute(parentSelenideElement, locator, ".", "/..");
+    ElementsCollection findAllCommandCollection = findAllByXpathCommand.execute(parentSelenideElement, locator, new String[] { ".", "/.." });
 
     assertThat(findAllCommandCollection.first().getText()).isEqualTo("Default Text");
 

@@ -17,7 +17,7 @@ final class FindByXpathCommandTest implements WithAssertions {
 
   @Test
   void testExecuteMethodWithNoArgsPassed() {
-    assertThatThrownBy(() -> findByXpathCommand.execute(proxy, locator))
+    assertThatThrownBy(() -> findByXpathCommand.execute(proxy, locator, new Object[0]))
       .isInstanceOf(IllegalArgumentException.class)
       .hasMessage("Missing arguments");
   }
@@ -25,14 +25,14 @@ final class FindByXpathCommandTest implements WithAssertions {
   @Test
   void testExecuteMethodWithZeroLengthArgs() {
     when(locator.find(proxy, By.xpath("."), 0)).thenReturn(element1);
-    assertThat(findByXpathCommand.execute(proxy, locator, "."))
+    assertThat(findByXpathCommand.execute(proxy, locator, new String [] { "." }))
       .isEqualTo(element1);
   }
 
   @Test
   void testExecuteMethodWithMoreThenOneArgsList() {
     when(locator.find(proxy, By.xpath("."), 1)).thenReturn(element1);
-    assertThat(findByXpathCommand.execute(proxy, locator, ".", 1))
+    assertThat(findByXpathCommand.execute(proxy, locator, new Object[] { ".", 1 }))
       .isEqualTo(element1);
   }
 }

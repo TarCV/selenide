@@ -1,49 +1,41 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.WebElementSource;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Quotes;
-import org.openqa.selenium.support.ui.Select;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-import static com.codeborne.selenide.commands.Util.firstOf;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.WebElementSource
+import org.openqa.selenium.By
+import org.openqa.selenium.NoSuchElementException
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.support.ui.Quotes
+import org.openqa.selenium.support.ui.Select
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class SelectOptionContainingText implements Command<Void> {
-  @Override
-  @Nullable
-  public Void execute(SelenideElement proxy, WebElementSource selectField, @Nullable Object[] args) {
-    String text = firstOf(args);
-    WebElement element = selectField.getWebElement();
-    Select select = new Select(element);
-
-    List<WebElement> options = element.findElements(By.xpath(
-        ".//option[contains(normalize-space(.), " + Quotes.escape(text) + ")]"));
-
-    if (options.isEmpty()) {
-      throw new NoSuchElementException("Cannot locate option containing text: " + text);
+class SelectOptionContainingText : Command<Void?> {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): Void? {
+        val text = Util.firstOf<String>(args)
+        val element = locator.webElement
+        val select = Select(element)
+        val options = element.findElements(
+            By.xpath(
+                ".//option[contains(normalize-space(.), " + Quotes.escape(text) + ")]"
+            )
+        )
+        if (options.isEmpty()) {
+            throw NoSuchElementException("Cannot locate option containing text: $text")
+        }
+        for (option in options) {
+            setSelected(option)
+            if (!select.isMultiple) {
+                break
+            }
+        }
+        return null
     }
 
-    for (WebElement option : options) {
-      setSelected(option);
-      if (!select.isMultiple()) {
-        break;
-      }
+    private fun setSelected(option: WebElement) {
+        if (!option.isSelected) {
+            option.click()
+        }
     }
-
-    return null;
-  }
-
-  private void setSelected(WebElement option) {
-    if (!option.isSelected()) {
-      option.click();
-    }
-  }
 }

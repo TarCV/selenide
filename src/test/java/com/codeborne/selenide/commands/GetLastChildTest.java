@@ -23,7 +23,7 @@ final class GetLastChildTest implements WithAssertions {
   @BeforeEach
   void setup() {
     when(locator.getWebElement()).thenReturn(mockedElement);
-    when(findMock.execute(proxy, locator, By.xpath("*[last()]"), 0)).thenReturn(mockedElement);
+    when(findMock.execute(proxy, locator, new Object[]{ By.xpath("*[last()]"), 0 })).thenReturn(mockedElement);
   }
 
   @Test

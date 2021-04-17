@@ -17,21 +17,21 @@ final class FindCommandTest implements WithAssertions {
 
   @Test
   void testExecuteMethodWithNoArgsPassed() {
-    assertThatThrownBy(() -> findCommand.execute(proxy, locator))
+    assertThatThrownBy(() -> findCommand.execute(proxy, locator, new Object[0]))
       .isInstanceOf(ArrayIndexOutOfBoundsException.class);
   }
 
   @Test
   void testExecuteMethodWithZeroLengthArgs() {
     when(locator.find(proxy, By.xpath(".."), 0)).thenReturn(element1);
-    assertThat(findCommand.execute(proxy, locator, By.xpath("..")))
+    assertThat(findCommand.execute(proxy, locator, new Object[]{ By.xpath("..") }))
       .isEqualTo(element1);
   }
 
   @Test
   void testExecuteMethodWithMoreThenOneArgsList() {
     when(locator.find(proxy, By.xpath(".."), 1)).thenReturn(element1);
-    assertThat(findCommand.execute(proxy, locator, By.xpath(".."), 1))
+    assertThat(findCommand.execute(proxy, locator, new Object[]{ By.xpath(".."), 1 }))
       .isEqualTo(element1);
   }
 }

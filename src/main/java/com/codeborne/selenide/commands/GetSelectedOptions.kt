@@ -1,77 +1,55 @@
-package com.codeborne.selenide.commands;
+package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.impl.Alias;
-import com.codeborne.selenide.impl.CollectionSource;
-import com.codeborne.selenide.impl.WebElementSource;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
+import com.codeborne.selenide.Command
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.ElementsCollection
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.Alias
+import com.codeborne.selenide.impl.CollectionSource
+import com.codeborne.selenide.impl.WebElementSource
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.support.ui.Select
+import javax.annotation.CheckReturnValue
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-import static com.codeborne.selenide.impl.Alias.NONE;
-
-@ParametersAreNonnullByDefault
-public class GetSelectedOptions implements Command<ElementsCollection> {
-  @Override
-  public ElementsCollection execute(SelenideElement proxy, final WebElementSource selectElement, @Nullable Object[] args) {
-    return new ElementsCollection(new SelectedOptionsCollection(selectElement));
-  }
-
-  private static class SelectedOptionsCollection implements CollectionSource {
-    private final WebElementSource selectElement;
-    private Alias alias = NONE;
-
-    private SelectedOptionsCollection(WebElementSource selectElement) {
-      this.selectElement = selectElement;
+class GetSelectedOptions : Command<ElementsCollection?> {
+    override fun execute(
+      proxy: SelenideElement,
+      locator: WebElementSource,
+      args: Array<Any>?
+    ): ElementsCollection {
+        return ElementsCollection(SelectedOptionsCollection(locator))
     }
 
-    @Override
-    @CheckReturnValue
-    @Nonnull
-    public List<WebElement> getElements() {
-      return select(selectElement).getAllSelectedOptions();
-    }
+    private class SelectedOptionsCollection constructor(private val selectElement: WebElementSource) :
+        CollectionSource {
+        private var alias = Alias.NONE
+        @CheckReturnValue
+        override fun getElements(): List<WebElement> {
+            return select(selectElement).allSelectedOptions
+        }
 
-    @Override
-    @CheckReturnValue
-    @Nonnull
-    public WebElement getElement(int index) {
-      return index == 0 ?
-        select(selectElement).getFirstSelectedOption() :
-        select(selectElement).getAllSelectedOptions().get(index);
-    }
+        @CheckReturnValue
+        override fun getElement(index: Int): WebElement {
+            return if (index == 0) select(selectElement).firstSelectedOption else select(selectElement).allSelectedOptions[index]
+        }
 
-    @CheckReturnValue
-    @Nonnull
-    private Select select(WebElementSource selectElement) {
-      return new Select(selectElement.getWebElement());
-    }
+        @CheckReturnValue
+        private fun select(selectElement: WebElementSource): Select {
+            return Select(selectElement.webElement)
+        }
 
-    @Override
-    @CheckReturnValue
-    @Nonnull
-    public String description() {
-      return alias.getOrElse(() -> selectElement.description() + " selected options");
-    }
+        @CheckReturnValue
+        override fun description(): String {
+            return alias.getOrElse { selectElement.description() + " selected options" }
+        }
 
-    @Override
-    @CheckReturnValue
-    @Nonnull
-    public Driver driver() {
-      return selectElement.driver();
-    }
+        @CheckReturnValue
+        override fun driver(): Driver {
+            return selectElement.driver()
+        }
 
-    @Override
-    public void setAlias(String alias) {
-      this.alias = new Alias(alias);
+        override fun setAlias(alias: String) {
+            this.alias = Alias(alias)
+        }
     }
-  }
 }
