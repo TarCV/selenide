@@ -1,5 +1,2 @@
 rootProject.name = 'selenide'
 include ':statics'
-include ':modules:grid'
-include ':modules:junit4'
-include ':modules:testng'
