@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class GetPseudoValue : Command<String> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): String {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): String {
         val pseudoElement = Util.firstOf<String>(args)
         if (args!!.size > 1) {
             val propertyName = args[1] as String

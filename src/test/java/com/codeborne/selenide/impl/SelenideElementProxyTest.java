@@ -11,6 +11,7 @@ import com.codeborne.selenide.logevents.LogEvent.EventStatus;
 import com.codeborne.selenide.logevents.LogEventListener;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import org.assertj.core.api.WithAssertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -168,7 +169,6 @@ final class SelenideElementProxyTest implements WithAssertions {
     selEl.setValue("ABC");
   }
 
-  @ParametersAreNonnullByDefault
   private class TestEventListener implements LogEventListener {
 
     private final String expectSelector;
@@ -194,7 +194,7 @@ final class SelenideElementProxyTest implements WithAssertions {
     }
 
     @Override
-    public void beforeEvent(LogEvent currentLog) {
+    public void beforeEvent(@NotNull LogEvent currentLog) {
 
     }
   }

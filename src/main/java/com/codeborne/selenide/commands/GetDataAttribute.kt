@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class GetDataAttribute : Command<String?> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): String? {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): String? {
         val dataAttributeName = Util.firstOf<String>(args)
         return locator.webElement.getAttribute("data-$dataAttributeName")
     }

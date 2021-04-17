@@ -20,7 +20,7 @@ class GetLastChild : Command<SelenideElement> {
     }
 
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): SelenideElement {
         return find.execute(proxy, locator, arrayOf(By.xpath("*[last()]"), 0))
     }
 }

@@ -1,198 +1,183 @@
-package com.codeborne.selenide.logevents;
+package com.codeborne.selenide.logevents
 
-import com.codeborne.selenide.impl.DurationFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import static com.codeborne.selenide.logevents.LogEvent.EventStatus.FAIL;
-import static com.codeborne.selenide.logevents.LogEvent.EventStatus.PASS;
-import static java.util.stream.Collectors.joining;
+import com.codeborne.selenide.impl.DurationFormat
+import com.codeborne.selenide.logevents.LogEvent.EventStatus
+import org.slf4j.LoggerFactory
+import java.time.Duration
+import java.util.Arrays
+import java.util.function.Supplier
+import java.util.stream.Collectors
+import java.util.stream.Stream
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 /**
  * Logs Selenide test steps and notifies all registered LogEventListener about it
  */
 @ParametersAreNonnullByDefault
-public class SelenideLogger {
-  private static final Logger LOG = LoggerFactory.getLogger(SelenideLogger.class);
+object SelenideLogger {
+    private val LOG = LoggerFactory.getLogger(SelenideLogger::class.java)
+    internal val listeners = ThreadLocal<MutableMap<String, LogEventListener>?>()
+    private val df = DurationFormat()
 
-  protected static final ThreadLocal<Map<String, LogEventListener>> listeners = new ThreadLocal<>();
-
-  private static final DurationFormat df = new DurationFormat();
-
-  /**
-   * Add a listener (to the current thread).
-   * @param name unique name of this listener (per thread).
-   *             Can be used later to remove listener using method {@link #removeListener(String)}
-   * @param listener event listener
-   */
-  public static void addListener(String name, LogEventListener listener) {
-    Map<String, LogEventListener> threadListeners = listeners.get();
-    if (threadListeners == null) {
-      threadListeners = new HashMap<>();
+    /**
+     * Add a listener (to the current thread).
+     * @param name unique name of this listener (per thread).
+     * Can be used later to remove listener using method [.removeListener]
+     * @param listener event listener
+     */
+    @JvmStatic
+    fun addListener(name: String, listener: LogEventListener) {
+        var threadListeners = listeners.get()
+        if (threadListeners == null) {
+            threadListeners = HashMap()
+        }
+        threadListeners[name] = listener
+        listeners.set(threadListeners)
     }
 
-    threadListeners.put(name, listener);
-    listeners.set(threadListeners);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public static SelenideLog beginStep(String source, String methodName, @Nullable Object... args) {
-    return beginStep(source, readableMethodName(methodName) + "(" + readableArguments(args) + ")");
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  static String readableMethodName(String methodName) {
-    return methodName.replaceAll("([A-Z])", " $1").toLowerCase();
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  static String readableArguments(@Nullable Object... args) {
-    if (args == null || args.length == 0) {
-      return "";
+    @CheckReturnValue
+    fun beginStep(source: String?, methodName: String, vararg args: Any?): SelenideLog {
+        return beginStep(source, readableMethodName(methodName) + "(" + readableArguments(*args) + ")")
     }
 
-    if (args[0] instanceof Object[]) {
-      return arrayToString((Object[]) args[0]);
+    @JvmStatic
+    @CheckReturnValue
+    fun readableMethodName(methodName: String): String {
+        return methodName.replace("([A-Z])".toRegex(), " $1").toLowerCase()
     }
 
-    if (args[0] instanceof int[]) {
-      return arrayToString((int[]) args[0]);
+    @JvmStatic
+    @CheckReturnValue
+    fun readableArguments(vararg args: Any?): String {
+        if (args.isEmpty()) {
+            return ""
+        }
+        args[0].let {
+          if (it is Array<*>) {
+            return arrayToString(it as Array<Any>)
+          }
+        }
+        return if (args[0] is IntArray) {
+            arrayToString(args[0] as IntArray?)
+        } else arrayToString(args)
     }
 
-    return arrayToString(args);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  private static String arrayToString(Object[] args) {
-    return args.length == 1 ?
-      argToString(args[0]) :
-      '[' + Stream.of(args).map(SelenideLogger::argToString).collect(joining(", ")) + ']';
-  }
-
-  private static String argToString(Object arg) {
-    if (arg instanceof Duration) {
-      return df.format((Duration) arg);
+    @CheckReturnValue
+    private fun arrayToString(args: Array<out Any?>): String {
+        return if (args.size == 1) argToString(args[0]) else '[' + Stream.of(*args).map { obj: Any? -> argToString(obj) }
+            .collect(Collectors.joining(", ")) + ']'
     }
-    return String.valueOf(arg);
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  private static String arrayToString(int[] args) {
-    return args.length == 1 ? String.valueOf(args[0]) : Arrays.toString(args);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public static SelenideLog beginStep(String source, String subject) {
-    Collection<LogEventListener> listeners = getEventLoggerListeners();
-
-    SelenideLog log = new SelenideLog(source, subject);
-    for (LogEventListener listener : listeners) {
-      try {
-        listener.beforeEvent(log);
-      }
-      catch (RuntimeException e) {
-        LOG.error("Failed to call listener {}", listener, e);
-      }
+    private fun argToString(arg: Any?): String {
+        return if (arg is Duration) {
+            df.format(arg)
+        } else arg.toString()
     }
-    return log;
-  }
 
-  public static void commitStep(SelenideLog log, Throwable error) {
-    log.setError(error);
-    commitStep(log, FAIL);
-  }
-
-  public static void commitStep(SelenideLog log, LogEvent.EventStatus status) {
-    log.setStatus(status);
-
-    Collection<LogEventListener> listeners = getEventLoggerListeners();
-    for (LogEventListener listener : listeners) {
-      try {
-        listener.afterEvent(log);
-      }
-      catch (RuntimeException e) {
-        LOG.error("Failed to call listener {}", listener, e);
-      }
+    @CheckReturnValue
+    private fun arrayToString(args: IntArray?): String {
+        return if (args!!.size == 1) args[0].toString() else Arrays.toString(args)
     }
-  }
 
-  public static void run(String source, String subject, Runnable runnable) {
-    SelenideLog log = SelenideLogger.beginStep(source, subject);
-    try {
-      runnable.run();
-      SelenideLogger.commitStep(log, PASS);
+    @JvmStatic
+    @CheckReturnValue
+    fun beginStep(source: String, subject: String): SelenideLog {
+        val listeners = eventLoggerListeners
+        val log = SelenideLog(source, subject)
+        for (listener in listeners) {
+            try {
+                listener.beforeEvent(log)
+            } catch (e: RuntimeException) {
+                LOG.error("Failed to call listener {}", listener, e)
+            }
+        }
+        return log
     }
-    catch (RuntimeException | Error e) {
-      SelenideLogger.commitStep(log, e);
-      throw e;
+
+    fun commitStep(log: SelenideLog, error: Throwable) {
+      log.error = error
+      commitStep(log, EventStatus.FAIL)
     }
-  }
 
-  public static <T> T get(String source, @Nullable String subject, java.util.function.Supplier<T> supplier) {
-    SelenideLog log = SelenideLogger.beginStep(source, subject);
-    try {
-      T result = supplier.get();
-      SelenideLogger.commitStep(log, PASS);
-      return result;
+    @JvmStatic
+    fun commitStep(log: SelenideLog, status: EventStatus) {
+      log.status = status
+      val listeners = eventLoggerListeners
+        for (listener in listeners) {
+            try {
+                listener.afterEvent(log)
+            } catch (e: RuntimeException) {
+                LOG.error("Failed to call listener {}", listener, e)
+            }
+        }
     }
-    catch (RuntimeException | Error e) {
-      SelenideLogger.commitStep(log, e);
-      throw e;
+
+    fun run(source: String, subject: String, runnable: Runnable) {
+        val log = beginStep(source, subject)
+        try {
+            runnable.run()
+            commitStep(log, EventStatus.PASS)
+        } catch (e: RuntimeException) {
+            commitStep(log, e)
+            throw e
+        } catch (e: Error) {
+            commitStep(log, e)
+            throw e
+        }
     }
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  private static Collection<LogEventListener> getEventLoggerListeners() {
-    if (listeners.get() == null) {
-      listeners.set(new HashMap<>());
+    operator fun <T> get(source: String, subject: String, supplier: Supplier<T>): T {
+        val log = beginStep(source, subject)
+        return try {
+            val result = supplier.get()
+            commitStep(log, EventStatus.PASS)
+            result
+        } catch (e: RuntimeException) {
+            commitStep(log, e)
+            throw e
+        } catch (e: Error) {
+            commitStep(log, e)
+            throw e
+        }
     }
-    return listeners.get().values();
-  }
 
-  /**
-   * Remove listener (from the current thread).
-   * @param name unique name of listener added by method {@link #addListener(String, LogEventListener)}
-   * @param <T> class of listener to be returned
-   * @return the listener being removed
-   */
-  @SuppressWarnings("unchecked")
-  @Nullable
-  public static <T extends LogEventListener> T removeListener(String name) {
-    Map<String, LogEventListener> listeners = SelenideLogger.listeners.get();
-    return listeners == null ? null : (T) listeners.remove(name);
-  }
+    @get:CheckReturnValue
+    private val eventLoggerListeners: Collection<LogEventListener>
+        get() {
+            if (listeners.get() == null) {
+                listeners.set(HashMap())
+            }
+            return listeners.get()!!.values
+        }
 
-  public static void removeAllListeners() {
-    SelenideLogger.listeners.remove();
-  }
+    /**
+     * Remove listener (from the current thread).
+     * @param name unique name of listener added by method [.addListener]
+     * @param <T> class of listener to be returned
+     * @return the listener being removed
+    </T> */
+    @JvmStatic
+    fun <T : LogEventListener?> removeListener(name: String): T? {
+        val listeners = listeners.get()
+        return if (listeners == null) null else listeners.remove(name) as T?
+    }
 
-  /**
-   * If listener with given name is bound (added) to the current thread.
-   *
-   * @param name unique name of listener added by method {@link #addListener(String, LogEventListener)}
-   * @return true if method {@link #addListener(String, LogEventListener)} with
-   *              corresponding name has been called in current thread.
-   */
-  public static boolean hasListener(String name) {
-    Map<String, LogEventListener> listeners = SelenideLogger.listeners.get();
-    return listeners != null && listeners.containsKey(name);
-  }
+    @JvmStatic
+    fun removeAllListeners() {
+        listeners.remove()
+    }
+
+    /**
+     * If listener with given name is bound (added) to the current thread.
+     *
+     * @param name unique name of listener added by method [.addListener]
+     * @return true if method [.addListener] with
+     * corresponding name has been called in current thread.
+     */
+    @JvmStatic
+    fun hasListener(name: String): Boolean {
+        val listeners: Map<String, LogEventListener>? = listeners.get()
+        return listeners != null && listeners.containsKey(name)
+    }
 }

@@ -1,21 +1,18 @@
-package com.codeborne.selenide.proxy;
+package com.codeborne.selenide.proxy
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.InetAddress
+import java.net.UnknownHostException
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class InetAddressResolver {
-  @CheckReturnValue
-  @Nonnull
-  InetAddress getInetAddressByName(String hostname) {
-    try {
-      return InetAddress.getByName(hostname);
+open class InetAddressResolver {
+    @CheckReturnValue
+    open fun getInetAddressByName(hostname: String?): InetAddress {
+        return try {
+            InetAddress.getByName(hostname)
+        } catch (e: UnknownHostException) {
+            throw IllegalArgumentException(e)
+        }
     }
-    catch (UnknownHostException e) {
-      throw new IllegalArgumentException(e);
-    }
-  }
 }

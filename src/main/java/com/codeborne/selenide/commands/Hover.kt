@@ -8,7 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class Hover : Command<SelenideElement> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): SelenideElement {
         val element = locator.webElement
         Actions(locator.driver().webDriver).moveToElement(element).perform()
         return proxy

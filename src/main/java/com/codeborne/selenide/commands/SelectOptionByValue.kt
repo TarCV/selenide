@@ -11,7 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class SelectOptionByValue : Command<Void?> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): Void? {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): Void? {
         val select = Select(locator.webElement)
         require(!(args == null || args.isEmpty())) { "Missing arguments" }
       val firstArg = args[0]

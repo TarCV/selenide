@@ -12,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class IsDisplayed : Command<Boolean> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): Boolean {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): Boolean {
         return try {
             val element = locator.webElement
             element.isDisplayed

@@ -1,24 +1,19 @@
-package com.codeborne.selenide.proxy;
+package com.codeborne.selenide.proxy
 
-import com.browserup.bup.BrowserUpProxy;
-import com.browserup.bup.client.ClientUtil;
-import com.browserup.bup.filters.RequestFilter;
-import com.browserup.bup.filters.ResponseFilter;
-import com.codeborne.selenide.Config;
-import org.openqa.selenium.Proxy;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.net.InetSocketAddress;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.Integer.parseInt;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
+import javax.annotation.ParametersAreNonnullByDefault
+import kotlin.jvm.JvmOverloads
+import com.browserup.bup.BrowserUpProxy
+import com.browserup.bup.filters.RequestFilter
+import java.util.HashMap
+import com.browserup.bup.filters.ResponseFilter
+import com.browserup.bup.client.ClientUtil
+import com.codeborne.selenide.Config
+import org.apache.commons.lang3.StringUtils
+import org.openqa.selenium.Proxy
+import java.lang.IllegalStateException
+import java.net.InetSocketAddress
+import java.util.Arrays
+import javax.annotation.CheckReturnValue
 
 /**
  * Selenide own proxy server to intercept server responses
@@ -26,164 +21,134 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * It holds map of request and response filters by name.
  */
 @ParametersAreNonnullByDefault
-public class SelenideProxyServer {
-  private final Config config;
-  private final InetAddressResolver inetAddressResolver;
-  @Nullable
-  private final Proxy outsideProxy;
-  private final BrowserUpProxy proxy;
-  private final Map<String, RequestFilter> requestFilters = new HashMap<>();
-  private final Map<String, ResponseFilter> responseFilters = new HashMap<>();
-  private int port;
+class SelenideProxyServer
+/**
+ * Create server
+ * Note that server is not started nor activated yet.
+ *
+ * @param outsideProxy another proxy server used by test author for his own need (can be null)
+ */ @JvmOverloads constructor(
+    private val config: Config, private val outsideProxy: Proxy?,
+    private val inetAddressResolver: InetAddressResolver = InetAddressResolver(),
+    /**
+     * Method return current instance of browser up proxy
+     *
+     * @return browser up proxy instance
+     */
+    @get:CheckReturnValue
+    val proxy: BrowserUpProxy = BrowserUpProxyServerUnlimited()
+) {
+    private val requestFilters: MutableMap<String, RequestFilter> = HashMap()
+    private val responseFilters: MutableMap<String, ResponseFilter> = HashMap()
+    private var port = 0
 
-  /**
-   * Create server
-   * Note that server is not started nor activated yet.
-   *
-   * @param outsideProxy another proxy server used by test author for his own need (can be null)
-   */
-  public SelenideProxyServer(Config config, @Nullable Proxy outsideProxy) {
-    this(config, outsideProxy, new InetAddressResolver(), new BrowserUpProxyServerUnlimited());
-  }
-
-  protected SelenideProxyServer(Config config, @Nullable Proxy outsideProxy,
-                                InetAddressResolver inetAddressResolver,
-                                BrowserUpProxy proxy) {
-    this.config = config;
-    this.outsideProxy = outsideProxy;
-    this.inetAddressResolver = inetAddressResolver;
-    this.proxy = proxy;
-  }
-
-  /**
-   * Start the server
-   *
-   * It automatically adds one response filter "download" that can intercept downloaded files.
-   */
-  public void start() {
-    proxy.setTrustAllServers(true);
-    if (outsideProxy != null) {
-      proxy.setChainedProxy(getProxyAddress(outsideProxy));
-      String noProxy = outsideProxy.getNoProxy();
-      if (noProxy != null) {
-        List<String> noProxyHosts = Arrays.asList(noProxy.split(","));
-        proxy.setChainedProxyNonProxyHosts(noProxyHosts);
-      }
+    /**
+     * Start the server
+     *
+     * It automatically adds one response filter "download" that can intercept downloaded files.
+     */
+    fun start() {
+        proxy.setTrustAllServers(true)
+        if (outsideProxy != null) {
+            proxy.chainedProxy = getProxyAddress(outsideProxy)
+            val noProxy = outsideProxy.noProxy
+            if (noProxy != null) {
+                val noProxyHosts = Arrays.asList(*noProxy.split(",").toTypedArray())
+                proxy.setChainedProxyNonProxyHosts(noProxyHosts)
+            }
+        }
+        addRequestFilter("authentication", AuthenticationFilter())
+        addRequestFilter("requestSizeWatchdog", RequestSizeWatchdog())
+        addResponseFilter("responseSizeWatchdog", ResponseSizeWatchdog())
+        addResponseFilter("download", FileDownloadFilter(config))
+        proxy.start(config.proxyPort())
+        port = proxy.port
     }
-    addRequestFilter("authentication", new AuthenticationFilter());
-    addRequestFilter("requestSizeWatchdog", new RequestSizeWatchdog());
-    addResponseFilter("responseSizeWatchdog", new ResponseSizeWatchdog());
-    addResponseFilter("download", new FileDownloadFilter(config));
 
-    proxy.start(config.proxyPort());
-    port = proxy.getPort();
-  }
+    @get:CheckReturnValue
+    val isStarted: Boolean
+        get() = proxy.isStarted
 
-  @CheckReturnValue
-  public boolean isStarted() {
-    return proxy.isStarted();
-  }
-
-  /**
-   * Add a custom request filter which allows to track/modify all requests from browser to server
-   *
-   * @param name unique name of filter
-   * @param requestFilter the filter
-   */
-  public void addRequestFilter(String name, RequestFilter requestFilter) {
-    if (isRequestFilterAdded(name)) {
-      throw new IllegalArgumentException("Duplicate request filter: " + name);
+    /**
+     * Add a custom request filter which allows to track/modify all requests from browser to server
+     *
+     * @param name unique name of filter
+     * @param requestFilter the filter
+     */
+    fun addRequestFilter(name: String, requestFilter: RequestFilter) {
+        require(!isRequestFilterAdded(name)) { "Duplicate request filter: $name" }
+        proxy.addRequestFilter(requestFilter)
+        requestFilters[name] = requestFilter
     }
-    proxy.addRequestFilter(requestFilter);
-    requestFilters.put(name, requestFilter);
-  }
 
-  private boolean isRequestFilterAdded(String name) {
-    return requestFilters.containsKey(name);
-  }
-
-  /**
-   * Add a custom response filter which allows to track/modify all server responses to browser
-   *
-   * @param name unique name of filter
-   * @param responseFilter the filter
-   */
-  public void addResponseFilter(String name, ResponseFilter responseFilter) {
-    if (responseFilters.containsKey(name)) {
-      throw new IllegalArgumentException("Duplicate response filter: " + name);
+    private fun isRequestFilterAdded(name: String): Boolean {
+        return requestFilters.containsKey(name)
     }
-    proxy.addResponseFilter(responseFilter);
-    responseFilters.put(name, responseFilter);
-  }
 
-  static InetSocketAddress getProxyAddress(Proxy proxy) {
-    String httpProxy = proxy.getHttpProxy();
-    String host = httpProxy.replaceFirst("(.*):.*", "$1");
-    String port = httpProxy.replaceFirst(".*:(.*)", "$1");
-    return new InetSocketAddress(host, parseInt(port));
-  }
-
-  /**
-   * Converts this proxy to a "selenium" proxy that can be used by webdriver
-   */
-  @CheckReturnValue
-  @Nonnull
-  public Proxy createSeleniumProxy() {
-    return isEmpty(config.proxyHost())
-      ? ClientUtil.createSeleniumProxy(proxy)
-      : ClientUtil.createSeleniumProxy(proxy, inetAddressResolver.getInetAddressByName(config.proxyHost()));
-  }
-
-  /**
-   * Stop the server
-   */
-  public void shutdown() {
-    if (proxy.isStarted()) {
-      try {
-        proxy.abort();
-      }
-      catch (IllegalStateException ignore) {
-      }
+    /**
+     * Add a custom response filter which allows to track/modify all server responses to browser
+     *
+     * @param name unique name of filter
+     * @param responseFilter the filter
+     */
+    fun addResponseFilter(name: String, responseFilter: ResponseFilter) {
+        require(!responseFilters.containsKey(name)) { "Duplicate response filter: $name" }
+        proxy.addResponseFilter(responseFilter)
+        responseFilters[name] = responseFilter
     }
-  }
 
-  /**
-   * Method return current instance of browser up proxy
-   *
-   * @return browser up proxy instance
-   */
-  @CheckReturnValue
-  @Nonnull
-  public BrowserUpProxy getProxy() {
-    return proxy;
-  }
+    /**
+     * Converts this proxy to a "selenium" proxy that can be used by webdriver
+     */
+    @CheckReturnValue
+    fun createSeleniumProxy(): Proxy {
+        return if (StringUtils.isEmpty(config.proxyHost())) ClientUtil.createSeleniumProxy(proxy) else ClientUtil.createSeleniumProxy(
+            proxy, inetAddressResolver.getInetAddressByName(config.proxyHost())
+        )
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String toString() {
-    return String.format("Selenide proxy server: %s", port);
-  }
+    /**
+     * Stop the server
+     */
+    fun shutdown() {
+        if (proxy.isStarted) {
+            try {
+                proxy.abort()
+            } catch (ignore: IllegalStateException) {
+            }
+        }
+    }
 
-  /**
-   * Get request filter by name
-   */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  @Nullable
-  public <T extends RequestFilter> T requestFilter(String name) {
-    return (T) requestFilters.get(name);
-  }
+    @CheckReturnValue
+    override fun toString(): String {
+        return String.format("Selenide proxy server: %s", port)
+    }
 
-  /**
-   * Get response filter by name
-   *
-   * By default, the only one filter "download" is available.
-   */
-  @SuppressWarnings("unchecked")
-  @CheckReturnValue
-  @Nullable
-  public <T extends ResponseFilter> T responseFilter(String name) {
-    return (T) responseFilters.get(name);
-  }
+    /**
+     * Get request filter by name
+     */
+    @CheckReturnValue
+    fun <T : RequestFilter?> requestFilter(name: String): T? {
+        return requestFilters[name] as T?
+    }
+
+    /**
+     * Get response filter by name
+     *
+     * By default, the only one filter "download" is available.
+     */
+    @CheckReturnValue
+    fun <T : ResponseFilter?> responseFilter(name: String): T? {
+        return responseFilters[name] as T?
+    }
+
+    companion object {
+        @JvmStatic
+        fun getProxyAddress(proxy: Proxy): InetSocketAddress {
+            val httpProxy = proxy.httpProxy
+            val host = httpProxy.replaceFirst("(.*):.*".toRegex(), "$1")
+            val port = httpProxy.replaceFirst(".*:(.*)".toRegex(), "$1")
+            return InetSocketAddress(host, port.toInt())
+        }
+    }
 }

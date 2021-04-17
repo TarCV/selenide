@@ -18,7 +18,7 @@ class GetSelectedText : Command<String> {
     }
 
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): String {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): String {
         val option: WebElement = getSelectedOption.execute(proxy, locator, Command.NO_ARGS)
         return option.text
     }

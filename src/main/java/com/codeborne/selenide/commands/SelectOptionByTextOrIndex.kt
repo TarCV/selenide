@@ -11,7 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class SelectOptionByTextOrIndex : Command<Void?> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): Void? {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): Void? {
         require(!(args == null || args.isEmpty())) { "Missing arguments" }
       val firstArg = args[0]
       if (firstArg is Array<*> && firstArg[0] is String) { // TODO: why check in Java code was incomplete?

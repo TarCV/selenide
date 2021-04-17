@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class IsImage : Command<Boolean> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): Boolean {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): Boolean {
         val img = locator.webElement
         require("img".equals(img.tagName, ignoreCase = true)) { "Method isImage() is only applicable for img elements" }
         return IsImageLoaded.isImage(locator.driver(), img)

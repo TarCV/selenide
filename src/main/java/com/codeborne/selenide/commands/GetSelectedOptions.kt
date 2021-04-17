@@ -13,9 +13,9 @@ import javax.annotation.CheckReturnValue
 
 class GetSelectedOptions : Command<ElementsCollection?> {
     override fun execute(
-      proxy: SelenideElement,
-      locator: WebElementSource,
-      args: Array<Any>?
+        proxy: SelenideElement,
+        locator: WebElementSource,
+        args: Array<out Any?>?
     ): ElementsCollection {
         return ElementsCollection(SelectedOptionsCollection(locator))
     }

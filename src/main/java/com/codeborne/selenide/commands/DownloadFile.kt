@@ -34,7 +34,7 @@ class DownloadFile internal constructor(
 
     @CheckReturnValue
     @Throws(IOException::class)
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): File {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): File {
         val link = locator.findAndAssertElementIsInteractable()
         val config = locator.driver().config()
         val options = getDownloadOptions(config, args)
@@ -57,18 +57,18 @@ class DownloadFile internal constructor(
     }
 
     @CheckReturnValue
-    private fun getDownloadOptions(config: Config, args: Array<Any>?): DownloadOptions {
+    private fun getDownloadOptions(config: Config, args: Array<out Any?>?): DownloadOptions {
         return if (args != null && args.isNotEmpty() && args[0] is DownloadOptions) {
             args[0] as DownloadOptions
         } else using(
-            config.fileDownload()!!
+            config.fileDownload()
         )
             .withFilter(getFileFilter(args))
             .withTimeout(getTimeout(config, args))
     }
 
     @CheckReturnValue
-    fun getTimeout(config: Config, args: Array<Any>?): Long {
+    fun getTimeout(config: Config, args: Array<out Any?>?): Long {
         return if (args != null && args.isNotEmpty() && args[0] is Long) {
             args[0] as Long
         } else {
@@ -77,7 +77,7 @@ class DownloadFile internal constructor(
     }
 
     @CheckReturnValue
-    fun getFileFilter(args: Array<Any>?): FileFilter {
+    fun getFileFilter(args: Array<out Any?>?): FileFilter {
         if (args != null && args.isNotEmpty() && args[0] is FileFilter) {
             return args[0] as FileFilter
         }

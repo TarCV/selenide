@@ -1,29 +1,20 @@
-package com.codeborne.selenide.logevents;
+package com.codeborne.selenide.logevents
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collections
+import javax.annotation.CheckReturnValue
 
-@ParametersAreNonnullByDefault
-public class EventsCollector implements LogEventListener {
-  private final List<LogEvent> logEvents = new ArrayList<>();
+class EventsCollector : LogEventListener {
+    private val logEvents: MutableList<LogEvent> = ArrayList()
+    override fun afterEvent(currentLog: LogEvent) {
+        logEvents.add(currentLog)
+    }
 
-  @Override
-  public void afterEvent(LogEvent currentLog) {
-    logEvents.add(currentLog);
-  }
+    override fun beforeEvent(currentLog: LogEvent) {
+        //ignore
+    }
 
-  @Override
-  public void beforeEvent(LogEvent currentLog) {
-    //ignore
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public List<LogEvent> events() {
-    return Collections.unmodifiableList(logEvents);
-  }
+    @CheckReturnValue
+    fun events(): List<LogEvent> {
+        return Collections.unmodifiableList(logEvents)
+    }
 }

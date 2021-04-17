@@ -9,6 +9,7 @@ import com.codeborne.selenide.ex.ElementNotFound;
 import com.codeborne.selenide.ex.ElementShould;
 import com.codeborne.selenide.ex.ElementShouldNot;
 import com.codeborne.selenide.impl.WebElementSource;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -637,18 +638,16 @@ final class SelenideMethodsTest extends IntegrationTest {
     assertThat(value).isEqualTo(10);
   }
 
-  @ParametersAreNonnullByDefault
   static class DoubleClick implements Command<Void> {
+    @org.jetbrains.annotations.Nullable
     @Override
-    @Nullable
-    public Void execute(SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) {
+    public Void execute(@NotNull SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) {
       locator.driver().actions().doubleClick(locator.findAndAssertElementIsInteractable()).perform();
       return null;
 
     }
   }
 
-  @ParametersAreNonnullByDefault
   static class Replace implements Command<SelenideElement> {
     private final String replacement;
 
@@ -662,7 +661,7 @@ final class SelenideMethodsTest extends IntegrationTest {
 
     @Override
     @Nonnull
-    public SelenideElement execute(SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) {
+    public SelenideElement execute(@NotNull SelenideElement proxy, @NotNull WebElementSource locator, @org.jetbrains.annotations.Nullable Object[] args) {
       proxy.clear();
       proxy.sendKeys(replacement);
       return proxy;

@@ -7,6 +7,7 @@ import com.codeborne.selenide.logevents.LogEvent;
 import com.codeborne.selenide.logevents.LogEventListener;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import org.assertj.core.api.SoftAssertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +52,6 @@ final class LogEventListenerTest extends BaseIntegrationTest {
     sa.assertAll();
   }
 
-  @ParametersAreNonnullByDefault
   private class SelenideListener implements LogEventListener {
     @Override
     public void afterEvent(LogEvent logEvent) {
@@ -59,7 +59,7 @@ final class LogEventListenerTest extends BaseIntegrationTest {
     }
 
     @Override
-    public void beforeEvent(LogEvent logEvent) {
+    public void beforeEvent(@NotNull LogEvent logEvent) {
       if (logEvent.getSubject().contains("click()")) {
         beforeEvents.add(format("before: $(%s) %s", logEvent.getElement(), logEvent.getSubject()));
       }

@@ -2,21 +2,20 @@ package com.codeborne.selenide.commands
 
 import com.codeborne.selenide.Condition
 import java.time.Duration
-import java.util.Arrays
 import javax.annotation.CheckReturnValue
 import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 internal object Util {
     @CheckReturnValue
-    fun <T> firstOf(args: Array<Any>?): T {
+    fun <T> firstOf(args: Array<out Any?>?): T {
         require(!(args == null || args.isEmpty())) { "Missing arguments" }
         return args[0] as T
     }
 
     @JvmStatic
     @CheckReturnValue
-    fun argsToConditions(args: Array<Any>?): List<Condition> {
+    fun argsToConditions(args: Array<out Any?>?): List<Condition> {
         if (args == null) return emptyList()
         val conditions: MutableList<Condition> = ArrayList(args.size)
         for (arg in args) {

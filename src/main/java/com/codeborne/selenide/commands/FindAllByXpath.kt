@@ -12,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class FindAllByXpath : Command<ElementsCollection?> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): ElementsCollection {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): ElementsCollection {
         val xpath = Util.firstOf<String>(args)
         return ElementsCollection(BySelectorCollection(locator.driver(), proxy, By.xpath(xpath)))
     }

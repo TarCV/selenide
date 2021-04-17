@@ -11,7 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class TakeScreenshotAsImage : Command<BufferedImage?> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): BufferedImage? {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): BufferedImage? {
         return ScreenShotLaboratory.getInstance().takeScreenshotAsImage(locator.driver(), locator.webElement)
     }
 }

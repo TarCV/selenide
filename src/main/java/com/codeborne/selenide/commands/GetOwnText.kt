@@ -11,7 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class GetOwnText : Command<String> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): String {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): String {
         return getOwnText(locator.driver(), locator.webElement)
     }
 

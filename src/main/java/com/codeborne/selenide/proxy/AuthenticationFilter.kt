@@ -1,40 +1,38 @@
-package com.codeborne.selenide.proxy;
+package com.codeborne.selenide.proxy
 
-import com.codeborne.selenide.AuthenticationType;
-import com.codeborne.selenide.Credentials;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-import com.browserup.bup.filters.RequestFilter;
-import com.browserup.bup.util.HttpMessageContents;
-import com.browserup.bup.util.HttpMessageInfo;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.browserup.bup.filters.RequestFilter
+import com.browserup.bup.util.HttpMessageContents
+import com.browserup.bup.util.HttpMessageInfo
+import com.codeborne.selenide.AuthenticationType
+import com.codeborne.selenide.Credentials
+import io.netty.handler.codec.http.HttpRequest
+import io.netty.handler.codec.http.HttpResponse
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class AuthenticationFilter implements RequestFilter {
-  private AuthenticationType authenticationType;
-  private Credentials credentials;
-
-  @Override
-  @Nullable
-  public HttpResponse filterRequest(HttpRequest request, HttpMessageContents contents, HttpMessageInfo messageInfo) {
-    if (authenticationType != null) {
-      String authorization = String.format("%s %s", authenticationType.getValue(), credentials.encode());
-      HttpHeaders headers = request.headers();
-      headers.add("Authorization", authorization);
-      headers.add("Proxy-Authorization", authorization);
+class AuthenticationFilter : RequestFilter {
+    private var authenticationType: AuthenticationType? = null
+    private var credentials: Credentials? = null
+    override fun filterRequest(
+        request: HttpRequest,
+        contents: HttpMessageContents,
+        messageInfo: HttpMessageInfo
+    ): HttpResponse? {
+        authenticationType?.let {  authenticationType ->
+            val authorization = String.format("%s %s", authenticationType.value, credentials!!.encode())
+            val headers = request.headers()
+            headers.add("Authorization", authorization)
+            headers.add("Proxy-Authorization", authorization)
+        }
+        return null
     }
-    return null;
-  }
 
-  public void setAuthentication(@Nullable AuthenticationType authenticationType, @Nullable Credentials credentials) {
-    this.authenticationType = authenticationType;
-    this.credentials = credentials;
-  }
+    fun setAuthentication(authenticationType: AuthenticationType?, credentials: Credentials?) {
+        this.authenticationType = authenticationType
+        this.credentials = credentials
+    }
 
-  public void removeAuthentication() {
-    setAuthentication(null, null);
-  }
+    fun removeAuthentication() {
+        setAuthentication(null, null)
+    }
 }

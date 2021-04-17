@@ -31,8 +31,8 @@ interface Config {
     fun versatileSetValue(): Boolean
     fun selectorMode(): SelectorMode?
     fun assertionMode(): AssertionMode?
-    fun fileDownload(): FileDownloadMode?
+    fun fileDownload(): FileDownloadMode
     fun proxyEnabled(): Boolean
-    fun proxyHost(): String?
+    fun proxyHost(): String
     fun proxyPort(): Int
 }

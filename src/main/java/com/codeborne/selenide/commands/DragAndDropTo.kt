@@ -19,7 +19,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 open class DragAndDropTo : Command<SelenideElement> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): SelenideElement {
         val target = findTarget(locator.driver(), args)
         target.shouldBe(Condition.visible)
         val options = Arguments(args)
@@ -29,7 +29,7 @@ open class DragAndDropTo : Command<SelenideElement> {
         return proxy
     }
 
-    protected fun findTarget(driver: Driver, args: Array<Any>?): SelenideElement {
+    protected fun findTarget(driver: Driver, args: Array<out Any?>?): SelenideElement {
         return if (args == null || args.isEmpty()) {
             throw IllegalArgumentException("Missing target argument")
         } else if (args[0] is String) {

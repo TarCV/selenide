@@ -25,7 +25,7 @@ class UploadFile : Command<File> {
 
     @CheckReturnValue
     @Throws(IOException::class)
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): File {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): File {
         checkNotNull(args)
         val file = getFiles(args)
         checkFilesGiven(file)
@@ -50,10 +50,9 @@ class UploadFile : Command<File> {
     }
 
     @CheckReturnValue
-    // TODO: check if java code was valid
-    private fun getFiles(args: Array<Any>): Array<File> {
+    private fun getFiles(args: Array<out Any?>?): Array<File> {
         val firstOf = Util.firstOf<Any>(args)
-        return if (firstOf is Array<*>) { // TODO: why check in Java code was incomplete?
+        return if (firstOf is Array<*>) {
           firstOf as Array<File>
         } else {
           args as Array<File>

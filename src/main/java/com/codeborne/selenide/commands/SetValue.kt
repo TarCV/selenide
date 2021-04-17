@@ -24,7 +24,7 @@ class SetValue : Command<SelenideElement> {
         this.selectRadio = selectRadio
     }
 
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): SelenideElement {
         val text = Util.firstOf<String>(args)
         val element = locator.findAndAssertElementIsInteractable()
         if (locator.driver().config().versatileSetValue()
