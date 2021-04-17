@@ -1,36 +1,30 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
+import com.codeborne.selenide.Condition
+import java.util.Arrays
+import java.util.Collections
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class ConditionHelpers {
-
-  @CheckReturnValue
-  @Nonnull
-  @SafeVarargs
-  public static <T> List<T> merge(T first, T second, T... others) {
-    List<T> result = new ArrayList<>(2 + others.length);
-    result.add(first);
-    result.add(second);
-    if (others.length > 0) result.addAll(asList(others));
-    return unmodifiableList(result);
-  }
-
-  @CheckReturnValue
-  static boolean negateMissingElementTolerance(List<Condition> conditions) {
-    boolean result = true;
-    for (Condition condition : conditions) {
-      result &= condition.negate().applyNull();
+object ConditionHelpers {
+    @CheckReturnValue
+    @SafeVarargs
+    fun <T> merge(first: T, second: T, vararg others: T): List<T> {
+        val result: MutableList<T> = ArrayList(2 + others.size)
+        result.add(first)
+        result.add(second)
+        if (others.isNotEmpty()) result.addAll(listOf(*others))
+        return Collections.unmodifiableList(result)
     }
-    return result;
-  }
+
+    @JvmStatic
+    @CheckReturnValue
+    fun negateMissingElementTolerance(conditions: List<Condition>): Boolean {
+        var result = true
+        for (condition in conditions) {
+            result = result and condition.negate().applyNull()
+        }
+        return result
+    }
 }

@@ -39,8 +39,10 @@ final class CollectionElementByConditionTest implements WithAssertions {
     CollectionSource collection = mock(CollectionSource.class);
     WebElement mockedWebElement1 = mock(WebElement.class);
     WebElement mockedWebElement2 = mock(WebElement.class);
+    final DriverStub driver = new DriverStub();
 
     List<WebElement> listOfMockedElements = asList(mockedWebElement1, mockedWebElement2);
+    when(collection.driver()).thenReturn(driver);
     when(collection.getElements()).thenReturn(listOfMockedElements);
     when(mockedWebElement2.isDisplayed()).thenReturn(true);
     CollectionElementByCondition collectionElement = new CollectionElementByCondition(collection, visible);

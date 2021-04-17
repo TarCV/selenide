@@ -1,37 +1,33 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.impl.ElementDescriber;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static com.codeborne.selenide.impl.Plugins.inject;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.impl.ElementDescriber
+import com.codeborne.selenide.impl.Plugins
+import org.openqa.selenium.WebElement
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Focused extends Condition {
-  private final ElementDescriber describe = inject(ElementDescriber.class);
+class Focused : Condition("focused") {
+    private val describe = Plugins.inject(
+        ElementDescriber::class.java
+    )
 
-  public Focused() {
-    super("focused");
-  }
+    private fun getFocusedElement(driver: Driver): WebElement? {
+        return driver.executeJavaScript("return document.activeElement")
+    }
 
-  private WebElement getFocusedElement(Driver driver) {
-    return driver.executeJavaScript("return document.activeElement");
-  }
+    override fun apply(driver: Driver, element: WebElement): Boolean {
+        val focusedElement = getFocusedElement(driver)
+        return focusedElement != null && focusedElement == element
+    }
 
-  @Override
-  public boolean apply(Driver driver, WebElement webElement) {
-    WebElement focusedElement = getFocusedElement(driver);
-    return focusedElement != null && focusedElement.equals(webElement);
-  }
-
-  @Override
-  public String actualValue(Driver driver, WebElement webElement) {
-    WebElement focusedElement = getFocusedElement(driver);
-    return focusedElement == null ? "No focused element found " :
-      "Focused element: " + describe.fully(driver, focusedElement) +
-        ", current element: " + describe.fully(driver, webElement);
-  }
+    override fun actualValue(driver: Driver, element: WebElement): String {
+        val focusedElement = getFocusedElement(driver)
+        return if (focusedElement == null) "No focused element found " else "Focused element: " + describe.fully(
+            driver,
+            focusedElement
+        ) +
+                ", current element: " + describe.fully(driver, element)
+    }
 }

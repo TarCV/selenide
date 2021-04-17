@@ -1,29 +1,18 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.impl.Html;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import javax.annotation.ParametersAreNonnullByDefault
+import org.openqa.selenium.WebElement
+import com.codeborne.selenide.impl.Html
 
 @ParametersAreNonnullByDefault
-public class ExactText extends Condition {
-  private final String expectedText;
+class ExactText(private val expectedText: String) : Condition("exact text") {
+    override fun apply(driver: Driver, element: WebElement): Boolean {
+        return Html.text.equals(element.text, expectedText)
+    }
 
-  public ExactText(String expectedText) {
-    super("exact text");
-    this.expectedText = expectedText;
-  }
-
-  @Override
-  public boolean apply(Driver driver, WebElement element) {
-    return Html.text.equals(element.getText(), expectedText);
-  }
-
-  @Override
-  public String toString() {
-    return String.format("%s '%s'", getName(), expectedText);
-  }
-
+    override fun toString(): String {
+        return String.format("%s '%s'", name, expectedText)
+    }
 }

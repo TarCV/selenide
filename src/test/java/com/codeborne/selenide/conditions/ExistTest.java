@@ -1,5 +1,6 @@
 package com.codeborne.selenide.conditions;
 
+import com.codeborne.selenide.DriverStub;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
@@ -27,18 +28,18 @@ final class ExistTest {
   @Test
   void satisfied_if_element_is_visible() {
     when(element.isDisplayed()).thenReturn(true);
-    assertThat(condition.apply(null, element)).isTrue();
+    assertThat(condition.apply(new DriverStub(), element)).isTrue();
   }
 
   @Test
   void satisfied_if_element_exists_even_if_invisible() {
     when(element.isDisplayed()).thenReturn(false);
-    assertThat(condition.apply(null, element)).isTrue();
+    assertThat(condition.apply(new DriverStub(), element)).isTrue();
   }
 
   @Test
   void not_satisfied_if_element_is_stolen() {
     when(element.isDisplayed()).thenThrow(StaleElementReferenceException.class);
-    assertThat(condition.apply(null, element)).isFalse();
+    assertThat(condition.apply(new DriverStub(), element)).isFalse();
   }
 }

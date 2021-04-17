@@ -1,46 +1,31 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class AttributeWithValue extends Condition {
-  private final String attributeName;
-  protected final String expectedAttributeValue;
+open class AttributeWithValue(private val attributeName: String, protected val expectedAttributeValue: String) :
+    Condition("attribute") {
+    @CheckReturnValue
+    override fun apply(driver: Driver, element: WebElement): Boolean {
+        return expectedAttributeValue == getAttributeValue(element)
+    }
 
-  public AttributeWithValue(String attributeName, String expectedAttributeValue) {
-    super("attribute");
-    this.attributeName = attributeName;
-    this.expectedAttributeValue = expectedAttributeValue;
-  }
+    @CheckReturnValue
+    override fun actualValue(driver: Driver, element: WebElement): String {
+        return String.format("%s=\"%s\"", attributeName, getAttributeValue(element))
+    }
 
-  @CheckReturnValue
-  @Override
-  public boolean apply(Driver driver, WebElement element) {
-    return expectedAttributeValue.equals(getAttributeValue(element));
-  }
+    @CheckReturnValue
+    override fun toString(): String {
+        return String.format("%s %s=\"%s\"", name, attributeName, expectedAttributeValue)
+    }
 
-  @Nonnull
-  @CheckReturnValue
-  @Override
-  public String actualValue(Driver driver, WebElement element) {
-    return String.format("%s=\"%s\"", attributeName, getAttributeValue(element));
-  }
-
-  @Nonnull
-  @CheckReturnValue
-  @Override
-  public String toString() {
-    return String.format("%s %s=\"%s\"", getName(), attributeName, expectedAttributeValue);
-  }
-
-  protected String getAttributeValue(WebElement element) {
-    String attr = element.getAttribute(attributeName);
-    return attr == null ? "" : attr;
-  }
+    protected fun getAttributeValue(element: WebElement): String {
+        val attr = element.getAttribute(attributeName)
+        return attr ?: ""
+    }
 }

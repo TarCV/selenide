@@ -1,33 +1,23 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.StaleElementReferenceException
+import org.openqa.selenium.WebElement
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Exist extends Condition {
-  public Exist() {
-    super("exist");
-  }
-
-  @Override
-  public boolean apply(Driver driver, WebElement element) {
-    try {
-      element.isDisplayed();
-      return true;
+class Exist : Condition("exist") {
+    override fun apply(driver: Driver, element: WebElement): Boolean {
+        return try {
+            element.isDisplayed
+            true
+        } catch (e: StaleElementReferenceException) {
+            false
+        }
     }
-    catch (StaleElementReferenceException e) {
-      return false;
-    }
-  }
 
-  @Nonnull
-  @Override
-  public Condition negate() {
-    return new Not(this, true);
-  }
+    override fun negate(): Condition {
+        return Not(this, true)
+    }
 }

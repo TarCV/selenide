@@ -1,32 +1,22 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Not extends Condition {
-  private final Condition condition;
+class Not(private val condition: Condition, absentElementMatchesCondition: Boolean) :
+    Condition("not " + condition.name, absentElementMatchesCondition) {
+    override fun apply(driver: Driver, element: WebElement): Boolean {
+        return !condition.apply(driver, element)
+    }
 
-  public Not(Condition originalCondition, boolean absentElementMatchesCondition) {
-    super("not " + originalCondition.getName(), absentElementMatchesCondition);
-    this.condition = originalCondition;
-  }
+    override fun actualValue(driver: Driver, element: WebElement): String? {
+        return condition.actualValue(driver, element)
+    }
 
-  @Override
-  public boolean apply(Driver driver, WebElement element) {
-    return !condition.apply(driver, element);
-  }
-
-  @Override
-  public String actualValue(Driver driver, WebElement element) {
-    return condition.actualValue(driver, element);
-  }
-
-  @Override
-  public String toString() {
-    return "not " + condition.toString();
-  }
+    override fun toString(): String {
+        return "not $condition"
+    }
 }

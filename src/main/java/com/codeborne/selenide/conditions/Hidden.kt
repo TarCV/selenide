@@ -1,32 +1,22 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.StaleElementReferenceException
+import org.openqa.selenium.WebElement
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Hidden extends Condition {
-  public Hidden() {
-    super("hidden", true);
-  }
-
-  @Override
-  public boolean apply(Driver driver, WebElement element) {
-    try {
-      return !element.isDisplayed();
+class Hidden : Condition("hidden", true) {
+    override fun apply(driver: Driver, element: WebElement): Boolean {
+        return try {
+            !element.isDisplayed
+        } catch (elementHasDisappeared: StaleElementReferenceException) {
+            true
+        }
     }
-    catch (StaleElementReferenceException elementHasDisappeared) {
-      return true;
-    }
-  }
 
-  @Nonnull
-  @Override
-  public Condition negate() {
-    return new Not(this, false);
-  }
+    override fun negate(): Condition {
+        return Not(this, false)
+    }
 }

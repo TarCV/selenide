@@ -1,5 +1,6 @@
 package com.codeborne.selenide.conditions;
 
+import com.codeborne.selenide.DriverStub;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebElement;
 
@@ -26,23 +27,23 @@ final class VisibleTest {
   @Test
   void satisfied_if_element_is_visible() {
     when(element.isDisplayed()).thenReturn(true);
-    assertThat(condition.apply(null, element)).isTrue();
+    assertThat(condition.apply(new DriverStub(), element)).isTrue();
   }
 
   @Test
   void not_satisfied_if_element_is_invisible() {
     when(element.isDisplayed()).thenReturn(false);
-    assertThat(condition.apply(null, element)).isFalse();
+    assertThat(condition.apply(new DriverStub(), element)).isFalse();
   }
 
   @Test
   void actualValue_invisible() {
-    assertThat(condition.actualValue(null, element)).isEqualTo("visible:false");
+    assertThat(condition.actualValue(new DriverStub(), element)).isEqualTo("visible:false");
   }
 
   @Test
   void actualValue_visible() {
     when(element.isDisplayed()).thenReturn(true);
-    assertThat(condition.actualValue(null, element)).isEqualTo("visible:true");
+    assertThat(condition.actualValue(new DriverStub(), element)).isEqualTo("visible:true");
   }
 }

@@ -1,36 +1,25 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class SelectedText extends Condition {
-  private final String expectedText;
+class SelectedText(private val expectedText: String) : Condition("selectedText") {
+    private var actualResult = ""
+    override fun apply(driver: Driver, element: WebElement): Boolean {
+        actualResult = driver.executeJavaScript(
+            "return arguments[0].value.substring(arguments[0].selectionStart, arguments[0].selectionEnd);", element
+        )
+        return actualResult == expectedText
+    }
 
-  public SelectedText(String expectedText) {
-    super("selectedText");
-    this.expectedText = expectedText;
-  }
+    override fun actualValue(driver: Driver, element: WebElement): String {
+        return "'$actualResult'"
+    }
 
-  private String actualResult = "";
-
-  @Override
-  public boolean apply(Driver driver, WebElement element) {
-    actualResult = driver.executeJavaScript(
-      "return arguments[0].value.substring(arguments[0].selectionStart, arguments[0].selectionEnd);", element);
-    return actualResult.equals(expectedText);
-  }
-
-  @Override
-  public String actualValue(Driver driver, WebElement element) {
-    return "'" + actualResult + "'";
-  }
-
-  @Override
-  public String toString() {
-    return String.format("%s '%s'", getName(), expectedText);
-  }
+    override fun toString(): String {
+        return String.format("%s '%s'", name, expectedText)
+    }
 }

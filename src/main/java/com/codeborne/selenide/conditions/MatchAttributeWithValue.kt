@@ -1,40 +1,30 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.regex.Pattern;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import java.util.regex.Pattern
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class MatchAttributeWithValue extends Condition {
-  private final String attributeName;
-  private final Pattern attributeRegex;
+class MatchAttributeWithValue(private val attributeName: String, attributeRegex: String) :
+    Condition("match attribute") {
+    private val attributeRegex: Pattern = Pattern.compile(attributeRegex)
+  override fun apply(driver: Driver, element: WebElement): Boolean {
+        return attributeRegex.matcher(getAttributeValue(element)).matches()
+    }
 
-  public MatchAttributeWithValue(String attributeName, String attributeRegex) {
-    super("match attribute");
-    this.attributeName = attributeName;
-    this.attributeRegex = Pattern.compile(attributeRegex);
-  }
+    override fun actualValue(driver: Driver, element: WebElement): String {
+        return String.format("%s=\"%s\"", attributeName, getAttributeValue(element))
+    }
 
-  @Override
-  public boolean apply(Driver driver, WebElement element) {
-    return attributeRegex.matcher(getAttributeValue(element)).matches();
-  }
+    override fun toString(): String {
+        return String.format("%s %s=\"%s\"", name, attributeName, attributeRegex)
+    }
 
-  @Override
-  public String actualValue(Driver driver, WebElement element) {
-    return String.format("%s=\"%s\"", attributeName, getAttributeValue(element));
-  }
+    private fun getAttributeValue(element: WebElement): String {
+        val attr = element.getAttribute(attributeName)
+        return attr ?: ""
+    }
 
-  @Override
-  public String toString() {
-    return String.format("%s %s=\"%s\"", getName(), attributeName, attributeRegex);
-  }
-
-  private String getAttributeValue(WebElement element) {
-    String attr = element.getAttribute(attributeName);
-    return attr == null ? "" : attr;
-  }
 }

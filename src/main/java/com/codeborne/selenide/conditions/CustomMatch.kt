@@ -1,29 +1,20 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Predicate;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import java.util.function.Predicate
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class CustomMatch extends Condition {
-  protected final Predicate<WebElement> predicate;
+open class CustomMatch(description: String, protected val predicate: Predicate<WebElement>) : Condition(
+  description
+) {
+    override fun apply(driver: Driver, element: WebElement): Boolean {
+        return predicate.test(element)
+    }
 
-  public CustomMatch(String description, Predicate<WebElement> predicate) {
-    super(description);
-    this.predicate = predicate;
-  }
-
-  @Override
-  public boolean apply(Driver driver, WebElement element) {
-    return predicate.test(element);
-  }
-
-
-  @Override
-  public String toString() {
-    return String.format("match '%s' predicate.", getName());
-  }
+    override fun toString(): String {
+        return String.format("match '%s' predicate.", name)
+    }
 }

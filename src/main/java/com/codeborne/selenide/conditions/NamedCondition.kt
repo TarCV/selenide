@@ -1,41 +1,27 @@
-package com.codeborne.selenide.conditions;
+package com.codeborne.selenide.conditions
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class NamedCondition extends Condition {
-  private final String prefix;
-  private final Condition delegate;
+class NamedCondition(private val prefix: String, private val delegate: Condition) : Condition(
+    delegate.name, delegate.missingElementSatisfiesCondition()
+) {
+    override fun apply(driver: Driver, element: WebElement): Boolean {
+        return delegate.apply(driver, element)
+    }
 
-  public NamedCondition(String prefix, Condition delegate) {
-    super(delegate.getName(), delegate.missingElementSatisfiesCondition());
-    this.prefix = prefix;
-    this.delegate = delegate;
-  }
+    override fun actualValue(driver: Driver, element: WebElement): String? {
+        return delegate.actualValue(driver, element)
+    }
 
-  @Override
-  public boolean apply(Driver driver, WebElement element) {
-    return delegate.apply(driver, element);
-  }
+    override fun negate(): Condition {
+        return delegate.negate()
+    }
 
-  @Override
-  public String actualValue(Driver driver, WebElement element) {
-    return delegate.actualValue(driver, element);
-  }
-
-  @Nonnull
-  @Override
-  public Condition negate() {
-    return delegate.negate();
-  }
-
-  @Override
-  public String toString() {
-    return prefix + ' ' + delegate.toString();
-  }
+    override fun toString(): String {
+        return "$prefix $delegate"
+    }
 }
