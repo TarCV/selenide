@@ -18,13 +18,16 @@ import static org.mockito.Mockito.when;
 final class SelenideTargetLocatorTest {
   private final Config config = new SelenideConfig();
   private final WebDriver webdriver = mock(WebDriver.class);
-  private final DriverStub driver = new DriverStub(config, new Browser("zopera", true), webdriver, null);
-  private final SelenideTargetLocator switchTo = new SelenideTargetLocator(driver);
+  private final DriverStub driver = new DriverStub(null, config, new Browser("zopera", true), webdriver, null);
+  private SelenideTargetLocator switchTo;
+
   private final TargetLocator targetLocator = mock(TargetLocator.class);
 
   @BeforeEach
   void setUp() {
     when(webdriver.switchTo()).thenReturn(targetLocator);
+    switchTo = new SelenideTargetLocator(driver);
+
     when(webdriver.getPageSource()).thenReturn("<html><h42/></html>");
   }
 

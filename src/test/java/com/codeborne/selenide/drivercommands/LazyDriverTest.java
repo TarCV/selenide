@@ -1,5 +1,6 @@
 package com.codeborne.selenide.drivercommands;
 
+import com.codeborne.selenide.Browsers;
 import com.codeborne.selenide.Config;
 import com.codeborne.selenide.impl.DummyFileNamer;
 import com.codeborne.selenide.webdriver.WebDriverFactory;
@@ -33,6 +34,7 @@ final class LazyDriverTest implements WithAssertions {
   void mockLogging() {
     when(config.downloadsFolder()).thenReturn("build/down");
     when(config.reopenBrowserOnFail()).thenReturn(true);
+    when(config.browser()).thenReturn(Browsers.CHROME);
     when(config.proxyEnabled()).thenReturn(true);
     driver = new LazyDriver(config, null, emptyList(), factory, browserHealthChecker, createDriverCommand, closeDriverCommand);
   }

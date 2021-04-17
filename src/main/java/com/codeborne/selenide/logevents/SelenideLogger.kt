@@ -19,6 +19,7 @@ object SelenideLogger {
     private val LOG = LoggerFactory.getLogger(SelenideLogger::class.java)
     internal val listeners = ThreadLocal<MutableMap<String, LogEventListener>?>()
     private val df = DurationFormat()
+    private val methodNameRegex = "([A-Z])".toRegex()
 
     /**
      * Add a listener (to the current thread).
@@ -37,23 +38,41 @@ object SelenideLogger {
     }
 
     @CheckReturnValue
-    fun beginStep(source: String?, methodName: String, vararg args: Any?): SelenideLog {
-        return beginStep(source, readableMethodName(methodName) + "(" + readableArguments(*args) + ")")
+    @JvmSynthetic
+    fun beginStep(source: String, methodName: String, vararg args: Any?): SelenideLog {
+        return if (args.isEmpty()) {
+            beginStep(source, methodName)
+        } else {
+            beginStep(source, readableMethodName(methodName) + "(" + readableArguments(*args) + ")")
+        }
+    }
+
+    @CheckReturnValue
+    @JvmStatic
+    fun beginStep(source: String, methodName: String, firstArg: Any?, vararg args: Any?): SelenideLog {
+      val actualArgs = if (firstArg is Array<*> && args.isEmpty()) {
+        firstArg
+      } else if (firstArg == null && args.isEmpty()) {
+        emptyArray()
+      } else {
+        arrayOf(firstArg, *args)
+      }
+      return beginStep(source, readableMethodName(methodName) + "(" + readableArguments(*actualArgs) + ")")
     }
 
     @JvmStatic
     @CheckReturnValue
     fun readableMethodName(methodName: String): String {
-        return methodName.replace("([A-Z])".toRegex(), " $1").toLowerCase()
+      return methodName.replace(methodNameRegex, " $1").toLowerCase()
     }
 
-    @JvmStatic
     @CheckReturnValue
+    @JvmStatic
     fun readableArguments(vararg args: Any?): String {
-        if (args.isEmpty()) {
+        if (args.isNullOrEmpty()) {
             return ""
         }
-        args[0].let {
+        args[0]?.let {
           if (it is Array<*>) {
             return arrayToString(it as Array<Any>)
           }

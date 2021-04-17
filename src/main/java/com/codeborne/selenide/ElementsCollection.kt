@@ -28,7 +28,6 @@ import java.time.Duration
 import java.util.AbstractList
 import java.util.stream.Collectors
 import javax.annotation.CheckReturnValue
-import javax.annotation.ParametersAreNonnullByDefault
 
 class ElementsCollection(private val collection: CollectionSource) : AbstractList<SelenideElement>() {
     constructor(driver: Driver, elements: Collection<WebElement>) : this(
@@ -200,7 +199,7 @@ class ElementsCollection(private val collection: CollectionSource) : AbstractLis
         } else if (lastError is UIAssertionError) {
             throw lastError
         } else {
-            condition.fail(collection, actualElements, lastError as Exception, timeout.toMillis())
+            condition.fail(collection, actualElements, lastError as Exception?, timeout.toMillis())
         }
     }
 

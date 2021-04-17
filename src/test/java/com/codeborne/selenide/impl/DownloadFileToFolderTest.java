@@ -7,9 +7,11 @@ import com.codeborne.selenide.files.FileFilters;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.stubbing.Answer;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.io.TemporaryFilesystem;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +36,9 @@ final class DownloadFileToFolderTest {
   private final WebDriver webdriver = mock(WebDriver.class);
   private final WebElementSource linkWithHref = mock(WebElementSource.class);
   private final WebElement link = mock(WebElement.class);
-  private final DriverStub driver = new DriverStub(config, new Browser("opera", false), webdriver, null);
+
+  @TempDir File tempDir;
+  private final DriverStub driver = new DriverStub(() -> tempDir, config, new Browser("opera", false), webdriver, null);
 
   @BeforeEach
   void setUp() {

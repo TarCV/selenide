@@ -9,6 +9,7 @@ import com.codeborne.selenide.proxy.SelenideProxyServer;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -39,13 +40,14 @@ final class DownloadFileWithProxyServerTest implements WithAssertions {
   private final WebElementSource linkWithHref = mock(WebElementSource.class);
   private final WebElement link = mock(WebElement.class);
   private final FileDownloadFilter filter = spy(new FileDownloadFilter(config));
+  @TempDir File tempDir;
 
   @BeforeEach
   void setUp() {
     config.proxyEnabled(true);
     config.fileDownload(PROXY);
     when(proxy.responseFilter("download")).thenReturn(filter);
-    when(linkWithHref.driver()).thenReturn(new DriverStub(config, new Browser("opera", false), webdriver, proxy));
+    when(linkWithHref.driver()).thenReturn(new DriverStub(() -> tempDir, config, new Browser("opera", false), webdriver, proxy));
     when(linkWithHref.findAndAssertElementIsInteractable()).thenReturn(link);
     when(linkWithHref.toString()).thenReturn("<a href='report.pdf'>report</a>");
   }
@@ -94,7 +96,7 @@ final class DownloadFileWithProxyServerTest implements WithAssertions {
   @Test
   void proxyServerShouldBeStarted() {
     SelenideConfig config = new SelenideConfig().proxyEnabled(true).fileDownload(PROXY);
-    when(linkWithHref.driver()).thenReturn(new DriverStub(config, mock(Browser.class), mock(WebDriver.class), null));
+    when(linkWithHref.driver()).thenReturn(new DriverStub(() -> tempDir, config, mock(Browser.class), mock(WebDriver.class), null));
 
     assertThatThrownBy(() -> command.download(linkWithHref, link, 3000, none()))
       .isInstanceOf(IllegalStateException.class)

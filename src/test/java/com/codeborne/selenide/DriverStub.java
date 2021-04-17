@@ -1,7 +1,6 @@
 package com.codeborne.selenide;
 
 import com.codeborne.selenide.proxy.SelenideProxyServer;
-import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.interactions.Actions;
@@ -10,6 +9,11 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import java.io.File;
+import java.security.Provider;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import static org.mockito.Mockito.mock;
 
@@ -22,23 +26,29 @@ public class DriverStub implements Driver {
   private final Browser browser;
   private final WebDriver webDriver;
   private final SelenideProxyServer proxy;
-  private final DownloadsFolder browserDownloadsFolder = new SharedDownloadsFolder("build/downloads/45");
+  @Nullable private final Supplier<File> tempDir;
 
   public DriverStub() {
     this("zopera");
   }
 
   public DriverStub(String browser) {
-    this(new SelenideConfig(), new Browser(browser, false), mock(WebDriver.class), null);
+    this(null, new SelenideConfig(), new Browser(browser, false), mock(WebDriver.class), null);
   }
 
-  public DriverStub(Config config, Browser browser,
+  public DriverStub(@Nullable Supplier<File> tempDir, Config config, Browser browser,
                     WebDriver webDriver,
                     @Nullable SelenideProxyServer proxy) {
     this.config = config;
     this.browser = browser;
     this.webDriver = webDriver;
     this.proxy = proxy;
+
+    if (tempDir == null) {
+      this.tempDir = null;
+    } else {
+      this.tempDir = tempDir;
+    }
   }
 
   @Override
@@ -84,7 +94,8 @@ public class DriverStub implements Driver {
   @CheckReturnValue
   @Nullable
   public DownloadsFolder browserDownloadsFolder() {
-    return browserDownloadsFolder;
+    Objects.requireNonNull(tempDir);
+    return new SharedDownloadsFolder(tempDir.get() + "/build/downloads/45");
   }
 
   @Override

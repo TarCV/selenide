@@ -27,7 +27,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 internal open class SelenideElementProxy(private val webElementSource: WebElementSource) : InvocationHandler {
     private val exceptionWrapper = ExceptionWrapper()
     @Throws(Throwable::class)
-    override fun invoke(proxy: Any, method: Method, vararg args: Any?): Any {
+    override fun invoke(proxy: Any, method: Method, args: Array<out Any?>?): Any {
         val arguments = Arguments(args)
         if (methodsToSkipLogging.contains(method.name)) return instance!!.execute<Any>(
             proxy,
@@ -40,7 +40,7 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
         }
         val timeoutMs = getTimeoutMs(method, arguments)
         val pollingIntervalMs = getPollingIntervalMs(method, arguments)
-        val log = beginStep(webElementSource.description(), method.name, *args)
+        val log = beginStep(webElementSource.description(), method.name, *args ?: arrayOfNulls(1))
         return try {
             val result = dispatchAndRetry(timeoutMs, pollingIntervalMs, proxy, method, args)!!
             commitStep(log, EventStatus.PASS)
@@ -82,7 +82,7 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
     @Throws(Throwable::class)
     protected fun dispatchAndRetry(
       timeoutMs: Long, pollingIntervalMs: Long,
-      proxy: Any?, method: Method, args: Array<out Any?>
+      proxy: Any?, method: Method, args: Array<out Any?>?
     ): Any? {
         val stopwatch = Stopwatch(timeoutMs)
         var lastError: Throwable?
@@ -90,7 +90,9 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
             lastError = try {
                 return if (isSelenideElementMethod(method)) {
                     instance!!.execute<Any>(proxy!!, webElementSource, method.name, args)
-                } else method.invoke(webElementSource.webElement, *args)
+                } else {
+                  method.invoke(webElementSource.webElement, *args ?: arrayOfNulls(1))
+                }
             } catch (e: InvocationTargetException) {
                 e.targetException
             } catch (e: WebDriverException) {

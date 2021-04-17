@@ -122,7 +122,7 @@ open class Commands protected constructor() {
     @Throws(IOException::class)
     fun <T> execute(
       proxy: Any, webElementSource: WebElementSource, methodName: String,
-      args: Array<out Any?>
+      args: Array<out Any?>?
     ): T? {
         val command: Command<T> = getCommand(methodName)
         return command.execute((proxy as SelenideElement), webElementSource, args)

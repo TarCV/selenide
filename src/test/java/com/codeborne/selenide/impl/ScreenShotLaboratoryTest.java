@@ -33,7 +33,7 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
   private final String workingDirectory = new File(dir).toURI().toString().replaceAll("/$", "");
   private final ChromeDriver webDriver = mock(ChromeDriver.class);
   private final SelenideConfig config = new SelenideConfig().savePageSource(false).reportsFolder("build/reports/tests");
-  private final Driver driver = new DriverStub(config, new Browser("chrome", false), webDriver, null);
+  private final Driver driver = new DriverStub(null, config, new Browser("chrome", false), webDriver, null);
   private final Photographer photographer = mock(Photographer.class);
   private final PageSourceExtractor extractor = mock(PageSourceExtractor.class);
   private final Clock clock = new DummyClock(12356789L);

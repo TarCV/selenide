@@ -14,6 +14,7 @@ import com.codeborne.selenide.proxy.SelenideProxyServer;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.openqa.selenium.WebElement;
 
 import java.io.File;
@@ -40,6 +41,7 @@ final class DownloadFileTest implements WithAssertions {
   private final WebElementSource linkWithHref = mock(WebElementSource.class);
   private final WebElement link = mock(WebElement.class);
   private final File file = new File("some-file.yxy");
+  @TempDir File tempDir;
 
   @BeforeEach
   void setUp() {
@@ -65,7 +67,7 @@ final class DownloadFileTest implements WithAssertions {
   void canDownloadFile_withProxyServer() throws IOException {
     config.proxyEnabled(true).fileDownload(PROXY);
     SelenideProxyServer selenideProxy = mock(SelenideProxyServer.class);
-    when(linkWithHref.driver()).thenReturn(new DriverStub(config, null, null, selenideProxy));
+    when(linkWithHref.driver()).thenReturn(new DriverStub(() -> tempDir, config, null, null, selenideProxy));
     when(proxy.download(any(), any(), anyLong(), any())).thenReturn(file);
 
     File f = command.execute(seLink, linkWithHref, new Object[]{9000L});

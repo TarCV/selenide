@@ -25,8 +25,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 final class DownloadFileWithHttpRequestTest {
+  final DummyRandomizer dummyRandomizer = new DummyRandomizer("111-222-333-444");
   private final DownloadFileWithHttpRequest download = new DownloadFileWithHttpRequest(
-    new Downloader(new DummyRandomizer("111-222-333-444"))
+    new Downloader(dummyRandomizer)
   );
 
   @Test
@@ -105,7 +106,7 @@ final class DownloadFileWithHttpRequestTest {
   void getFileName_random() {
     HttpResponse response = responseWithHeaders();
 
-    assertThat(download.getFileName("/images/6584836/", response)).isEqualTo("111-222-333-444");
+    assertThat(download.getFileName("/images/6584836/", response)).isEqualTo(dummyRandomizer.text());
   }
 
   private HttpResponse responseWithHeaders(Header... headers) {

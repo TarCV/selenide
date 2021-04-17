@@ -25,7 +25,7 @@ final class ModalTest {
   private final Alert alert = mock(Alert.class);
   private final ChromeDriver webDriver = mock(ChromeDriver.class, RETURNS_DEEP_STUBS);
   private final SelenideConfig config = new SelenideConfig();
-  private final Driver driver = new DriverStub(config, new Browser("chrome", false), webDriver, null);
+  private final Driver driver = new DriverStub(null, config, new Browser("chrome", false), webDriver, null);
   private URI reportsBaseUri;
 
   @BeforeEach

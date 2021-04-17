@@ -8,7 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 open class InetAddressResolver {
     @CheckReturnValue
-    open fun getInetAddressByName(hostname: String?): InetAddress {
+    open fun getInetAddressByName(hostname: String): InetAddress {
         return try {
             InetAddress.getByName(hostname)
         } catch (e: UnknownHostException) {

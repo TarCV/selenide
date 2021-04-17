@@ -1,17 +1,18 @@
 package com.codeborne.selenide.proxy;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-@ParametersAreNonnullByDefault
 class InetAddressResolverStub extends InetAddressResolver {
   @Override
   @CheckReturnValue
   @Nonnull
-  InetAddress getInetAddressByName(String hostname) {
+  public InetAddress getInetAddressByName(@NotNull String hostname) {
     try {
       return InetAddress.getByAddress(hostname, new byte[4]);
     }

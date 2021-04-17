@@ -45,6 +45,7 @@ final class ElementsCollectionTest implements WithAssertions {
   @Test
   void shouldHaveSize() {
     ElementsCollection collection = spy(new ElementsCollection(source));
+    when(source.description()).thenReturn("");
     when(source.getElements()).thenReturn(emptyList());
 
     collection.shouldHaveSize(0);
@@ -58,6 +59,7 @@ final class ElementsCollectionTest implements WithAssertions {
   @Test
   void shouldBe() {
     ElementsCollection collection = new ElementsCollection(source);
+    when(source.description()).thenReturn("");
     when(source.getElements()).thenReturn(emptyList());
 
     collection.shouldBe(CollectionCondition.size(0));
@@ -69,6 +71,7 @@ final class ElementsCollectionTest implements WithAssertions {
   @Test
   void shouldWithErrorThrown() {
     ElementsCollection collection = new ElementsCollection(source);
+    when(source.description()).thenReturn("");
     when(source.getElements()).thenReturn(emptyList());
 
     assertThatThrownBy(() -> collection.should("Size", Duration.ofMillis(1), CollectionCondition.size(1)))
@@ -225,6 +228,7 @@ final class ElementsCollectionTest implements WithAssertions {
     CollectionSource source = mock(CollectionSource.class);
     when(source.driver()).thenReturn(driver);
     ElementsCollection collection = spy(new ElementsCollection(source));
+    when(source.description()).thenReturn("");
     when(source.getElements()).thenReturn(asList(element1, element2));
 
     collection.shouldHave(size(2));
@@ -235,6 +239,7 @@ final class ElementsCollectionTest implements WithAssertions {
   void doesNotWait_ifJavascriptExceptionHappened() {
     CollectionSource source = mock(CollectionSource.class);
     when(source.driver()).thenReturn(driver);
+    when(source.description()).thenReturn("");
     ElementsCollection collection = spy(new ElementsCollection(source));
     when(source.getElements()).thenThrow(new JavascriptException("ReferenceError: Sizzle is not defined"));
 
@@ -246,6 +251,7 @@ final class ElementsCollectionTest implements WithAssertions {
   @Test
   void sleepsAsLessAsPossible_untilConditionGetsMatched() {
     ElementsCollection collection = spy(new ElementsCollection(source));
+    when(source.description()).thenReturn("");
     when(source.getElements()).thenReturn(
       singletonList(element1),
       asList(element1, element2),

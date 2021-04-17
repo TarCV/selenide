@@ -31,7 +31,7 @@ final class WebElementSelectorTest {
   @Test
   void findElement_byCss() {
     Config config = new SelenideConfig().selectorMode(CSS);
-    Driver driver = new DriverStub(config, browser, webDriver, null);
+    Driver driver = new DriverStub(null, config, browser, webDriver, null);
     WebElement div = mock(WebElement.class);
     when(webDriver.findElement(By.cssSelector("a.active"))).thenReturn(div);
 
@@ -41,7 +41,7 @@ final class WebElementSelectorTest {
   @Test
   void findElement_byNonCss() {
     Config config = new SelenideConfig().selectorMode(Sizzle);
-    Driver driver = new DriverStub(config, browser, webDriver, null);
+    Driver driver = new DriverStub(null, config, browser, webDriver, null);
     WebElement div = mock(WebElement.class);
     when(webDriver.findElement(By.xpath("/div/h1"))).thenReturn(div);
 
@@ -51,7 +51,7 @@ final class WebElementSelectorTest {
   @Test
   void findElement_fromRoot_canUseSizzleSelectors() {
     Config config = new SelenideConfig().selectorMode(Sizzle);
-    Driver driver = new DriverStub(config, browser, webDriver, null);
+    Driver driver = new DriverStub(null, config, browser, webDriver, null);
 
     WebElement div = mock(WebElement.class);
     when(webDriver.executeScript("return typeof Sizzle != 'undefined'")).thenReturn(true);
@@ -63,7 +63,7 @@ final class WebElementSelectorTest {
   @Test
   void findElement_insideElement_canUseSizzleSelectors() {
     Config config = new SelenideConfig().selectorMode(Sizzle);
-    Driver driver = new DriverStub(config, browser, webDriver, null);
+    Driver driver = new DriverStub(null, config, browser, webDriver, null);
 
     WebElement div = mock(WebElement.class);
     when(webDriver.executeScript("return typeof Sizzle != 'undefined'")).thenReturn(true);
@@ -76,7 +76,7 @@ final class WebElementSelectorTest {
   @Test
   void findElements_byCss() {
     Config config = new SelenideConfig().selectorMode(CSS);
-    Driver driver = new DriverStub(config, browser, webDriver, null);
+    Driver driver = new DriverStub(null, config, browser, webDriver, null);
     List<WebElement> divs = asList(mock(WebElement.class), mock(WebElement.class));
     when(webDriver.findElements(By.cssSelector("a.active"))).thenReturn(divs);
 
@@ -86,7 +86,7 @@ final class WebElementSelectorTest {
   @Test
   void findElements_byNonCss() {
     Config config = new SelenideConfig().selectorMode(Sizzle);
-    Driver driver = new DriverStub(config, browser, webDriver, null);
+    Driver driver = new DriverStub(null, config, browser, webDriver, null);
     List<WebElement> divs = asList(mock(WebElement.class), mock(WebElement.class));
     when(webDriver.findElements(By.xpath("/div/h1"))).thenReturn(divs);
 

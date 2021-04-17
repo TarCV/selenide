@@ -32,7 +32,7 @@ final class SelenidePageFactoryTest {
   private final TestPage page = new TestPage();
   private final Config config = new SelenideConfig();
   private final WebDriver webDriver = mock(WebDriver.class);
-  private final Driver driver = new DriverStub(config, null, webDriver, null);
+  private final Driver driver = new DriverStub(null, config, null, webDriver, null);
   private final SelenidePageFactory pageFactory = new SelenidePageFactory();
   private final ClassLoader cl = getClass().getClassLoader();
 

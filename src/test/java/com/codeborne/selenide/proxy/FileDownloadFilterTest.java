@@ -25,9 +25,15 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 final class FileDownloadFilterTest implements WithAssertions {
-  private final FileDownloadFilter filter = new FileDownloadFilter(
-    new SelenideConfig().downloadsFolder("build/downloads"), new Downloader(new DummyRandomizer("random-text"))
-  );
+  private final FileDownloadFilter filter;
+  private final DummyRandomizer dummyRandomizer = new DummyRandomizer("random-text");
+
+  {
+    filter = new FileDownloadFilter(
+      new SelenideConfig().downloadsFolder("build/downloads"), new Downloader(dummyRandomizer)
+    );
+  }
+
   private final HttpResponse response = mock(HttpResponse.class);
   private final HttpMessageContents contents = mock(HttpMessageContents.class);
   private final HttpMessageInfo messageInfo = mock(HttpMessageInfo.class);
@@ -63,10 +69,11 @@ final class FileDownloadFilterTest implements WithAssertions {
   void doesNotInterceptResponsesWithCodeBelow200() {
     filter.activate();
     mockStatusCode(199, "below 200");
+    mockUrl("/foo/bar/cv.pdf?4242");
     filter.filterResponse(response, contents, messageInfo);
 
     assertThat(filter.responsesAsString())
-      .isEqualTo("Intercepted 1 responses:\n  #1  null -> 199 \"below 200\" {hkey-01=hvalue-01} app/json  (7 bytes)\n");
+      .isEqualTo("Intercepted 1 responses:\n  #1  /foo/bar/cv.pdf?4242 -> 199 \"below 200\" {hkey-01=hvalue-01} app/json  (7 bytes)\n");
   }
 
   private void mockStatusCode(int code, String reason) {
@@ -81,10 +88,11 @@ final class FileDownloadFilterTest implements WithAssertions {
   void doesNotInterceptResponsesWithCodeAbove300() {
     filter.activate();
     mockStatusCode(300, "300 or above");
+    mockUrl("/foo/bar/cv.pdf?4242");
     filter.filterResponse(response, contents, messageInfo);
 
     assertThat(filter.responsesAsString())
-      .isEqualTo("Intercepted 1 responses:\n  #1  null -> 300 \"300 or above\" {hkey-01=hvalue-01} app/json  (7 bytes)\n");
+      .isEqualTo("Intercepted 1 responses:\n  #1  /foo/bar/cv.pdf?4242 -> 300 \"300 or above\" {hkey-01=hvalue-01} app/json  (7 bytes)\n");
   }
 
   @Test
@@ -92,13 +100,14 @@ final class FileDownloadFilterTest implements WithAssertions {
     filter.activate();
     mockStatusCode(200, "200=success");
     mockHeaders().add("content-disposition", "attachement; filename=report.pdf");
+    mockUrl("/foo/bar/cv.pdf?4242");
     when(contents.getBinaryContents()).thenReturn(new byte[]{1, 2, 3, 4, 5});
 
     filter.filterResponse(response, contents, messageInfo);
     assertThat(filter.downloads().size()).isEqualTo(1);
 
     File file = filter.downloads().files().get(0).getFile();
-    File expectedFile = new File("build/downloads/random-text/report.pdf");
+    File expectedFile = new File("build/downloads/" + dummyRandomizer.text() + "/report.pdf");
     assertThat(file.getName()).isEqualTo("report.pdf");
     assertThat(file.getPath()).endsWith(expectedFile.getPath());
     assertThat(readFileToByteArray(file)).isEqualTo(new byte[]{1, 2, 3, 4, 5});
@@ -117,7 +126,7 @@ final class FileDownloadFilterTest implements WithAssertions {
     assertThat(filter.responsesAsString())
       .isEqualTo("Intercepted 1 responses:\n  #1  /foo/bar/cv.pdf?42 -> 200 \"200=success\" {} app/json  (7 bytes)\n");
     File file = filter.downloads().files().get(0).getFile();
-    File expectedFile = new File("build/downloads/random-text/cv.pdf");
+    File expectedFile = new File("build/downloads/" + dummyRandomizer.text() + "/cv.pdf");
     assertThat(file.getName()).isEqualTo("cv.pdf");
     assertThat(file.getPath()).endsWith(expectedFile.getPath());
     assertThat(readFileToString(file, UTF_8)).isEqualTo("HELLO");

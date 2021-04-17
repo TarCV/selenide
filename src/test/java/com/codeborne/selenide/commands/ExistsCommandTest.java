@@ -8,9 +8,12 @@ import com.codeborne.selenide.ex.ElementNotFound;
 import com.codeborne.selenide.impl.WebElementSource;
 import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+
+import java.io.File;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -21,6 +24,7 @@ final class ExistsCommandTest implements WithAssertions {
   private final WebElementSource locator = mock(WebElementSource.class);
   private final WebElement element = mock(WebElement.class);
   private final Exists existsCommand = new Exists();
+  @TempDir File tempDir;
 
   @Test
   void testExistExecuteMethod() {

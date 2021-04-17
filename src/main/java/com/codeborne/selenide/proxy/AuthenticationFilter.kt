@@ -15,8 +15,8 @@ class AuthenticationFilter : RequestFilter {
     private var credentials: Credentials? = null
     override fun filterRequest(
         request: HttpRequest,
-        contents: HttpMessageContents,
-        messageInfo: HttpMessageInfo
+        contents: HttpMessageContents?,
+        messageInfo: HttpMessageInfo?
     ): HttpResponse? {
         authenticationType?.let {  authenticationType ->
             val authorization = String.format("%s %s", authenticationType.value, credentials!!.encode())

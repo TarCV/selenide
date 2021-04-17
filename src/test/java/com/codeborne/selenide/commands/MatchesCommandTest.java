@@ -1,6 +1,7 @@
 package com.codeborne.selenide.commands;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Driver;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.impl.WebElementSource;
 import org.assertj.core.api.WithAssertions;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.when;
 final class MatchesCommandTest implements WithAssertions {
   private final SelenideElement proxy = mock(SelenideElement.class);
   private final WebElementSource locator = mock(WebElementSource.class);
+  private final Driver driver = mock(Driver.class);
   private final SelenideElement mockedElement = mock(SelenideElement.class);
   private final Matches matchesCommand = new Matches();
 
@@ -29,6 +31,7 @@ final class MatchesCommandTest implements WithAssertions {
   @Test
   void testExecuteMethodWhenElementDoesntMeetCondition() {
     when(locator.getWebElement()).thenReturn(mockedElement);
+    when(locator.driver()).thenReturn(driver);
     when(mockedElement.isEnabled()).thenReturn(true);
     assertThat(matchesCommand.execute(proxy, locator, new Object[]{Condition.disabled}))
       .isFalse();
@@ -37,6 +40,7 @@ final class MatchesCommandTest implements WithAssertions {
   @Test
   void testExecuteMethodWhenElementMeetsCondition() {
     when(locator.getWebElement()).thenReturn(mockedElement);
+    when(locator.driver()).thenReturn(driver);
     when(mockedElement.isEnabled()).thenReturn(true);
     assertThat(matchesCommand.execute(proxy, locator, new Object[]{Condition.enabled}))
       .isTrue();

@@ -51,7 +51,7 @@ final class SelenideLoggerTest implements WithAssertions {
 
   @Test
   void printsReadableArgumentsValues() {
-    assertThat(readableArguments((Object[]) null)).isEqualTo("");
+    assertThat(readableArguments()).isEqualTo("");
     assertThat(readableArguments(111)).isEqualTo("111");
     assertThat(readableArguments(1, 2, 3)).isEqualTo("[1, 2, 3]");
     assertThat(readableArguments((Object[]) new String[]{"a"})).isEqualTo("a");
