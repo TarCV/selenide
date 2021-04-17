@@ -22,7 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class WebDriverThreadLocalContainer : WebDriverContainer {
-    private val listeners: MutableList<WebDriverEventListener?> = ArrayList()
+    private val listeners: MutableList<WebDriverEventListener> = ArrayList()
 
     @JvmField
     val allWebDriverThreads: MutableCollection<Thread> = ConcurrentLinkedQueue()
@@ -41,7 +41,7 @@ class WebDriverThreadLocalContainer : WebDriverContainer {
 
     @JvmField
     val cleanupThreadStarted = AtomicBoolean(false)
-    override fun addListener(listener: WebDriverEventListener?) {
+    override fun addListener(listener: WebDriverEventListener) {
         listeners.add(listener)
     }
 

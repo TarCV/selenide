@@ -11,7 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 interface WebDriverContainer {
-    fun addListener(listener: WebDriverEventListener?)
+    fun addListener(listener: WebDriverEventListener)
     fun setWebDriver(webDriver: WebDriver, selenideProxy: SelenideProxyServer?)
     fun setWebDriver(
         webDriver: WebDriver,
