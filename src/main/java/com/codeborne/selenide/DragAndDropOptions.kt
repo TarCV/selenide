@@ -1,47 +1,34 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static com.codeborne.selenide.DragAndDropOptions.DragAndDropMethod.ACTIONS;
-import static com.codeborne.selenide.DragAndDropOptions.DragAndDropMethod.JS;
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class DragAndDropOptions {
+class DragAndDropOptions(val method: DragAndDropMethod) {
 
-  private final DragAndDropMethod method;
+    enum class DragAndDropMethod {
+        /**
+         * Executing drag and drop via Selenium Actions
+         */
+        ACTIONS,
 
-  public DragAndDropOptions(DragAndDropMethod method) {
-    this.method = method;
-  }
+        /**
+         * Executing drag and drop via JS script
+         */
+        JS
+    }
 
-  public static DragAndDropOptions usingJavaScript() {
-    return new DragAndDropOptions(JS);
-  }
+    override fun toString(): String {
+        return String.format("method: %s", method)
+    }
 
-  public static DragAndDropOptions usingActions() {
-    return new DragAndDropOptions(ACTIONS);
-  }
+    companion object {
+        @JvmStatic
+        fun usingJavaScript(): DragAndDropOptions {
+            return DragAndDropOptions(DragAndDropMethod.JS)
+        }
 
-  public DragAndDropMethod getMethod() {
-    return method;
-  }
-
-  public enum DragAndDropMethod {
-
-    /**
-     * Executing drag and drop via Selenium Actions
-     */
-    ACTIONS,
-
-    /**
-     * Executing drag and drop via JS script
-     */
-    JS
-  }
-
-  @Override
-  public String toString() {
-    return String.format("method: %s", method);
-  }
+        fun usingActions(): DragAndDropOptions {
+            return DragAndDropOptions(DragAndDropMethod.ACTIONS)
+        }
+    }
 }
-

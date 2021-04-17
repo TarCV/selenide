@@ -151,7 +151,7 @@ object Selenide {
     @CheckReturnValue
     fun <PageObjectClass> open(
         relativeOrAbsoluteUrl: String,
-        pageObjectClassClass: Class<PageObjectClass>?
+        pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
         return WebDriverRunner.selenideDriver.open(relativeOrAbsoluteUrl, pageObjectClassClass)
     }
@@ -163,7 +163,7 @@ object Selenide {
     @CheckReturnValue
     fun <PageObjectClass> open(
         absoluteUrl: URL,
-        pageObjectClassClass: Class<PageObjectClass>?
+        pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
         return WebDriverRunner.selenideDriver.open(absoluteUrl, pageObjectClassClass)
     }
@@ -176,7 +176,7 @@ object Selenide {
     fun <PageObjectClass> open(
         relativeOrAbsoluteUrl: String,
         domain: String, login: String, password: String,
-        pageObjectClassClass: Class<PageObjectClass>?
+        pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
         return WebDriverRunner.selenideDriver
             .open(relativeOrAbsoluteUrl, domain, login, password, pageObjectClassClass)
@@ -189,7 +189,7 @@ object Selenide {
     @CheckReturnValue
     fun <PageObjectClass> open(
         absoluteUrl: URL, domain: String, login: String, password: String,
-        pageObjectClassClass: Class<PageObjectClass>?
+        pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
         return WebDriverRunner.selenideDriver.open(absoluteUrl, domain, login, password, pageObjectClassClass)
     }
@@ -281,7 +281,7 @@ object Selenide {
      * or null if webdriver does not support taking screenshots.
      */
     @CheckReturnValue
-    fun <T> screenshot(outputType: OutputType<T>?): T? {
+    fun <T> screenshot(outputType: OutputType<T>): T? {
         return WebDriverRunner.selenideDriver.screenshot(outputType)
     }
 
@@ -394,7 +394,8 @@ object Selenide {
     (method will not be removed until 4.x or later)
     """
     )
-    fun `$`(parent: WebElement, seleniumSelector: By): SelenideElement {
+    // TODO: why this hadn't Nullable in Java code?
+    fun `$`(parent: WebElement, seleniumSelector: By): SelenideElement? {
         return WebDriverRunner.selenideDriver.`$`(parent).find(seleniumSelector)
     }
 
@@ -419,7 +420,7 @@ object Selenide {
      * Initialize collection with Elements
      */
     @CheckReturnValue
-    fun `$$`(elements: Collection<WebElement?>): ElementsCollection {
+    fun `$$`(elements: Collection<WebElement>): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$$`(elements)
     }
 
@@ -563,7 +564,7 @@ object Selenide {
      * @return given WebElement collection wrapped into SelenideElement collection
      */
     @CheckReturnValue
-    fun elements(elements: Collection<WebElement?>): ElementsCollection {
+    fun elements(elements: Collection<WebElement>): ElementsCollection {
         return WebDriverRunner.selenideDriver.`$$`(elements)
     }
 
@@ -770,7 +771,7 @@ object Selenide {
      * Initialize a given Page Object instance
      */
     @CheckReturnValue
-    fun <PageObjectClass, T : PageObjectClass?> page(pageObject: T): PageObjectClass {
+    fun <PageObjectClass, T : PageObjectClass> page(pageObject: T): PageObjectClass {
         return WebDriverRunner.selenideDriver.page(pageObject)
     }
 

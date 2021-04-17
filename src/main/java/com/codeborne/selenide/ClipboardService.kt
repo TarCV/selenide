@@ -1,10 +1,7 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-
-public class ClipboardService {
-
-  public Clipboard getClipboard(Driver driver) {
-    return new DefaultClipboard(driver);
-  }
-
+class ClipboardService {
+    fun getClipboard(driver: Driver): Clipboard {
+        return DefaultClipboard(driver)
+    }
 }

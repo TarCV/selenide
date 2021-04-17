@@ -1,14 +1,13 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-public enum ClickMethod {
+enum class ClickMethod {
+    /**
+     * Click the element via JavaScript
+     */
+    JS,
 
-  /**
-   * Click the element via JavaScript
-   */
-  JS,
-
-  /**
-   * Click the element via WebDriver default click
-   */
-  DEFAULT
+    /**
+     * Click the element via WebDriver default click
+     */
+    DEFAULT
 }

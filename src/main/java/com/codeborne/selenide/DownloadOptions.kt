@@ -1,59 +1,51 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import com.codeborne.selenide.files.FileFilter;
+import com.codeborne.selenide.files.FileFilter
+import com.codeborne.selenide.files.FileFilters
 
-import static com.codeborne.selenide.files.FileFilters.none;
+class DownloadOptions private constructor(
+    val method: FileDownloadMode,
+    private val timeout: Long,
+    val filter: FileFilter
+) {
+    fun getTimeout(defaultValue: Long): Long {
+        return if (hasSpecifiedTimed()) timeout else defaultValue
+    }
 
-public class DownloadOptions {
-  private static final long UNSPECIFIED_TIMEOUT = Long.MIN_VALUE;
+    private fun hasSpecifiedTimed(): Boolean {
+        return timeout != UNSPECIFIED_TIMEOUT
+    }
 
-  private final FileDownloadMode method;
-  private final long timeout;
-  private final FileFilter filter;
+    fun withTimeout(timeout: Long): DownloadOptions {
+        return DownloadOptions(method, timeout, filter)
+    }
 
-  private DownloadOptions(FileDownloadMode method, long timeout, FileFilter filter) {
-    this.method = method;
-    this.timeout = timeout;
-    this.filter = filter;
-  }
+    fun withFilter(filter: FileFilter): DownloadOptions {
+        return DownloadOptions(method, timeout, filter)
+    }
 
-  public FileDownloadMode getMethod() {
-    return method;
-  }
+    override fun toString(): String {
+        return if (hasSpecifiedTimed() && !filter.isEmpty) String.format(
+            "method: %s, timeout: %s ms, filter: %s",
+            method,
+            timeout,
+            filter.description()
+        ) else if (hasSpecifiedTimed()) String.format(
+            "method: %s, timeout: %s ms",
+            method,
+            timeout
+        ) else if (!filter.isEmpty) String.format(
+            "method: %s, filter: %s",
+            method,
+            filter.description()
+        ) else String.format("method: %s", method)
+    }
 
-  public long getTimeout(long defaultValue) {
-    return hasSpecifiedTimed() ? timeout : defaultValue;
-  }
-
-  private boolean hasSpecifiedTimed() {
-    return timeout != UNSPECIFIED_TIMEOUT;
-  }
-
-  public FileFilter getFilter() {
-    return filter;
-  }
-
-  public DownloadOptions withTimeout(long timeout) {
-    return new DownloadOptions(method, timeout, filter);
-  }
-
-  public DownloadOptions withFilter(FileFilter filter) {
-    return new DownloadOptions(method, timeout, filter);
-  }
-
-  @Override
-  public String toString() {
-    if (hasSpecifiedTimed() && !filter.isEmpty())
-      return String.format("method: %s, timeout: %s ms, filter: %s", method, timeout, filter.description());
-    else if (hasSpecifiedTimed())
-      return String.format("method: %s, timeout: %s ms", method, timeout);
-    else if (!filter.isEmpty())
-      return String.format("method: %s, filter: %s", method, filter.description());
-    else
-      return String.format("method: %s", method);
-  }
-
-  public static DownloadOptions using(FileDownloadMode method) {
-    return new DownloadOptions(method, UNSPECIFIED_TIMEOUT, none());
-  }
+    companion object {
+        private const val UNSPECIFIED_TIMEOUT = Long.MIN_VALUE
+        @JvmStatic
+        fun using(method: FileDownloadMode): DownloadOptions {
+            return DownloadOptions(method, UNSPECIFIED_TIMEOUT, FileFilters.none())
+        }
+    }
 }

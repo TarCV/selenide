@@ -1,117 +1,100 @@
-package com.codeborne.selenide.selector;
+package com.codeborne.selenide.selector
 
-import com.codeborne.selenide.impl.Cleanup;
-import com.codeborne.selenide.impl.FileContent;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WrapsDriver;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.joining;
+import com.codeborne.selenide.impl.Cleanup
+import com.codeborne.selenide.impl.FileContent
+import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptException
+import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.NoSuchElementException
+import org.openqa.selenium.SearchContext
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.WrapsDriver
+import java.io.Serializable
+import java.util.Arrays
+import java.util.stream.Collectors
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class ByShadow {
-  private static final FileContent jsSource = new FileContent("find-in-shadow-roots.js");
+object ByShadow {
+    private val jsSource = FileContent("find-in-shadow-roots.js")
 
-  /**
-   * Find target elements inside shadow-root that attached to shadow-host.
-   * <br/> Supports inner shadow-hosts.
-   * <p>
-   * <br/> For example: shadow-host &gt; inner-shadow-host &gt; target-element
-   * (each shadow-host must be specified explicitly).
-   *
-   * @param target           CSS expression of target element
-   * @param shadowHost       CSS expression of the shadow-host with attached shadow-root
-   * @param innerShadowHosts subsequent inner shadow-hosts
-   * @return A By which locates elements by CSS inside shadow-root.
-   */
-  @CheckReturnValue
-  @Nonnull
-  public static By cssSelector(String target, String shadowHost, String... innerShadowHosts) {
-    return new ByShadowCss(target, shadowHost, innerShadowHosts);
-  }
-
-  @ParametersAreNonnullByDefault
-  public static class ByShadowCss extends By implements Serializable {
-    private final List<String> shadowHostsChain;
-    private final String target;
-
-    ByShadowCss(String target, String shadowHost, String... innerShadowHosts) {
-      //noinspection ConstantConditions
-      if (shadowHost == null || target == null) {
-        throw new IllegalArgumentException("Cannot find elements when the selector is null");
-      }
-      shadowHostsChain = new ArrayList<>(1 + innerShadowHosts.length);
-      shadowHostsChain.add(shadowHost);
-      shadowHostsChain.addAll(asList(innerShadowHosts));
-      this.target = target;
+    /**
+     * Find target elements inside shadow-root that attached to shadow-host.
+     * <br></br> Supports inner shadow-hosts.
+     *
+     *
+     * <br></br> For example: shadow-host &gt; inner-shadow-host &gt; target-element
+     * (each shadow-host must be specified explicitly).
+     *
+     * @param target           CSS expression of target element
+     * @param shadowHost       CSS expression of the shadow-host with attached shadow-root
+     * @param innerShadowHosts subsequent inner shadow-hosts
+     * @return A By which locates elements by CSS inside shadow-root.
+     */
+    @CheckReturnValue
+    fun cssSelector(target: String, shadowHost: String, vararg innerShadowHosts: String): By {
+        return ByShadowCss(target, shadowHost, *innerShadowHosts)
     }
 
-    @Override
-    @CheckReturnValue
-    @Nonnull
-    public WebElement findElement(SearchContext context) {
-      List<WebElement> found = findElements(context);
-      if (found.isEmpty()) {
-        throw new NoSuchElementException("Cannot locate an element " + target + " in shadow roots " + describeShadowRoots());
-      }
-      return found.get(0);
-    }
-
-    @Override
-    @CheckReturnValue
-    @Nonnull
-    public List<WebElement> findElements(SearchContext context) {
-      try {
-        if (context instanceof JavascriptExecutor) {
-          return findElementsInDocument((JavascriptExecutor) context);
+    @ParametersAreNonnullByDefault
+    class ByShadowCss internal constructor(target: String, shadowHost: String, vararg innerShadowHosts: String) :
+        By(), Serializable {
+        private val shadowHostsChain: MutableList<String>
+        private val target: String
+        @CheckReturnValue
+        override fun findElement(context: SearchContext): WebElement {
+            val found = findElements(context)
+            if (found.isEmpty()) {
+                throw NoSuchElementException("Cannot locate an element " + target + " in shadow roots " + describeShadowRoots())
+            }
+            return found[0]
         }
-        else {
-          return findElementsInElement(context);
+
+        @CheckReturnValue
+        override fun findElements(context: SearchContext): List<WebElement> {
+            return try {
+                if (context is JavascriptExecutor) {
+                    findElementsInDocument(context as JavascriptExecutor)
+                } else {
+                    findElementsInElement(context)
+                }
+            } catch (e: JavascriptException) {
+                throw NoSuchElementException(Cleanup.of.webdriverExceptionMessage(e))
+            }
         }
-      }
-      catch (JavascriptException e) {
-        throw new NoSuchElementException(Cleanup.of.webdriverExceptionMessage(e));
-      }
-    }
 
-    @SuppressWarnings("unchecked")
-    private List<WebElement> findElementsInDocument(JavascriptExecutor context) {
-      return (List<WebElement>) context.executeScript(
-        "return " + jsSource.content() + "(arguments[0], arguments[1])", target, shadowHostsChain
-      );
-    }
+        private fun findElementsInDocument(context: JavascriptExecutor): List<WebElement> {
+            return context.executeScript(
+                "return " + jsSource.content() + "(arguments[0], arguments[1])", target, shadowHostsChain
+            ) as List<WebElement>
+        }
 
-    @SuppressWarnings("unchecked")
-    private List<WebElement> findElementsInElement(SearchContext context) {
-      JavascriptExecutor js = (JavascriptExecutor) ((WrapsDriver) context).getWrappedDriver();
-      return (List<WebElement>) js.executeScript(
-        "return " + jsSource.content() + "(arguments[0], arguments[1], arguments[2])", target, shadowHostsChain, context
-      );
-    }
+        private fun findElementsInElement(context: SearchContext): List<WebElement> {
+            val js = (context as WrapsDriver).wrappedDriver as JavascriptExecutor
+            return js.executeScript(
+                "return " + jsSource.content() + "(arguments[0], arguments[1], arguments[2])",
+                target,
+                shadowHostsChain,
+                context
+            ) as List<WebElement>
+        }
 
-    @Override
-    @CheckReturnValue
-    @Nonnull
-    public String toString() {
-      return "By.cssSelector: " + describeShadowRoots() + " -> " + target;
-    }
+        @CheckReturnValue
+        override fun toString(): String {
+            return "By.cssSelector: " + describeShadowRoots() + " -> " + target
+        }
 
-    @CheckReturnValue
-    @Nonnull
-    private String describeShadowRoots() {
-      return shadowHostsChain.stream().collect(joining(" -> "));
+        @CheckReturnValue
+        private fun describeShadowRoots(): String {
+            return shadowHostsChain.stream().collect(Collectors.joining(" -> "))
+        }
+
+        init {
+            shadowHostsChain = ArrayList(1 + innerShadowHosts.size)
+            shadowHostsChain.add(shadowHost)
+            shadowHostsChain.addAll(Arrays.asList(*innerShadowHosts))
+            this.target = target
+        }
     }
-  }
 }

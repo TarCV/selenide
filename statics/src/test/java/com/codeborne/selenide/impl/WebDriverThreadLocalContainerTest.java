@@ -4,6 +4,7 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverProvider;
 import com.codeborne.selenide.WebDriverRunner;
 import org.assertj.core.api.WithAssertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,7 +111,7 @@ final class WebDriverThreadLocalContainerTest implements WithAssertions {
     @Override
     @CheckReturnValue
     @Nonnull
-    public WebDriver createDriver(@Nonnull DesiredCapabilities desiredCapabilities) {
+    public WebDriver createDriver(@NotNull DesiredCapabilities desiredCapabilities) {
       WebDriver webdriver = mock(WebDriver.class);
       WebDriver.Options options = mock(WebDriver.Options.class);
       when(webdriver.manage()).thenReturn(options);

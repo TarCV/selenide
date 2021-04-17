@@ -1,112 +1,100 @@
-package com.codeborne.selenide.webdriver;
+package com.codeborne.selenide.webdriver
 
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.MutableCapabilities;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Arrays.asList;
+import org.openqa.selenium.Capabilities
+import org.openqa.selenium.MutableCapabilities
+import java.util.Arrays
 
 /**
  * A subclass of MutableCapabilities which has fixed `merge` method:
  * it can properly merge all these ChromeOptions etc. with their Maps inside of Maps.
  */
-public class MergeableCapabilities extends MutableCapabilities {
-  public MergeableCapabilities(Capabilities base, Capabilities extraCapabilities) {
-    if (areDifferent(base.getBrowserName(), extraCapabilities.getBrowserName())) {
-      throw new IllegalArgumentException(String.format("Conflicting browser name: '%s' vs. '%s'",
-        base.getBrowserName(), extraCapabilities.getBrowserName()));
+class MergeableCapabilities(base: Capabilities, extraCapabilities: Capabilities) : MutableCapabilities() {
+    private fun areDifferent(text1: String, text2: String): Boolean {
+        return text1.isNotEmpty() && text2.isNotEmpty() && text1 != text2
     }
-    merge(base);
-    merge(extraCapabilities);
-  }
 
-  private boolean areDifferent(String text1, String text2) {
-    return !text1.isEmpty() && !text2.isEmpty() && !text1.equals(text2);
-  }
+    override fun setCapability(key: String, value: Any) {
+        if (value is Map<*, *>) {
+            setCapabilityMap(key, value as Map<String, Any>)
+        } else {
+            super.setCapability(key, value)
+        }
+    }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public void setCapability(String key, Object value) {
-    if (value instanceof Map) {
-      setCapabilityMap(key, (Map<String, Object>) value);
+    private fun setCapabilityMap(key: String, value: Map<String, Any>) {
+        val previousValue = getCapability(key)
+        if (previousValue == null) {
+            super.setCapability(key, value)
+        } else if (previousValue is Map<*, *>) {
+            super.setCapability(key, mergeMaps(previousValue as Map<String, Any>, value))
+        } else {
+            throw IllegalArgumentException(
+                "Cannot merge capability " + key + " of different types: " +
+                        value.javaClass.name + " vs " + previousValue.javaClass.name
+            )
+        }
     }
-    else {
-      super.setCapability(key, value);
-    }
-  }
 
-  @SuppressWarnings("unchecked")
-  private void setCapabilityMap(String key, Map<String, Object> value) {
-    Object previousValue = getCapability(key);
-    if (previousValue == null) {
-      super.setCapability(key, value);
+    private fun mergeMaps(base: Map<String, Any>, extra: Map<String, Any>): Map<String, Any> {
+        val result: MutableMap<String, Any> = HashMap()
+        for ((key, baseValue) in base) {
+            val extraValue = extra[key]
+            result[key] = merge(baseValue, extraValue)
+        }
+        for ((key, value) in extra) {
+            if (!result.containsKey(key)) {
+                result[key] = value
+            }
+        }
+        return result
     }
-    else if (previousValue instanceof Map) {
-      super.setCapability(key, mergeMaps((Map<String, Object>) previousValue, value));
-    }
-    else {
-      throw new IllegalArgumentException("Cannot merge capability " + key + " of different types: " +
-        value.getClass().getName() + " vs " + previousValue.getClass().getName());
-    }
-  }
 
-  private Map<String, Object> mergeMaps(Map<String, Object> base, Map<String, Object> extra) {
-    Map<String, Object> result = new HashMap<>();
-    for (Map.Entry<String, Object> entry : base.entrySet()) {
-      String key = entry.getKey();
-      Object baseValue = entry.getValue();
-      Object extraValue = extra.get(key);
-      result.put(key, merge(baseValue, extraValue));
+    private fun merge(baseValue: Any, extraValue: Any?): Any {
+        return if (extraValue == null) {
+            baseValue
+        } else if (baseValue is List<*> && extraValue is List<*>) {
+            mergeLists(baseValue as List<Any>, extraValue as List<Any>)
+        } else if (baseValue.javaClass.isArray && extraValue.javaClass.isArray) {
+            mergeArrays(baseValue as Array<Any>, extraValue as Array<Any>)
+        } else if (baseValue.javaClass.isArray && extraValue is List<*>) {
+            mergeLists(
+                listOf(*baseValue as Array<Any>),
+                extraValue as List<Any>
+            )
+        } else if (baseValue is List<*> && extraValue.javaClass.isArray) {
+            mergeLists(
+                baseValue as List<Any>,
+                listOf(*extraValue as Array<Any>)
+            )
+        } else if (baseValue.javaClass != extraValue.javaClass) {
+            throw IllegalArgumentException("Cannot merge values of different types: $baseValue vs $extraValue")
+        } else {
+            extraValue
+        }
     }
-    for (Map.Entry<String, Object> entry : extra.entrySet()) {
-      String key = entry.getKey();
-      if (!result.containsKey(key)) {
-        result.put(key, entry.getValue());
-      }
-    }
-    return result;
-  }
 
-  @SuppressWarnings({"unchecked", "ConstantConditions"})
-  private Object merge(Object baseValue, Object extraValue) {
-    if (extraValue == null) {
-      return baseValue;
+    private fun mergeLists(base: List<Any>, extra: List<Any>): List<Any> {
+        val result = ArrayList<Any>()
+        result.addAll(base)
+        result.addAll(extra)
+        return result
     }
-    else if (baseValue instanceof List && extraValue instanceof List) {
-      return mergeLists((List<Object>) baseValue, (List<Object>) extraValue);
-    }
-    else if (baseValue.getClass().isArray() && extraValue.getClass().isArray()) {
-      return mergeArrays((Object[]) baseValue, (Object[]) extraValue);
-    }
-    else if (baseValue.getClass().isArray() && extraValue instanceof List) {
-      return mergeLists(asList((Object[]) baseValue), (List<Object>) extraValue);
-    }
-    else if (baseValue instanceof List && extraValue.getClass().isArray()) {
-      return mergeLists((List<Object>) baseValue, asList((Object[]) extraValue));
-    }
-    else if (baseValue.getClass() != extraValue.getClass()) {
-      throw new IllegalArgumentException("Cannot merge values of different types: " + baseValue + " vs " + extraValue);
-    }
-    else {
-      return extraValue;
-    }
-  }
 
-  private List<Object> mergeLists(List<Object> base, List<Object> extra) {
-    ArrayList<Object> result = new ArrayList<>();
-    result.addAll(base);
-    result.addAll(extra);
-    return result;
-  }
+    private fun mergeArrays(base: Array<Any>, extra: Array<Any>): Array<Any?> {
+        val result = arrayOfNulls<Any>(base.size + extra.size)
+        System.arraycopy(base, 0, result, 0, base.size)
+        System.arraycopy(extra, 0, result, base.size, extra.size)
+        return result
+    }
 
-  private Object[] mergeArrays(Object[] base, Object[] extra) {
-    Object[] result = new Object[base.length + extra.length];
-    System.arraycopy(base, 0, result, 0, base.length);
-    System.arraycopy(extra, 0, result, base.length, extra.length);
-    return result;
-  }
+    init {
+        require(!areDifferent(base.browserName, extraCapabilities.browserName)) {
+            String.format(
+                "Conflicting browser name: '%s' vs. '%s'",
+                base.browserName, extraCapabilities.browserName
+            )
+        }
+        merge(base)
+        merge(extraCapabilities)
+    }
 }

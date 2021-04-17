@@ -1,79 +1,70 @@
-package com.codeborne.selenide.collections;
+package com.codeborne.selenide.collections
 
-import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.ex.ElementNotFound;
-import com.codeborne.selenide.ex.TextsMismatch;
-import com.codeborne.selenide.ex.TextsSizeMismatch;
-import com.codeborne.selenide.impl.Html;
-import com.codeborne.selenide.impl.CollectionSource;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
+import com.codeborne.selenide.ElementsCollection.Companion.texts
+import javax.annotation.ParametersAreNonnullByDefault
+import com.codeborne.selenide.CollectionCondition
+import org.openqa.selenium.WebElement
+import com.codeborne.selenide.impl.Html
+import com.codeborne.selenide.impl.CollectionSource
+import com.codeborne.selenide.ex.ElementNotFound
+import com.codeborne.selenide.ex.TextsSizeMismatch
+import com.codeborne.selenide.ElementsCollection
+import com.codeborne.selenide.ex.TextsMismatch
+import java.lang.Exception
+import java.lang.IllegalArgumentException
+import java.util.Arrays
+import java.util.Collections
+import javax.annotation.CheckReturnValue
 
 @ParametersAreNonnullByDefault
-public class ExactTexts extends CollectionCondition {
-  protected final List<String> expectedTexts;
+open class ExactTexts(expectedTexts: List<String>) : CollectionCondition() {
+    @JvmField
+    val expectedTexts: List<String>
 
-  public ExactTexts(String... expectedTexts) {
-    this(asList(expectedTexts));
-  }
+    constructor(vararg expectedTexts: String) : this(listOf<String>(*expectedTexts)) {}
 
-  public ExactTexts(List<String> expectedTexts) {
-    if (expectedTexts.isEmpty()) {
-      throw new IllegalArgumentException("No expected texts given");
+    @CheckReturnValue
+    override fun test(elements: List<WebElement>): Boolean {
+        if (elements.size != expectedTexts.size) {
+            return false
+        }
+        for (i in expectedTexts.indices) {
+            val element = elements[i]
+            val expectedText = expectedTexts[i]
+            if (!Html.text.equals(element.text, expectedText)) {
+                return false
+            }
+        }
+        return true
     }
-    this.expectedTexts = unmodifiableList(expectedTexts);
-  }
 
-  @CheckReturnValue
-  @Override
-  public boolean test(List<WebElement> elements) {
-    if (elements.size() != expectedTexts.size()) {
-      return false;
+    override fun fail(
+        collection: CollectionSource,
+        elements: List<WebElement>?,
+        lastError: Exception?,
+        timeoutMs: Long
+    ) {
+        if (elements == null || elements.isEmpty()) {
+            val elementNotFound = ElementNotFound(collection, toString(), lastError)
+            elementNotFound.timeoutMs = timeoutMs
+            throw elementNotFound
+        } else if (elements.size != expectedTexts.size) {
+            throw TextsSizeMismatch(collection, texts(elements), expectedTexts, explanation, timeoutMs)
+        } else {
+            throw TextsMismatch(collection, texts(elements), expectedTexts, explanation, timeoutMs)
+        }
     }
 
-    for (int i = 0; i < expectedTexts.size(); i++) {
-      WebElement element = elements.get(i);
-      String expectedText = expectedTexts.get(i);
-      if (!Html.text.equals(element.getText(), expectedText)) {
-        return false;
-      }
+    override fun applyNull(): Boolean {
+        return false
     }
-    return true;
-  }
 
-  @Override
-  public void fail(CollectionSource collection,
-                   @Nullable List<WebElement> elements,
-                   @Nullable Exception lastError,
-                   long timeoutMs) {
-    if (elements == null || elements.isEmpty()) {
-      ElementNotFound elementNotFound = new ElementNotFound(collection, toString(), lastError);
-      elementNotFound.timeoutMs = timeoutMs;
-      throw elementNotFound;
+    override fun toString(): String {
+        return "Exact texts $expectedTexts"
     }
-    else if (elements.size() != expectedTexts.size()) {
-      throw new TextsSizeMismatch(collection, ElementsCollection.texts(elements), expectedTexts, explanation, timeoutMs);
-    }
-    else {
-      throw new TextsMismatch(collection, ElementsCollection.texts(elements), expectedTexts, explanation, timeoutMs);
-    }
-  }
 
-  @Override
-  public boolean applyNull() {
-    return false;
-  }
-
-  @Override
-  public String toString() {
-    return "Exact texts " + expectedTexts;
-  }
+    init {
+        require(expectedTexts.isNotEmpty()) { "No expected texts given" }
+        this.expectedTexts = Collections.unmodifiableList(expectedTexts)
+    }
 }

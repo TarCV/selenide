@@ -1,139 +1,132 @@
-package com.codeborne.selenide.drivercommands;
+package com.codeborne.selenide.drivercommands
 
-import com.codeborne.selenide.Browser;
-import com.codeborne.selenide.Config;
-import com.codeborne.selenide.DownloadsFolder;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.proxy.SelenideProxyServer;
-import com.codeborne.selenide.webdriver.WebDriverFactory;
-import org.openqa.selenium.Proxy;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.events.WebDriverEventListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.Thread.currentThread;
+import com.codeborne.selenide.Browser
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.DownloadsFolder
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.drivercommands.LazyDriver
+import com.codeborne.selenide.proxy.SelenideProxyServer
+import com.codeborne.selenide.webdriver.WebDriverFactory
+import org.openqa.selenium.Proxy
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.support.events.WebDriverEventListener
+import org.slf4j.LoggerFactory
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
+import javax.annotation.concurrent.GuardedBy
 
 /**
  * A `Driver` implementation which opens browser on demand (on a first call).
  * May be created with its own config, proxy and listeners.
  */
 @ParametersAreNonnullByDefault
-public class LazyDriver implements Driver {
-  private static final Logger log = LoggerFactory.getLogger(LazyDriver.class);
+class LazyDriver internal constructor(
+  private val config: Config, private val userProvidedProxy: Proxy?, listeners: List<WebDriverEventListener>?,
+  factory: WebDriverFactory, browserHealthChecker: BrowserHealthChecker,
+  createDriverCommand: CreateDriverCommand, closeDriverCommand: CloseDriverCommand
+) : Driver {
+    private val browserHealthChecker: BrowserHealthChecker
+    private val factory: WebDriverFactory
+    private val closeDriverCommand: CloseDriverCommand
+    private val createDriverCommand: CreateDriverCommand
+    private val listeners: MutableList<WebDriverEventListener> = ArrayList()
+    private val browser: Browser = Browser(config.browser(), config.headless())
 
-  private final Config config;
-  private final BrowserHealthChecker browserHealthChecker;
-  private final WebDriverFactory factory;
-  private final CloseDriverCommand closeDriverCommand;
-  private final CreateDriverCommand createDriverCommand;
-  private final Proxy userProvidedProxy;
-  private final List<WebDriverEventListener> listeners = new ArrayList<>();
-  private final Browser browser;
+    @GuardedBy("this")
+    private var closed = false
+    @GuardedBy("this")
+    private var _webDriver: WebDriver? = null
+    @GuardedBy("this")
+    private var browserDownloadsFolder: DownloadsFolder? = null
+    @field:GuardedBy("this")
+    override var proxy: SelenideProxyServer? = null
+        get() = synchronized(this) { field }
+        private set(value) = synchronized(this) {
+          field = value
+        }
 
-  private boolean closed;
-  private WebDriver webDriver;
-  @Nullable private SelenideProxyServer selenideProxyServer;
-  @Nullable private DownloadsFolder browserDownloadsFolder;
-
-  public LazyDriver(Config config, @Nullable Proxy userProvidedProxy, List<WebDriverEventListener> listeners) {
-    this(config, userProvidedProxy, listeners, new WebDriverFactory(), new BrowserHealthChecker(),
-      new CreateDriverCommand(), new CloseDriverCommand());
-  }
-
-  LazyDriver(Config config, @Nullable Proxy userProvidedProxy, List<WebDriverEventListener> listeners,
-             WebDriverFactory factory, BrowserHealthChecker browserHealthChecker,
-             CreateDriverCommand createDriverCommand, CloseDriverCommand closeDriverCommand) {
-    this.config = config;
-    this.browser = new Browser(config.browser(), config.headless());
-    this.userProvidedProxy = userProvidedProxy;
-    this.listeners.addAll(listeners);
-    this.factory = factory;
-    this.browserHealthChecker = browserHealthChecker;
-    this.closeDriverCommand = closeDriverCommand;
-    this.createDriverCommand = createDriverCommand;
-  }
-
-  @Override
-  @Nonnull
-  public Config config() {
-    return config;
-  }
-
-  @Override
-  @Nonnull
-  public Browser browser() {
-    return browser;
-  }
-
-  @Override
-  public boolean hasWebDriverStarted() {
-    return webDriver != null;
-  }
-
-  @Override
-  @Nonnull
-  public synchronized WebDriver getWebDriver() {
-    if (closed) {
-      throw new IllegalStateException("Webdriver has been closed. You need to call open(url) to open a browser again.");
+    constructor(config: Config, userProvidedProxy: Proxy?, listeners: List<WebDriverEventListener>?) : this(
+        config, userProvidedProxy, listeners, WebDriverFactory(), BrowserHealthChecker(),
+        CreateDriverCommand(), CloseDriverCommand()
+    ) {
     }
-    if (webDriver == null) {
-      throw new IllegalStateException("No webdriver is bound to current thread: " + currentThread().getId() +
-        ". You need to call open(url) first.");
+
+    override fun config(): Config {
+        return config
     }
-    return webDriver;
-  }
 
-  @Override
-  @Nullable
-  public SelenideProxyServer getProxy() {
-    return selenideProxyServer;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public synchronized WebDriver getAndCheckWebDriver() {
-    if (webDriver != null && config.reopenBrowserOnFail() && !browserHealthChecker.isBrowserStillOpen(webDriver)) {
-      log.info("Webdriver has been closed meanwhile. Let's re-create it.");
-      close();
-      createDriver();
+    override fun browser(): Browser {
+        return browser
     }
-    else if (webDriver == null) {
-      log.info("No webdriver is bound to current thread: {} - let's create a new webdriver", currentThread().getId());
-      createDriver();
+
+    // TODO: why this is not sync in Java?
+    override fun hasWebDriverStarted(): Boolean = synchronized(this) {
+        return _webDriver != null
     }
-    return getWebDriver();
-  }
 
-  @CheckReturnValue
-  @Nullable
-  @Override
-  public DownloadsFolder browserDownloadsFolder() {
-    return browserDownloadsFolder;
-  }
+    override val webDriver: WebDriver
+      get() = synchronized(this) {
+          check(!closed) { "Webdriver has been closed. You need to call open(url) to open a browser again." }
+          return checkNotNull(_webDriver) {
+              "No webdriver is bound to current thread: " + Thread.currentThread().id +
+                      ". You need to call open(url) first."
+          }
+      }
 
-  void createDriver() {
-    CreateDriverCommand.Result result = createDriverCommand.createDriver(config, factory, userProvidedProxy, listeners);
-    this.webDriver = result.webDriver;
-    this.selenideProxyServer = result.selenideProxyServer;
-    this.browserDownloadsFolder = result.browserDownloadsFolder;
-    this.closed = false;
-  }
+    @get:CheckReturnValue
+    override val getAndCheckWebDriver: WebDriver
+        get() = synchronized(this) {
+          _webDriver.let {
+            if (it != null && config.reopenBrowserOnFail() && !browserHealthChecker.isBrowserStillOpen(it)) {
+              log.info("Webdriver has been closed meanwhile. Let's re-create it.")
+              close()
+              createDriver()
+            } else if (it == null) {
+              log.info(
+                "No webdriver is bound to current thread: {} - let's create a new webdriver",
+                Thread.currentThread().id
+              )
+              createDriver()
+            } else {
+              it
+            }
+          }
+        }
 
-  @Override
-  public void close() {
-    closeDriverCommand.close(config, webDriver, selenideProxyServer);
-    webDriver = null;
-    selenideProxyServer = null;
-    browserDownloadsFolder = null;
-    closed = true;
-  }
+    @CheckReturnValue
+    // TODO: why this is not sync in Java?
+    override fun browserDownloadsFolder(): DownloadsFolder? = synchronized(this) {
+        return browserDownloadsFolder
+    }
+
+    // TODO: why this is not sync in Java?
+    internal fun createDriver(): WebDriver = synchronized(this) {
+        val result = createDriverCommand.createDriver(config, factory, userProvidedProxy, listeners)
+        _webDriver = result.webDriver
+        proxy = result.selenideProxyServer
+        browserDownloadsFolder = result.browserDownloadsFolder
+        closed = false
+      return result.webDriver
+    }
+
+    // TODO: why this is not sync in Java?
+    override fun close() = synchronized(this) {
+        closeDriverCommand.close(config, _webDriver, proxy)
+        _webDriver = null
+        proxy = null
+        browserDownloadsFolder = null
+        closed = true
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(LazyDriver::class.java)
+    }
+
+    init {
+      this.listeners.addAll(listeners!!)
+        this.factory = factory
+        this.browserHealthChecker = browserHealthChecker
+        this.closeDriverCommand = closeDriverCommand
+        this.createDriverCommand = createDriverCommand
+    }
 }

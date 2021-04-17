@@ -68,7 +68,7 @@ final class LazyDriverTest implements WithAssertions {
     givenOpenedBrowser();
     when(config.reopenBrowserOnFail()).thenReturn(true);
 
-    assertThat(driver.getAndCheckWebDriver()).isEqualTo(webdriver);
+    assertThat(driver.getGetAndCheckWebDriver()).isEqualTo(webdriver);
     verify(browserHealthChecker).isBrowserStillOpen(any());
   }
 
@@ -77,7 +77,7 @@ final class LazyDriverTest implements WithAssertions {
     givenOpenedBrowser();
     when(config.reopenBrowserOnFail()).thenReturn(false);
 
-    assertThat(driver.getAndCheckWebDriver()).isEqualTo(webdriver);
+    assertThat(driver.getGetAndCheckWebDriver()).isEqualTo(webdriver);
     verify(browserHealthChecker, never()).isBrowserStillOpen(any());
   }
 
@@ -91,7 +91,7 @@ final class LazyDriverTest implements WithAssertions {
 
   @Test
   void getWebDriver_throwsException_ifBrowserHasBeenClosed() {
-    driver.getAndCheckWebDriver();
+    driver.getGetAndCheckWebDriver();
     driver.close();
 
     assertThatThrownBy(() -> driver.getWebDriver())
@@ -121,6 +121,6 @@ final class LazyDriverTest implements WithAssertions {
   }
 
   private void givenOpenedBrowser() {
-    assertThat(driver.getAndCheckWebDriver()).isSameAs(webdriver);
+    assertThat(driver.getGetAndCheckWebDriver()).isSameAs(webdriver);
   }
 }

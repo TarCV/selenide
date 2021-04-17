@@ -1,98 +1,78 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import com.codeborne.selenide.proxy.SelenideProxyServer;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.interactions.Actions;
+import com.codeborne.selenide.proxy.SelenideProxyServer
+import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.interactions.Actions
+import javax.annotation.CheckReturnValue
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+interface Driver {
+    @CheckReturnValue
+    fun config(): Config
 
-public interface Driver {
-  @CheckReturnValue
-  @Nonnull
-  Config config();
+    @CheckReturnValue
+    fun browser(): Browser
 
-  @CheckReturnValue
-  @Nonnull
-  Browser browser();
+    @CheckReturnValue
+    fun hasWebDriverStarted(): Boolean
 
-  @CheckReturnValue
-  boolean hasWebDriverStarted();
+    @get:CheckReturnValue
+    val webDriver: WebDriver
 
-  @CheckReturnValue
-  @Nonnull
-  WebDriver getWebDriver();
+    @get:CheckReturnValue
+    val proxy: SelenideProxyServer?
 
-  @CheckReturnValue
-  @Nullable
-  SelenideProxyServer getProxy();
+    @get:CheckReturnValue
+    val getAndCheckWebDriver: WebDriver
 
-  @CheckReturnValue
-  @Nonnull
-  WebDriver getAndCheckWebDriver();
+    @CheckReturnValue
+    fun browserDownloadsFolder(): DownloadsFolder?
+    fun close()
 
-  @CheckReturnValue
-  @Nullable
-  DownloadsFolder browserDownloadsFolder();
-
-  void close();
-
-  @CheckReturnValue
-  default boolean supportsJavascript() {
-    return hasWebDriverStarted() && getWebDriver() instanceof JavascriptExecutor;
-  }
-
-  @SuppressWarnings("unchecked")
-  default <T> T executeJavaScript(String jsCode, Object... arguments) {
-    return (T) ((JavascriptExecutor) getWebDriver()).executeScript(jsCode, arguments);
-  }
-
-  @SuppressWarnings("unchecked")
-  default <T> T executeAsyncJavaScript(String jsCode, Object... arguments) {
-    return (T) ((JavascriptExecutor) getWebDriver()).executeAsyncScript(jsCode, arguments);
-  }
-
-  default void clearCookies() {
-    if (hasWebDriverStarted()) {
-      getWebDriver().manage().deleteAllCookies();
+    @CheckReturnValue
+    fun supportsJavascript(): Boolean {
+        return hasWebDriverStarted() && webDriver is JavascriptExecutor
     }
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  default String getUserAgent() {
-    return executeJavaScript("return navigator.userAgent;");
-  }
+    fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T {
+        return (webDriver as JavascriptExecutor).executeScript(jsCode, *arguments) as T
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  default String source() {
-    return getWebDriver().getPageSource();
-  }
+    fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T {
+        return (webDriver as JavascriptExecutor).executeAsyncScript(jsCode, *arguments) as T
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  default String url() {
-    return getWebDriver().getCurrentUrl();
-  }
+    fun clearCookies() {
+        if (hasWebDriverStarted()) {
+            webDriver.manage().deleteAllCookies()
+        }
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  default String getCurrentFrameUrl() {
-    return executeJavaScript("return window.location.href").toString();
-  }
+    @get:CheckReturnValue
+    val userAgent: String
+        get() = executeJavaScript("return navigator.userAgent;")
 
-  @CheckReturnValue
-  @Nonnull
-  default SelenideTargetLocator switchTo() {
-    return new SelenideTargetLocator(this);
-  }
+    @CheckReturnValue
+    fun source(): String {
+        return webDriver.pageSource
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  default Actions actions() {
-    return new Actions(getWebDriver());
-  }
+    @CheckReturnValue
+    fun url(): String {
+        return webDriver.currentUrl
+    }
+
+    @get:CheckReturnValue
+    val currentFrameUrl: String
+        get() = executeJavaScript<Any>("return window.location.href").toString()
+
+    @CheckReturnValue
+    fun switchTo(): SelenideTargetLocator {
+        return SelenideTargetLocator(this)
+    }
+
+    @CheckReturnValue
+    fun actions(): Actions {
+        return Actions(webDriver)
+    }
 }

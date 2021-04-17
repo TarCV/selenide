@@ -1,56 +1,50 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import static com.codeborne.selenide.ClickMethod.DEFAULT;
-import static com.codeborne.selenide.ClickMethod.JS;
+class ClickOptions private constructor(
+    private val clickMethod: ClickMethod,
+    private val offsetX: Int,
+    private val offsetY: Int
+) {
+    fun offsetX(): Int {
+        return offsetX
+    }
 
-public class ClickOptions {
-  private final int offsetX;
-  private final int offsetY;
-  private final ClickMethod clickMethod;
+    fun offsetY(): Int {
+        return offsetY
+    }
 
-  private ClickOptions(ClickMethod clickMethod, int offsetX, int offsetY) {
-    this.clickMethod = clickMethod;
-    this.offsetX = offsetX;
-    this.offsetY = offsetY;
-  }
+    fun clickOption(): ClickMethod {
+        return clickMethod
+    }
 
-  public static ClickOptions usingDefaultMethod() {
-    return new ClickOptions(DEFAULT, 0, 0);
-  }
+    fun offsetX(offsetX: Int): ClickOptions {
+        return ClickOptions(clickMethod, offsetX, offsetY)
+    }
 
-  public static ClickOptions usingJavaScript() {
-    return new ClickOptions(JS, 0, 0);
-  }
+    fun offsetY(offsetY: Int): ClickOptions {
+        return ClickOptions(clickMethod, offsetX, offsetY)
+    }
 
-  public int offsetX() {
-    return offsetX;
-  }
+    fun offset(offsetX: Int, offsetY: Int): ClickOptions {
+        return ClickOptions(clickMethod, offsetX, offsetY)
+    }
 
-  public int offsetY() {
-    return offsetY;
-  }
+    override fun toString(): String {
+        return if (offsetX == 0 && offsetY == 0) String.format(
+            "method: %s",
+            clickMethod
+        ) else String.format("method: %s, offsetX: %s, offsetY: %s", clickMethod, offsetX, offsetY)
+    }
 
-  public ClickMethod clickOption() {
-    return clickMethod;
-  }
+    companion object {
+        @JvmStatic
+        fun usingDefaultMethod(): ClickOptions {
+            return ClickOptions(ClickMethod.DEFAULT, 0, 0)
+        }
 
-  public ClickOptions offsetX(int offsetX) {
-    return new ClickOptions(clickMethod, offsetX, offsetY);
-  }
-
-  public ClickOptions offsetY(int offsetY) {
-    return new ClickOptions(clickMethod, offsetX, offsetY);
-  }
-
-  public ClickOptions offset(int offsetX, int offsetY) {
-    return new ClickOptions(clickMethod, offsetX, offsetY);
-  }
-
-  @Override
-  public String toString() {
-    if (offsetX == 0 && offsetY == 0)
-      return String.format("method: %s", clickMethod);
-    else
-      return String.format("method: %s, offsetX: %s, offsetY: %s", clickMethod, offsetX, offsetY);
-  }
+        @JvmStatic
+        fun usingJavaScript(): ClickOptions {
+            return ClickOptions(ClickMethod.JS, 0, 0)
+        }
+    }
 }

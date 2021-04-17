@@ -1,21 +1,17 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.google.errorprone.annotations.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public abstract class ElementsContainer {
-  private SelenideElement self;
+abstract class ElementsContainer {
+    @get:Deprecated(
+        """I rather think that this method is not needed.
+    You are expected to find elements INSIDE this container, not the container itself."""
+    )
 
-  /**
-   * @deprecated I rather think that this method is not needed.
-   * You are expected to find elements INSIDE this container, not the container itself.
-   */
-  @CheckReturnValue
-  @Nonnull
-  @Deprecated
-  public SelenideElement getSelf() {
-    return self;
-  }
+    // TODO: why this was NonNull in Java?
+    @get:CheckReturnValue
+    val self: SelenideElement? = null
+
 }

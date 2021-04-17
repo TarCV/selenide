@@ -179,19 +179,6 @@ object WebDriverRunner : Browsers {
         return Browser(browser, headless)
     }
 
-    /**
-     * Is Selenide configured to use Firefox browser
-     */
-    @get:CheckReturnValue
-    val isFirefox: Boolean
-        get() = browser().isFirefox
-
-    /**
-     * Is Selenide configured to use legacy Firefox driver
-     */
-    @get:CheckReturnValue
-    val isLegacyFirefox: Boolean
-        get() = browser().isLegacyFirefox
 
     /**
      * Is Selenide configured to use Chrome browser
@@ -199,20 +186,6 @@ object WebDriverRunner : Browsers {
     @get:CheckReturnValue
     val isChrome: Boolean
         get() = browser().isChrome
-
-    /**
-     * Is Selenide configured to use Internet Explorer browser
-     */
-    @get:CheckReturnValue
-    val isIE: Boolean
-        get() = browser().isIE
-
-    /**
-     * Is Selenide configured to use Microsoft EDGE browser
-     */
-    @get:CheckReturnValue
-    val isEdge: Boolean
-        get() = browser().isEdge
 
     /**
      * Is Selenide configured to use headless browser
@@ -228,13 +201,6 @@ object WebDriverRunner : Browsers {
     fun supportsJavascript(): Boolean {
         return driver().supportsJavascript()
     }
-
-    /**
-     * Is Selenide configured to use Opera browser
-     */
-    @get:CheckReturnValue
-    val isOpera: Boolean
-        get() = browser().isOpera
 
     /**
      * Delete all the browser cookies

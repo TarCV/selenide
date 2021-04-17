@@ -1,20 +1,16 @@
-package com.codeborne.selenide.drivercommands;
+package com.codeborne.selenide.drivercommands
 
-import com.codeborne.selenide.Browser;
-import com.codeborne.selenide.Config;
-import com.codeborne.selenide.DownloadsFolder;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.proxy.SelenideProxyServer;
-import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static java.util.Objects.requireNonNull;
+import com.codeborne.selenide.Browser
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.DownloadsFolder
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.drivercommands.WebDriverWrapper
+import com.codeborne.selenide.proxy.SelenideProxyServer
+import org.openqa.selenium.WebDriver
+import org.slf4j.LoggerFactory
+import java.util.Objects
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 /**
  * A `Driver` implementation which uses given webdriver [and proxy].
@@ -22,97 +18,83 @@ import static java.util.Objects.requireNonNull;
  * It doesn't start a new proxy.
  */
 @ParametersAreNonnullByDefault
-public class WebDriverWrapper implements Driver {
-  private static final Logger log = LoggerFactory.getLogger(WebDriverWrapper.class);
+class WebDriverWrapper private constructor(
+    config: Config, webDriver: WebDriver,
+    selenideProxy: SelenideProxyServer?, browserDownloadsFolder: DownloadsFolder,
+    browserHealthChecker: BrowserHealthChecker, closeDriverCommand: CloseDriverCommand
+) : Driver {
+    private val config: Config
 
-  private final Config config;
-  private final WebDriver webDriver;
-  private final SelenideProxyServer selenideProxy;
-  private final DownloadsFolder browserDownloadsFolder;
-  private final BrowserHealthChecker browserHealthChecker;
-  private final CloseDriverCommand closeDriverCommand;
+    @get:CheckReturnValue
+    override val webDriver: WebDriver
 
-  public WebDriverWrapper(Config config, WebDriver webDriver,
-                          @Nullable SelenideProxyServer selenideProxy, DownloadsFolder browserDownloadsFolder) {
-    this(config, webDriver, selenideProxy, browserDownloadsFolder, new BrowserHealthChecker(), new CloseDriverCommand());
-  }
+    @get:CheckReturnValue
+    override val proxy: SelenideProxyServer?
+    private val browserDownloadsFolder: DownloadsFolder
+    private val browserHealthChecker: BrowserHealthChecker
+    private val closeDriverCommand: CloseDriverCommand
 
-  private WebDriverWrapper(Config config, WebDriver webDriver,
-                           @Nullable SelenideProxyServer selenideProxy, DownloadsFolder browserDownloadsFolder,
-                           BrowserHealthChecker browserHealthChecker, CloseDriverCommand closeDriverCommand) {
-    requireNonNull(config, "config must not be null");
-    requireNonNull(webDriver, "webDriver must not be null");
-
-    this.config = config;
-    this.webDriver = webDriver;
-    this.selenideProxy = selenideProxy;
-    this.browserDownloadsFolder = browserDownloadsFolder;
-    this.browserHealthChecker = browserHealthChecker;
-    this.closeDriverCommand = closeDriverCommand;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Config config() {
-    return config;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Browser browser() {
-    return new Browser(config.browser(), config.headless());
-  }
-
-  @Override
-  @CheckReturnValue
-  public boolean hasWebDriverStarted() {
-    return webDriver != null;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebDriver getWebDriver() {
-    return webDriver;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nullable
-  public SelenideProxyServer getProxy() {
-    return selenideProxy;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebDriver getAndCheckWebDriver() {
-    if (webDriver == null || !browserHealthChecker.isBrowserStillOpen(webDriver)) {
-      log.info("Webdriver has been closed meanwhile");
-      close();
-      throw new IllegalStateException("Webdriver has been closed meanwhile");
+    constructor(
+        config: Config, webDriver: WebDriver,
+        selenideProxy: SelenideProxyServer?, browserDownloadsFolder: DownloadsFolder
+    ) : this(config, webDriver, selenideProxy, browserDownloadsFolder, BrowserHealthChecker(), CloseDriverCommand()) {
     }
-    return webDriver;
-  }
 
-  @Override
-  @CheckReturnValue
-  @Nullable
-  public DownloadsFolder browserDownloadsFolder() {
-    return browserDownloadsFolder;
-  }
+    @CheckReturnValue
+    override fun config(): Config {
+        return config
+    }
 
-  /**
-   * Close the webdriver.
-   * <p>
-   * NB! The behaviour was changed in Selenide 5.4.0
-   * Even if webdriver was created by user - it will be closed.
-   * It may hurt if you try to use this browser after closing.
-   */
-  @Override
-  public void close() {
-    closeDriverCommand.close(config, webDriver, selenideProxy);
-  }
+    @CheckReturnValue
+    override fun browser(): Browser {
+        return Browser(config.browser(), config.headless())
+    }
+
+    @CheckReturnValue
+    override fun hasWebDriverStarted(): Boolean {
+        return webDriver != null
+    }
+
+    @get:CheckReturnValue
+    override val getAndCheckWebDriver: WebDriver
+        get() {
+            if (webDriver == null || !browserHealthChecker.isBrowserStillOpen(webDriver)) {
+                log.info("Webdriver has been closed meanwhile")
+                close()
+                throw IllegalStateException("Webdriver has been closed meanwhile")
+            }
+            return webDriver
+        }
+
+    @CheckReturnValue
+    override fun browserDownloadsFolder(): DownloadsFolder? {
+        return browserDownloadsFolder
+    }
+
+    /**
+     * Close the webdriver.
+     *
+     *
+     * NB! The behaviour was changed in Selenide 5.4.0
+     * Even if webdriver was created by user - it will be closed.
+     * It may hurt if you try to use this browser after closing.
+     */
+    override fun close() {
+        closeDriverCommand.close(config, webDriver, proxy)
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(WebDriverWrapper::class.java)
+    }
+
+    init {
+        Objects.requireNonNull(config, "config must not be null")
+        Objects.requireNonNull(webDriver, "webDriver must not be null")
+        this.config = config
+        this.webDriver = webDriver
+        proxy = selenideProxy
+        this.browserDownloadsFolder = browserDownloadsFolder
+        this.browserHealthChecker = browserHealthChecker
+        this.closeDriverCommand = closeDriverCommand
+    }
 }

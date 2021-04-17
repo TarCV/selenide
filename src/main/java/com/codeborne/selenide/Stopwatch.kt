@@ -1,32 +1,25 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static java.lang.System.nanoTime;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import com.google.errorprone.annotations.CheckReturnValue
+import java.util.concurrent.TimeUnit
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Stopwatch {
-  private final long endTimeNano;
+class Stopwatch(timeoutMs: Long) {
+    private val endTimeNano: Long = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeoutMs)
 
-  public Stopwatch(long timeoutMs) {
-    this.endTimeNano = nanoTime() + MILLISECONDS.toNanos(timeoutMs);
-  }
+  @get:CheckReturnValue
+    val isTimeoutReached: Boolean
+        get() = System.nanoTime() > endTimeNano
 
-  @CheckReturnValue
-  public boolean isTimeoutReached() {
-    return nanoTime() > endTimeNano;
-  }
-
-  public void sleep(long milliseconds) {
-    if (isTimeoutReached()) return;
-
-    try {
-      Thread.sleep(milliseconds);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new RuntimeException(e);
+    fun sleep(milliseconds: Long) {
+        if (isTimeoutReached) return
+        try {
+            Thread.sleep(milliseconds)
+        } catch (e: InterruptedException) {
+            Thread.currentThread().interrupt()
+            throw RuntimeException(e)
+        }
     }
-  }
+
 }

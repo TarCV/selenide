@@ -1,15 +1,16 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import com.codeborne.selenide.impl.WebElementSource;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.IOException;
+import com.codeborne.selenide.impl.WebElementSource
+import java.io.IOException
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public interface Command<T> {
-  Object[] NO_ARGS = new Object[0];
+interface Command<T> {
+    @Throws(IOException::class)
+    fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<Any>): T?
 
-  @Nullable
-  T execute(SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) throws IOException;
+    companion object {
+        @JvmField
+        val NO_ARGS = arrayOfNulls<Any>(0)
+    }
 }

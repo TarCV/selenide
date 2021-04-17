@@ -1,57 +1,43 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static java.lang.Integer.parseInt;
-import static java.util.Optional.ofNullable;
+import java.util.Optional
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-abstract class JSStorage {
+abstract class JSStorage(private val driver: Driver, private val storage: String) {
+    @CheckReturnValue
+    fun containsItem(key: String): Boolean {
+        return Optional.ofNullable(getItem(key)).isPresent
+    }
 
-  private final Driver driver;
-  private final String storage;
+    @CheckReturnValue
+    fun getItem(key: String): String? {
+        return driver.executeJavaScript(js("return %s.getItem(arguments[0])"), key)
+    }
 
-  JSStorage(Driver driver, String storage) {
-    this.driver = driver;
-    this.storage = storage;
-  }
+    fun setItem(key: String, value: String) {
+        driver.executeJavaScript<Any>(js("%s.setItem(arguments[0], arguments[1])"), key, value)
+    }
 
-  @CheckReturnValue
-  public boolean containsItem(String key) {
-    return ofNullable(getItem(key)).isPresent();
-  }
+    fun removeItem(key: String) {
+        driver.executeJavaScript<Any>(js("%s.removeItem(arguments[0])"), key)
+    }
 
-  @CheckReturnValue
-  @Nullable
-  public String getItem(String key) {
-    return driver.executeJavaScript(js("return %s.getItem(arguments[0])"), key);
-  }
+    fun clear() {
+        driver.executeJavaScript<Any>(js("%s.clear()"))
+    }
 
-  public void setItem(String key, String value) {
-    driver.executeJavaScript(js("%s.setItem(arguments[0], arguments[1])"), key, value);
-  }
+    @CheckReturnValue
+    fun size(): Int {
+        return driver.executeJavaScript<Any>(js("return %s.length")).toString().toInt()
+    }
 
-  public void removeItem(String key) {
-    driver.executeJavaScript(js("%s.removeItem(arguments[0])"), key);
-  }
+    @get:CheckReturnValue
+    val isEmpty: Boolean
+        get() = size() == 0
 
-  public void clear() {
-    driver.executeJavaScript(js("%s.clear()"));
-  }
-
-  @CheckReturnValue
-  public int size() {
-    return parseInt(driver.executeJavaScript(js("return %s.length")).toString());
-  }
-
-  @CheckReturnValue
-  public boolean isEmpty() {
-    return size() == 0;
-  }
-
-  private String js(String jsCodeTemplate) {
-    return String.format(jsCodeTemplate, storage);
-  }
+    private fun js(jsCodeTemplate: String): String {
+        return String.format(jsCodeTemplate, storage)
+    }
 }

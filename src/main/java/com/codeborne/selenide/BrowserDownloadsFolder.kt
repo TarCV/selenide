@@ -1,35 +1,30 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
-import java.io.IOException;
-
-import static org.apache.commons.io.FileUtils.cleanDirectory;
+import org.apache.commons.io.FileUtils
+import java.io.File
+import java.io.IOException
+import javax.annotation.ParametersAreNonnullByDefault
 
 /**
  * A unique folder per browser.
  * It effectively means that Selenide can delete all files in this folder before starting every new download.
  */
 @ParametersAreNonnullByDefault
-public final class BrowserDownloadsFolder extends DownloadsFolder {
-  private BrowserDownloadsFolder(File folder) {
-    super(folder);
-  }
-
-  @Override
-  public void cleanupBeforeDownload() {
-    try {
-      if (folder.exists()) {
-        cleanDirectory(folder);
-      }
+class BrowserDownloadsFolder private constructor(folder: File) : DownloadsFolder(folder) {
+    override fun cleanupBeforeDownload() {
+        try {
+            if (folder.exists()) {
+                FileUtils.cleanDirectory(folder)
+            }
+        } catch (e: IOException) {
+            throw IllegalStateException("Failed to cleanup folder " + folder.absolutePath, e)
+        }
     }
-    catch (IOException e) {
-      throw new IllegalStateException("Failed to cleanup folder " + folder.getAbsolutePath(), e);
-    }
-  }
 
-  public static BrowserDownloadsFolder from(@Nullable File folder) {
-    return folder == null ? null : new BrowserDownloadsFolder(folder);
-  }
+    companion object {
+        @JvmStatic
+        fun from(folder: File?): BrowserDownloadsFolder? {
+            return folder?.let { BrowserDownloadsFolder(it) }
+        }
+    }
 }

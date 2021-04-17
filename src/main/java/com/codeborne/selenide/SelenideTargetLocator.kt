@@ -1,233 +1,196 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import com.codeborne.selenide.ex.AlertNotFoundException;
-import com.codeborne.selenide.ex.FrameNotFoundException;
-import com.codeborne.selenide.ex.UIAssertionError;
-import com.codeborne.selenide.ex.WindowNotFoundException;
-import com.codeborne.selenide.impl.windows.FrameByIdOrName;
-import com.codeborne.selenide.impl.windows.WindowByIndex;
-import com.codeborne.selenide.impl.windows.WindowByNameOrHandle;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.InvalidArgumentException;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriver.TargetLocator;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.time.Duration;
-
-import static org.openqa.selenium.support.ui.ExpectedConditions.alertIsPresent;
-import static org.openqa.selenium.support.ui.ExpectedConditions.frameToBeAvailableAndSwitchToIt;
+import com.codeborne.selenide.ex.AlertNotFoundException
+import com.codeborne.selenide.ex.FrameNotFoundException
+import com.codeborne.selenide.ex.UIAssertionError
+import com.codeborne.selenide.ex.WindowNotFoundException
+import com.codeborne.selenide.impl.windows.FrameByIdOrName
+import com.codeborne.selenide.impl.windows.WindowByIndex
+import com.codeborne.selenide.impl.windows.WindowByNameOrHandle
+import org.openqa.selenium.Alert
+import org.openqa.selenium.InvalidArgumentException
+import org.openqa.selenium.NoSuchElementException
+import org.openqa.selenium.TimeoutException
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebDriver.TargetLocator
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.support.ui.ExpectedConditions
+import java.time.Duration
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class SelenideTargetLocator implements TargetLocator {
-  private final Driver driver;
-  private final WebDriver webDriver;
-  private final Config config;
-  private final TargetLocator delegate;
+class SelenideTargetLocator(private val driver: Driver) : TargetLocator {
+    private val webDriver: WebDriver = driver.webDriver
+    private val config: Config = driver.config()
+    private val delegate: TargetLocator = webDriver.switchTo()
 
-  public SelenideTargetLocator(Driver driver) {
-    this.driver = driver;
-    this.config = driver.config();
-    this.webDriver = driver.getWebDriver();
-    this.delegate = webDriver.switchTo();
-  }
-
-  @Override
-  @Nonnull
-  public WebDriver frame(int index) {
-    try {
-      return Wait().until(frameToBeAvailableAndSwitchToIt(index));
-    }
-    catch (NoSuchElementException | TimeoutException e) {
-      throw frameNotFoundError("No frame found with index: " + index, e);
-    }
-    catch (InvalidArgumentException e) {
-      if (isFirefox62Bug(e) || isChrome75Error(e)) {
-        throw frameNotFoundError("No frame found with index: " + index, e);
-      }
-      throw e;
-    }
-  }
-
-  @Override
-  @Nonnull
-  public WebDriver frame(String nameOrId) {
-    try {
-      return Wait().until(frameToBeAvailableAndSwitchToIt(nameOrId));
-    }
-    catch (NoSuchElementException | TimeoutException e) {
-      throw frameNotFoundError("No frame found with id/name: " + nameOrId, e);
-    }
-    catch (InvalidArgumentException e) {
-      if (isFirefox62Bug(e)) {
-        throw frameNotFoundError("No frame found with id/name: " + nameOrId, e);
-      }
-      throw e;
-    }
-  }
-
-  @Override
-  @Nonnull
-  public WebDriver frame(WebElement frameElement) {
-    try {
-      return Wait().until(frameToBeAvailableAndSwitchToIt(frameElement));
-    }
-    catch (NoSuchElementException | TimeoutException e) {
-      throw frameNotFoundError("No frame found with element: " + frameElement, e);
-    }
-    catch (InvalidArgumentException e) {
-      if (isFirefox62Bug(e)) {
-        throw frameNotFoundError("No frame found with element: " + frameElement, e);
-      }
-      throw e;
-    }
-  }
-
-  private boolean isFirefox62Bug(InvalidArgumentException e) {
-    return e.getMessage().contains("untagged enum FrameId");
-  }
-
-  private boolean isChrome75Error(InvalidArgumentException e) {
-    return e.getMessage().contains("invalid argument: 'id' out of range");
-  }
-
-  @Override
-  @Nonnull
-  public WebDriver parentFrame() {
-    return delegate.parentFrame();
-  }
-
-  @Override
-  @Nonnull
-  public WebDriver defaultContent() {
-    return delegate.defaultContent();
-  }
-
-  @Override
-  @Nonnull
-  public WebElement activeElement() {
-    return delegate.activeElement();
-  }
-
-  @Override
-  @Nonnull
-  public Alert alert() {
-    try {
-      return Wait().until(alertIsPresent());
-    }
-    catch (TimeoutException e) {
-      throw alertNotFoundError(e);
-    }
-  }
-
-  /**
-   * Switch to the inner frame (last child frame in given sequence)
-   */
-  @Nonnull
-  public WebDriver innerFrame(String... frames) {
-    delegate.defaultContent();
-
-    for (String frame : frames) {
-      try {
-        Wait().until(new FrameByIdOrName(frame));
-      }
-      catch (NoSuchElementException | TimeoutException e) {
-        throw frameNotFoundError("No frame found with id/name = " + frame, e);
-      }
+    override fun frame(index: Int): WebDriver {
+        return try {
+            Wait().until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(index))
+        } catch (e: NoSuchElementException) {
+            throw frameNotFoundError("No frame found with index: $index", e)
+        } catch (e: TimeoutException) {
+            throw frameNotFoundError("No frame found with index: $index", e)
+        } catch (e: InvalidArgumentException) {
+            if (isFirefox62Bug(e) || isChrome75Error(e)) {
+                throw frameNotFoundError("No frame found with index: $index", e)
+            }
+            throw e
+        }
     }
 
-    return webDriver;
-  }
-
-  /**
-   * Switch to window/tab by index
-   * NB! Order of windows/tabs can be different in different browsers, see Selenide tests.
-   *
-   * @param index index of window (0-based)
-   */
-  @Nonnull
-  public WebDriver window(int index) {
-    try {
-      return Wait().until(new WindowByIndex(index));
+    override fun frame(nameOrId: String): WebDriver {
+        return try {
+            Wait().until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(nameOrId))
+        } catch (e: NoSuchElementException) {
+            throw frameNotFoundError("No frame found with id/name: $nameOrId", e)
+        } catch (e: TimeoutException) {
+            throw frameNotFoundError("No frame found with id/name: $nameOrId", e)
+        } catch (e: InvalidArgumentException) {
+            if (isFirefox62Bug(e)) {
+                throw frameNotFoundError("No frame found with id/name: $nameOrId", e)
+            }
+            throw e
+        }
     }
-    catch (TimeoutException e) {
-      throw windowNotFoundError("No window found with index: " + index, e);
+
+    override fun frame(frameElement: WebElement): WebDriver {
+        return try {
+            Wait().until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameElement))
+        } catch (e: NoSuchElementException) {
+            throw frameNotFoundError("No frame found with element: $frameElement", e)
+        } catch (e: TimeoutException) {
+            throw frameNotFoundError("No frame found with element: $frameElement", e)
+        } catch (e: InvalidArgumentException) {
+            if (isFirefox62Bug(e)) {
+                throw frameNotFoundError("No frame found with element: $frameElement", e)
+            }
+            throw e
+        }
     }
-  }
 
-  /**
-   * Switch to window/tab by index with a configurable timeout
-   * NB! Order of windows/tabs can be different in different browsers, see Selenide tests.
-   *
-   * @param index    index of window (0-based)
-   * @param duration the timeout duration. It overrides default Config.timeout()
-   */
-  @Nonnull
-  public WebDriver window(int index, Duration duration) {
-    try {
-      return Wait(duration).until(new WindowByIndex(index));
+    private fun isFirefox62Bug(e: InvalidArgumentException): Boolean {
+        return e.message!!.contains("untagged enum FrameId")
     }
-    catch (TimeoutException e) {
-      throw windowNotFoundError("No window found with index: " + index, e);
+
+    private fun isChrome75Error(e: InvalidArgumentException): Boolean {
+        return e.message!!.contains("invalid argument: 'id' out of range")
     }
-  }
 
-  /**
-   * Switch to window/tab by name/handle/title
-   *
-   * @param nameOrHandleOrTitle name or handle or title of window/tab
-   */
-  @Override
-  @Nonnull
-  public WebDriver window(String nameOrHandleOrTitle) {
-    try {
-      return Wait().until(new WindowByNameOrHandle(nameOrHandleOrTitle));
+    override fun parentFrame(): WebDriver {
+        return delegate.parentFrame()
     }
-    catch (TimeoutException e) {
-      throw windowNotFoundError("No window found with name or handle or title: " + nameOrHandleOrTitle, e);
+
+    override fun defaultContent(): WebDriver {
+        return delegate.defaultContent()
     }
-  }
 
-  /**
-   * Switch to window/tab by name/handle/title with a configurable timeout
-   *
-   * @param nameOrHandleOrTitle name or handle or title of window/tab
-   * @param duration            the timeout duration. It overrides default Config.timeout()
-   */
-  @Nonnull
-  public WebDriver window(String nameOrHandleOrTitle, Duration duration) {
-    try {
-      return Wait(duration).until(new WindowByNameOrHandle(nameOrHandleOrTitle));
+    override fun activeElement(): WebElement {
+        return delegate.activeElement()
     }
-    catch (TimeoutException e) {
-      throw windowNotFoundError("No window found with name or handle or title: " + nameOrHandleOrTitle, e);
+
+    override fun alert(): Alert {
+        return try {
+            Wait().until(ExpectedConditions.alertIsPresent())
+        } catch (e: TimeoutException) {
+            throw alertNotFoundError(e)
+        }
     }
-  }
 
-  private SelenideWait Wait() {
-    return new SelenideWait(webDriver, config.timeout(), config.pollingInterval());
-  }
+    /**
+     * Switch to the inner frame (last child frame in given sequence)
+     */
+    fun innerFrame(vararg frames: String): WebDriver {
+        delegate.defaultContent()
+        for (frame in frames) {
+            try {
+                Wait().until(FrameByIdOrName(frame))
+            } catch (e: NoSuchElementException) {
+                throw frameNotFoundError("No frame found with id/name = $frame", e)
+            } catch (e: TimeoutException) {
+                throw frameNotFoundError("No frame found with id/name = $frame", e)
+            }
+        }
+        return webDriver
+    }
 
-  private SelenideWait Wait(Duration timeout) {
-    return new SelenideWait(webDriver, timeout.toMillis(), config.pollingInterval());
-  }
+    /**
+     * Switch to window/tab by index
+     * NB! Order of windows/tabs can be different in different browsers, see Selenide tests.
+     *
+     * @param index index of window (0-based)
+     */
+    fun window(index: Int): WebDriver {
+        return try {
+            Wait().until(WindowByIndex(index))
+        } catch (e: TimeoutException) {
+            throw windowNotFoundError("No window found with index: $index", e)
+        }
+    }
 
-  private Error frameNotFoundError(String message, Throwable cause) {
-    FrameNotFoundException error = new FrameNotFoundException(driver, message, cause);
-    return UIAssertionError.wrap(driver, error, config.timeout());
-  }
+    /**
+     * Switch to window/tab by index with a configurable timeout
+     * NB! Order of windows/tabs can be different in different browsers, see Selenide tests.
+     *
+     * @param index    index of window (0-based)
+     * @param duration the timeout duration. It overrides default Config.timeout()
+     */
+    fun window(index: Int, duration: Duration): WebDriver {
+        return try {
+            Wait(duration).until(WindowByIndex(index))
+        } catch (e: TimeoutException) {
+            throw windowNotFoundError("No window found with index: $index", e)
+        }
+    }
 
-  private Error windowNotFoundError(String message, Throwable cause) {
-    WindowNotFoundException error = new WindowNotFoundException(driver, message, cause);
-    return UIAssertionError.wrap(driver, error, config.timeout());
-  }
+    /**
+     * Switch to window/tab by name/handle/title
+     *
+     * @param nameOrHandleOrTitle name or handle or title of window/tab
+     */
+    override fun window(nameOrHandleOrTitle: String): WebDriver {
+        return try {
+            Wait().until(WindowByNameOrHandle(nameOrHandleOrTitle))
+        } catch (e: TimeoutException) {
+            throw windowNotFoundError("No window found with name or handle or title: $nameOrHandleOrTitle", e)
+        }
+    }
 
-  private Error alertNotFoundError(Throwable cause) {
-    AlertNotFoundException error = new AlertNotFoundException(driver, "Alert not found", cause);
-    return UIAssertionError.wrap(driver, error, config.timeout());
-  }
+    /**
+     * Switch to window/tab by name/handle/title with a configurable timeout
+     *
+     * @param nameOrHandleOrTitle name or handle or title of window/tab
+     * @param duration            the timeout duration. It overrides default Config.timeout()
+     */
+    fun window(nameOrHandleOrTitle: String, duration: Duration): WebDriver {
+        return try {
+            Wait(duration).until(WindowByNameOrHandle(nameOrHandleOrTitle))
+        } catch (e: TimeoutException) {
+            throw windowNotFoundError("No window found with name or handle or title: $nameOrHandleOrTitle", e)
+        }
+    }
+
+    private fun Wait(): SelenideWait {
+        return SelenideWait(webDriver, config.timeout(), config.pollingInterval())
+    }
+
+    private fun Wait(timeout: Duration): SelenideWait {
+        return SelenideWait(webDriver, timeout.toMillis(), config.pollingInterval())
+    }
+
+    private fun frameNotFoundError(message: String, cause: Throwable): Error {
+        val error = FrameNotFoundException(driver, message, cause)
+        return UIAssertionError.wrap(driver, error, config.timeout())
+    }
+
+    private fun windowNotFoundError(message: String, cause: Throwable): Error {
+        val error = WindowNotFoundException(driver, message, cause)
+        return UIAssertionError.wrap(driver, error, config.timeout())
+    }
+
+    private fun alertNotFoundError(cause: Throwable): Error {
+        val error = AlertNotFoundException(driver, "Alert not found", cause)
+        return UIAssertionError.wrap(driver, error, config.timeout())
+    }
+
 }

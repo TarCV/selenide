@@ -5,6 +5,8 @@ import com.codeborne.selenide.Config;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.webdriver.ChromeDriverFactory;
 import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Capabilities;
@@ -68,12 +70,11 @@ final class ChromeProfileByFactoryTest extends IntegrationTest {
     }
   }
 
-  @ParametersAreNonnullByDefault
   private static class MyFactory extends ChromeDriverFactory {
     @Override
     @CheckReturnValue
     @Nonnull
-    protected ChromeDriverService buildService(Config config) {
+    protected ChromeDriverService buildService(@Nullable Config config) {
       return new ChromeDriverService.Builder()
         .withLogFile(chromedriverLog)
         .withVerbose(true)
@@ -83,14 +84,14 @@ final class ChromeProfileByFactoryTest extends IntegrationTest {
     @Override
     @CheckReturnValue
     @Nonnull
-    protected String[] excludeSwitches(Capabilities commonCapabilities) {
+    protected String[] excludeSwitches(@NotNull Capabilities commonCapabilities) {
       return new String[]{"enable-automation"};
     }
 
     @Override
     @CheckReturnValue
     @Nonnull
-    protected List<String> createChromeArguments(Config config, Browser browser) {
+    protected List<String> createChromeArguments(@NotNull Config config, @Nullable Browser browser) {
       return asList("--proxy-bypass-list=<-loopback>", "--no-sandbox", "--disable-3d-apis");
     }
   }

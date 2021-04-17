@@ -1,46 +1,44 @@
-package com.codeborne.selenide.collections;
+package com.codeborne.selenide.collections
 
-import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.ex.ListSizeMismatch;
-import com.codeborne.selenide.impl.CollectionSource;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
+import com.codeborne.selenide.CollectionCondition
+import com.codeborne.selenide.ex.ListSizeMismatch
+import com.codeborne.selenide.impl.CollectionSource
+import org.openqa.selenium.WebElement
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class SizeNotEqual extends CollectionCondition {
-  protected final int expectedSize;
+class SizeNotEqual(protected val expectedSize: Int) : CollectionCondition() {
+    override fun test(elements: List<WebElement>): Boolean {
+        return apply(elements.size)
+    }
 
-  public SizeNotEqual(int expectedSize) {
-    this.expectedSize = expectedSize;
-  }
+    override fun fail(
+        collection: CollectionSource,
+        elements: List<WebElement>?,
+        lastError: Exception?,
+        timeoutMs: Long
+    ) {
+        throw ListSizeMismatch(
+            collection.driver(),
+            "<>",
+            expectedSize,
+            explanation,
+            collection,
+            elements,
+            lastError,
+            timeoutMs
+        )
+    }
 
-  @Override
-  public boolean test(List<WebElement> elements) {
-    return apply(elements.size());
-  }
+    override fun applyNull(): Boolean {
+        return apply(0)
+    }
 
-  @Override
-  public void fail(CollectionSource collection,
-                   @Nullable List<WebElement> elements,
-                   @Nullable Exception lastError,
-                   long timeoutMs) {
-    throw new ListSizeMismatch(collection.driver(), "<>", expectedSize, explanation, collection, elements, lastError, timeoutMs);
-  }
+    override fun toString(): String {
+        return String.format("size <> %s", expectedSize)
+    }
 
-  @Override
-  public boolean applyNull() {
-    return apply(0);
-  }
-
-  @Override
-  public String toString() {
-    return String.format("size <> %s", expectedSize);
-  }
-
-  private boolean apply(int size) {
-    return size != expectedSize;
-  }
+    private fun apply(size: Int): Boolean {
+        return size != expectedSize
+    }
 }

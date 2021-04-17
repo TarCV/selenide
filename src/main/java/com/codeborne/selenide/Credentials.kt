@@ -1,42 +1,29 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Base64;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.charset.StandardCharsets
+import java.util.Base64
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public final class Credentials {
-  public final String login;
-  public final String password;
+class Credentials(val login: String, val password: String) {
+    /**
+     * The resulting string is base64 encoded (YWxhZGRpbjpvcGVuc2VzYW1l).
+     *
+     * @return encoded string
+     */
+    @CheckReturnValue
+    fun encode(): String {
+        val credentialsBytes = combine().toByteArray(StandardCharsets.UTF_8)
+        return Base64.getEncoder().encodeToString(credentialsBytes)
+    }
 
-  public Credentials(@Nonnull String login, @Nonnull String password) {
-    this.login = login;
-    this.password = password;
-  }
+    private fun combine(): String {
+        return String.format("%s:%s", login, password)
+    }
 
-  /**
-   * The resulting string is base64 encoded (YWxhZGRpbjpvcGVuc2VzYW1l).
-   *
-   * @return encoded string
-   */
-  @CheckReturnValue
-  @Nonnull
-  public String encode() {
-    byte[] credentialsBytes = combine().getBytes(UTF_8);
-    return Base64.getEncoder().encodeToString(credentialsBytes);
-  }
-
-  private String combine() {
-    return String.format("%s:%s", login, password);
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String toString() {
-    return combine();
-  }
+    @CheckReturnValue
+    override fun toString(): String {
+        return combine()
+    }
 }

@@ -1,171 +1,173 @@
-package com.codeborne.selenide.drivercommands;
+package com.codeborne.selenide.drivercommands
 
-import com.codeborne.selenide.AuthenticationType;
-import com.codeborne.selenide.Config;
-import com.codeborne.selenide.Credentials;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.SelenideDriver;
-import com.codeborne.selenide.logevents.SelenideLogger;
-import com.codeborne.selenide.proxy.AuthenticationFilter;
-import com.codeborne.selenide.proxy.SelenideProxyServer;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.net.URL;
-import java.util.regex.Pattern;
-
-import static com.codeborne.selenide.FileDownloadMode.PROXY;
-import static java.util.regex.Pattern.DOTALL;
+import com.codeborne.selenide.AuthenticationType
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.Credentials
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.FileDownloadMode
+import com.codeborne.selenide.SelenideDriver
+import com.codeborne.selenide.logevents.SelenideLogger
+import com.codeborne.selenide.proxy.AuthenticationFilter
+import com.codeborne.selenide.proxy.SelenideProxyServer
+import org.openqa.selenium.WebDriverException
+import java.net.URL
+import java.util.regex.Pattern
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Navigator {
-  private static final Pattern ABSOLUTE_URL_REGEX = Pattern.compile("^[a-zA-Z]+:.*", DOTALL);
+class Navigator {
+    private val basicAuthUrl = BasicAuthUrl()
+    fun open(driver: SelenideDriver, relativeOrAbsoluteUrl: String) {
+        navigateTo(driver, relativeOrAbsoluteUrl, AuthenticationType.BASIC, "", "", "")
+    }
 
-  private final BasicAuthUrl basicAuthUrl = new BasicAuthUrl();
+    fun open(driver: SelenideDriver, url: URL) {
+        navigateTo(driver, url.toExternalForm(), AuthenticationType.BASIC, "", "", "")
+    }
 
-  public void open(SelenideDriver driver, String relativeOrAbsoluteUrl) {
-    navigateTo(driver, relativeOrAbsoluteUrl, AuthenticationType.BASIC, "", "", "");
-  }
+    fun open(driver: SelenideDriver, relativeOrAbsoluteUrl: String, domain: String, login: String, password: String) {
+        navigateTo(driver, relativeOrAbsoluteUrl, AuthenticationType.BASIC, domain, login, password)
+    }
 
-  public void open(SelenideDriver driver, URL url) {
-    navigateTo(driver, url.toExternalForm(), AuthenticationType.BASIC, "", "", "");
-  }
+    fun open(driver: SelenideDriver, url: URL, domain: String, login: String, password: String) {
+        navigateTo(driver, url.toExternalForm(), AuthenticationType.BASIC, domain, login, password)
+    }
 
-  public void open(SelenideDriver driver, String relativeOrAbsoluteUrl, String domain, String login, String password) {
-    navigateTo(driver, relativeOrAbsoluteUrl, AuthenticationType.BASIC, domain, login, password);
-  }
+    fun open(
+        driver: SelenideDriver, relativeOrAbsoluteUrl: String,
+        authenticationType: AuthenticationType, credentials: Credentials
+    ) {
+        navigateTo(driver, relativeOrAbsoluteUrl, authenticationType, "", credentials.login, credentials.password)
+    }
 
-  public void open(SelenideDriver driver, URL url, String domain, String login, String password) {
-    navigateTo(driver, url.toExternalForm(), AuthenticationType.BASIC, domain, login, password);
-  }
+    private fun basicAuthRequestFilter(selenideProxy: SelenideProxyServer): AuthenticationFilter? {
+        return selenideProxy!!.requestFilter("authentication")
+    }
 
-  public void open(SelenideDriver driver, String relativeOrAbsoluteUrl,
-                   AuthenticationType authenticationType, Credentials credentials) {
-    navigateTo(driver, relativeOrAbsoluteUrl, authenticationType, "", credentials.login, credentials.password);
-  }
+    fun absoluteUrl(config: Config, relativeOrAbsoluteUrl: String): String {
+        return if (isAbsoluteUrl(relativeOrAbsoluteUrl)) relativeOrAbsoluteUrl else config.baseUrl() + relativeOrAbsoluteUrl
+    }
 
-  private AuthenticationFilter basicAuthRequestFilter(SelenideProxyServer selenideProxy) {
-    return selenideProxy.requestFilter("authentication");
-  }
-
-  @Nonnull
-  String absoluteUrl(Config config, String relativeOrAbsoluteUrl) {
-    return isAbsoluteUrl(relativeOrAbsoluteUrl) ? relativeOrAbsoluteUrl : config.baseUrl() + relativeOrAbsoluteUrl;
-  }
-
-  private void navigateTo(SelenideDriver driver, String relativeOrAbsoluteUrl,
-                          AuthenticationType authenticationType, String domain, String login, String password) {
-    checkThatProxyIsEnabled(driver.config());
-
-    String absoluteUrl = absoluteUrl(driver.config(), relativeOrAbsoluteUrl);
-    String url = appendBasicAuthIfNeeded(driver.config(), absoluteUrl, authenticationType, domain, login, password);
-
-    SelenideLogger.run("open", url, () -> {
-      try {
-        WebDriver webDriver = driver.getAndCheckWebDriver();
-        beforeNavigateTo(driver.config(), driver.getProxy(), authenticationType, domain, login, password);
-        webDriver.navigate().to(url);
-      }
-      catch (WebDriverException e) {
-        e.addInfo("selenide.url", url);
-        e.addInfo("selenide.baseUrl", driver.config().baseUrl());
-        if (driver.config().remote() != null) {
-          e.addInfo("selenide.remote", driver.config().remote());
+    private fun navigateTo(
+        driver: SelenideDriver, relativeOrAbsoluteUrl: String,
+        authenticationType: AuthenticationType, domain: String, login: String, password: String
+    ) {
+        checkThatProxyIsEnabled(driver.config())
+        val absoluteUrl = absoluteUrl(driver.config(), relativeOrAbsoluteUrl)
+        val url = appendBasicAuthIfNeeded(driver.config(), absoluteUrl, authenticationType, domain, login, password)
+        SelenideLogger.run("open", url) {
+            try {
+                val webDriver = driver.andCheckWebDriver
+                beforeNavigateTo(driver.config(), driver.proxy!!, authenticationType, domain, login, password)
+                webDriver.navigate().to(url)
+            } catch (e: WebDriverException) {
+                e.addInfo("selenide.url", url)
+                e.addInfo("selenide.baseUrl", driver.config().baseUrl())
+                if (driver.config().remote() != null) {
+                    e.addInfo("selenide.remote", driver.config().remote())
+                }
+                throw e
+            }
         }
-        throw e;
-      }
-    });
-  }
-
-  public void open(SelenideDriver driver) {
-    checkThatProxyIsEnabled(driver.config());
-    SelenideLogger.run("open", "", driver::getAndCheckWebDriver);
-  }
-
-  private void checkThatProxyIsEnabled(Config config) {
-    if (!config.proxyEnabled() && config.fileDownload() == PROXY) {
-      throw new IllegalStateException("config.proxyEnabled == false but config.fileDownload == PROXY. " +
-        "You need to enable proxy server automatically.");
     }
-  }
 
-  private void checkThatProxyIsStarted(@Nullable SelenideProxyServer selenideProxy) {
-    if (selenideProxy == null) {
-      throw new IllegalStateException("config.proxyEnabled == true but proxy server is not created. " +
-        "You need to call `setWebDriver(webDriver, selenideProxy)` instead of `setWebDriver(webDriver)` if you need to use proxy.");
+    fun open(driver: SelenideDriver) {
+        checkThatProxyIsEnabled(driver.config())
+        SelenideLogger.run("open", "") { driver.andCheckWebDriver }
     }
-    if (!selenideProxy.isStarted()) {
-      throw new IllegalStateException("config.proxyEnabled == true but proxy server is not started.");
+
+    private fun checkThatProxyIsEnabled(config: Config) {
+        check(!(!config.proxyEnabled() && config.fileDownload() === FileDownloadMode.PROXY)) {
+            "config.proxyEnabled == false but config.fileDownload == PROXY. " +
+                    "You need to enable proxy server automatically."
+        }
     }
-  }
 
-  private void beforeNavigateTo(Config config, @Nullable SelenideProxyServer selenideProxy,
-                                AuthenticationType authenticationType, String domain, String login, String password) {
-    if (config.proxyEnabled()) {
-      checkThatProxyIsStarted(selenideProxy);
-      beforeNavigateToWithProxy(selenideProxy, authenticationType, domain, login, password);
+    private fun checkThatProxyIsStarted(selenideProxy: SelenideProxyServer) {
+        checkNotNull(selenideProxy) {
+            "config.proxyEnabled == true but proxy server is not created. " +
+                    "You need to call `setWebDriver(webDriver, selenideProxy)` instead of `setWebDriver(webDriver)` if you need to use proxy."
+        }
+        check(selenideProxy.isStarted) { "config.proxyEnabled == true but proxy server is not started." }
     }
-    else {
-      beforeNavigateToWithoutProxy(authenticationType, domain, login, password);
+
+    private fun beforeNavigateTo(
+        config: Config, selenideProxy: SelenideProxyServer,
+        authenticationType: AuthenticationType, domain: String, login: String, password: String
+    ) {
+        if (config.proxyEnabled()) {
+            checkThatProxyIsStarted(selenideProxy)
+            beforeNavigateToWithProxy(selenideProxy, authenticationType, domain, login, password)
+        } else {
+            beforeNavigateToWithoutProxy(authenticationType, domain, login, password)
+        }
     }
-  }
 
-  private void beforeNavigateToWithProxy(SelenideProxyServer selenideProxy,
-                                         AuthenticationType authenticationType, String domain, String login, String password) {
-    if (hasAuthentication(domain, login, password)) {
-      basicAuthRequestFilter(selenideProxy).setAuthentication(authenticationType, new Credentials(login, password));
+    private fun beforeNavigateToWithProxy(
+        selenideProxy: SelenideProxyServer,
+        authenticationType: AuthenticationType, domain: String, login: String, password: String
+    ) {
+        if (hasAuthentication(domain, login, password)) {
+            basicAuthRequestFilter(selenideProxy)!!.setAuthentication(authenticationType, Credentials(login, password))
+        } else {
+            basicAuthRequestFilter(selenideProxy)!!.removeAuthentication()
+        }
     }
-    else {
-      basicAuthRequestFilter(selenideProxy).removeAuthentication();
+
+    private fun beforeNavigateToWithoutProxy(
+        authenticationType: AuthenticationType,
+        domain: String,
+        login: String,
+        password: String
+    ) {
+        if (hasAuthentication(domain, login, password) && authenticationType != AuthenticationType.BASIC) {
+            throw UnsupportedOperationException("Cannot use $authenticationType authentication without proxy server")
+        }
     }
-  }
 
-  private void beforeNavigateToWithoutProxy(AuthenticationType authenticationType, String domain, String login, String password) {
-    if (hasAuthentication(domain, login, password) && authenticationType != AuthenticationType.BASIC) {
-      throw new UnsupportedOperationException("Cannot use " + authenticationType + " authentication without proxy server");
+    private fun hasAuthentication(domain: String, login: String, password: String): Boolean {
+        return !domain.isEmpty() || !login.isEmpty() || !password.isEmpty()
     }
-  }
 
-  private boolean hasAuthentication(String domain, String login, String password) {
-    return !domain.isEmpty() || !login.isEmpty() || !password.isEmpty();
-  }
+    private fun appendBasicAuthIfNeeded(
+        config: Config, url: String,
+        authType: AuthenticationType, domain: String, login: String, password: String
+    ): String {
+        return if (passBasicAuthThroughUrl(
+                config,
+                authType,
+                domain,
+                login,
+                password
+            )
+        ) basicAuthUrl.appendBasicAuthToURL(url, domain, login, password) else url
+    }
 
-  private String appendBasicAuthIfNeeded(Config config, String url,
-                                         AuthenticationType authType, String domain, String login, String password) {
-    return passBasicAuthThroughUrl(config, authType, domain, login, password)
-      ? basicAuthUrl.appendBasicAuthToURL(url, domain, login, password)
-      : url;
-  }
+    private fun passBasicAuthThroughUrl(
+        config: Config,
+        authenticationType: AuthenticationType, domain: String, login: String, password: String
+    ): Boolean {
+        return hasAuthentication(domain, login, password) &&
+                !config.proxyEnabled() && authenticationType == AuthenticationType.BASIC
+    }
 
-  private boolean passBasicAuthThroughUrl(Config config,
-                                          AuthenticationType authenticationType, String domain, String login, String password) {
-    return hasAuthentication(domain, login, password) &&
-      !config.proxyEnabled() &&
-      authenticationType == AuthenticationType.BASIC;
-  }
+    fun isAbsoluteUrl(relativeOrAbsoluteUrl: String): Boolean {
+        return ABSOLUTE_URL_REGEX.matcher(relativeOrAbsoluteUrl).matches()
+    }
 
-  boolean isAbsoluteUrl(String relativeOrAbsoluteUrl) {
-    return ABSOLUTE_URL_REGEX.matcher(relativeOrAbsoluteUrl).matches();
-  }
+    fun back(driver: Driver) {
+        SelenideLogger.run("back", "") { driver.webDriver.navigate().back() }
+    }
 
-  public void back(Driver driver) {
-    SelenideLogger.run("back", "", () -> {
-      driver.getWebDriver().navigate().back();
-    });
-  }
+    fun forward(driver: Driver) {
+        SelenideLogger.run("forward", "") { driver.webDriver.navigate().forward() }
+    }
 
-  public void forward(Driver driver) {
-    SelenideLogger.run("forward", "", () -> {
-      driver.getWebDriver().navigate().forward();
-    });
-  }
+    fun refresh(driver: Driver) {
+        SelenideLogger.run("refresh", "") { driver.webDriver.navigate().refresh() }
+    }
 
-  public void refresh(Driver driver) {
-    SelenideLogger.run("refresh", "", () -> {
-      driver.getWebDriver().navigate().refresh();
-    });
-  }
+    companion object {
+        private val ABSOLUTE_URL_REGEX = Pattern.compile("^[a-zA-Z]+:.*", Pattern.DOTALL)
+    }
 }

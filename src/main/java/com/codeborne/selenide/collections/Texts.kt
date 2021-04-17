@@ -1,41 +1,31 @@
-package com.codeborne.selenide.collections;
+package com.codeborne.selenide.collections
 
-import com.codeborne.selenide.impl.Html;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
+import com.codeborne.selenide.impl.Html
+import org.openqa.selenium.WebElement
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Texts extends ExactTexts {
-  public Texts(String... expectedTexts) {
-    super(expectedTexts);
-  }
+class Texts : ExactTexts {
+    constructor(vararg expectedTexts: String) : super(*expectedTexts) {}
+    constructor(expectedTexts: List<String>) : super(expectedTexts) {}
 
-  public Texts(List<String> expectedTexts) {
-    super(expectedTexts);
-  }
-
-  @CheckReturnValue
-  @Override
-  public boolean test(List<WebElement> elements) {
-    if (elements.size() != expectedTexts.size()) {
-      return false;
+    @CheckReturnValue
+    override fun test(elements: List<WebElement>): Boolean {
+        if (elements.size != expectedTexts.size) {
+            return false
+        }
+        for (i in expectedTexts.indices) {
+            val element = elements[i]
+            val expectedText = expectedTexts[i]
+            if (!Html.text.contains(element.text, expectedText)) {
+                return false
+            }
+        }
+        return true
     }
 
-    for (int i = 0; i < expectedTexts.size(); i++) {
-      WebElement element = elements.get(i);
-      String expectedText = expectedTexts.get(i);
-      if (!Html.text.contains(element.getText(), expectedText)) {
-        return false;
-      }
+    override fun toString(): String {
+        return "texts $expectedTexts"
     }
-    return true;
-  }
-
-  @Override
-  public String toString() {
-    return "texts " + expectedTexts;
-  }
 }

@@ -1,456 +1,404 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import com.codeborne.selenide.drivercommands.LazyDriver;
-import com.codeborne.selenide.drivercommands.Navigator;
-import com.codeborne.selenide.drivercommands.WebDriverWrapper;
-import com.codeborne.selenide.impl.DownloadFileWithHttpRequest;
-import com.codeborne.selenide.impl.ElementFinder;
-import com.codeborne.selenide.impl.PageObjectFactory;
-import com.codeborne.selenide.impl.ScreenShotLaboratory;
-import com.codeborne.selenide.logevents.SelenideLogger;
-import com.codeborne.selenide.proxy.SelenideProxyServer;
-import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.events.WebDriverEventListener;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-
-import static com.codeborne.selenide.files.FileFilters.none;
-import static com.codeborne.selenide.impl.Plugins.inject;
-import static com.codeborne.selenide.impl.WebElementWrapper.wrap;
-import static java.util.Collections.emptyList;
+import com.codeborne.selenide.drivercommands.LazyDriver
+import com.codeborne.selenide.drivercommands.Navigator
+import com.codeborne.selenide.drivercommands.WebDriverWrapper
+import com.codeborne.selenide.files.FileFilters
+import com.codeborne.selenide.impl.DownloadFileWithHttpRequest
+import com.codeborne.selenide.impl.ElementFinder
+import com.codeborne.selenide.impl.PageObjectFactory
+import com.codeborne.selenide.impl.Plugins
+import com.codeborne.selenide.impl.ScreenShotLaboratory
+import com.codeborne.selenide.impl.WebElementWrapper
+import com.codeborne.selenide.logevents.SelenideLogger
+import com.codeborne.selenide.proxy.SelenideProxyServer
+import org.openqa.selenium.By
+import org.openqa.selenium.OutputType
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebElement
+import org.openqa.selenium.support.events.WebDriverEventListener
+import java.io.File
+import java.io.IOException
+import java.net.URI
+import java.net.URISyntaxException
+import java.net.URL
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 /**
  * "Selenide driver" is a container for WebDriver + proxy server + settings
  */
 @ParametersAreNonnullByDefault
-public class SelenideDriver {
-  private static final Navigator navigator = new Navigator();
-  private static final ScreenShotLaboratory screenshots = ScreenShotLaboratory.getInstance();
+open class SelenideDriver {
+    private val config: Config
+    private val driver: Driver
 
-  private final Config config;
-  private final Driver driver;
-
-  public SelenideDriver(Config config) {
-    this(config, emptyList());
-  }
-
-  public SelenideDriver(Config config, List<WebDriverEventListener> listeners) {
-    this(config, new LazyDriver(config, null, listeners));
-  }
-
-  public SelenideDriver(Config config, Driver driver) {
-    this.config = config;
-    this.driver = driver;
-  }
-
-  public SelenideDriver(Config config, WebDriver webDriver, @Nullable SelenideProxyServer selenideProxy) {
-    this(config, webDriver, selenideProxy, new SharedDownloadsFolder(config.downloadsFolder()));
-  }
-
-  public SelenideDriver(Config config, WebDriver webDriver, @Nullable SelenideProxyServer selenideProxy,
-                        DownloadsFolder browserDownloadsFolder) {
-    this.config = config;
-    this.driver = new WebDriverWrapper(config, webDriver, selenideProxy, browserDownloadsFolder);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public Config config() {
-    return config;
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public Driver driver() {
-    return driver;
-  }
-
-  public void open() {
-    navigator.open(this);
-  }
-
-  public void open(String relativeOrAbsoluteUrl) {
-    navigator.open(this, relativeOrAbsoluteUrl);
-  }
-
-  public void open(URL absoluteUrl) {
-    navigator.open(this, absoluteUrl);
-  }
-
-  public void open(String relativeOrAbsoluteUrl, String domain, String login, String password) {
-    navigator.open(this, relativeOrAbsoluteUrl, domain, login, password);
-  }
-
-  public void open(String relativeOrAbsoluteUrl, AuthenticationType authenticationType, Credentials credentials) {
-    navigator.open(this, relativeOrAbsoluteUrl, authenticationType, credentials);
-  }
-
-  public void open(URL absoluteUrl, String domain, String login, String password) {
-    navigator.open(this, absoluteUrl, domain, login, password);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public <PageObjectClass> PageObjectClass open(String relativeOrAbsoluteUrl,
-                                                Class<PageObjectClass> pageObjectClassClass) {
-    return open(relativeOrAbsoluteUrl, "", "", "", pageObjectClassClass);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public <PageObjectClass> PageObjectClass open(URL absoluteUrl,
-                                                Class<PageObjectClass> pageObjectClassClass) {
-    return open(absoluteUrl, "", "", "", pageObjectClassClass);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public <PageObjectClass> PageObjectClass open(String relativeOrAbsoluteUrl,
-                                                String domain, String login, String password,
-                                                Class<PageObjectClass> pageObjectClassClass) {
-    open(relativeOrAbsoluteUrl, domain, login, password);
-    return page(pageObjectClassClass);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public <PageObjectClass> PageObjectClass open(URL absoluteUrl, String domain, String login, String password,
-                                                Class<PageObjectClass> pageObjectClassClass) {
-    open(absoluteUrl, domain, login, password);
-    return page(pageObjectClassClass);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public <PageObjectClass> PageObjectClass page(Class<PageObjectClass> pageObjectClass) {
-    return pageFactory.page(driver(), pageObjectClass);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public <PageObjectClass, T extends PageObjectClass> PageObjectClass page(T pageObject) {
-    return pageFactory.page(driver(), pageObject);
-  }
-
-  public void refresh() {
-    navigator.refresh(driver());
-  }
-
-  public void back() {
-    navigator.back(driver());
-  }
-
-  public void forward() {
-    navigator.forward(driver());
-  }
-
-  public void updateHash(String hash) {
-    SelenideLogger.run("updateHash", hash, () -> {
-      String localHash = (hash.charAt(0) == '#') ? hash.substring(1) : hash;
-      executeJavaScript("window.location.hash='" + localHash + "'");
-    });
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public Browser browser() {
-    return driver().browser();
-  }
-
-  @CheckReturnValue
-  @Nullable
-  public SelenideProxyServer getProxy() {
-    return driver().getProxy();
-  }
-
-  public boolean hasWebDriverStarted() {
-    return driver().hasWebDriverStarted();
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public WebDriver getWebDriver() {
-    return driver.getWebDriver();
-  }
-
-  @Nonnull
-  public WebDriver getAndCheckWebDriver() {
-    return driver.getAndCheckWebDriver();
-  }
-
-  public void clearCookies() {
-    SelenideLogger.run("clearCookies", "", () -> {
-      driver().clearCookies();
-    });
-  }
-
-  public void close() {
-    driver.close();
-  }
-
-  public <T> T executeJavaScript(String jsCode, Object... arguments) {
-    return driver().executeJavaScript(jsCode, arguments);
-  }
-
-  public <T> T executeAsyncJavaScript(String jsCode, Object... arguments) {
-    return driver().executeAsyncJavaScript(jsCode, arguments);
-  }
-
-  @CheckReturnValue
-  @Nullable
-  public WebElement getFocusedElement() {
-    return executeJavaScript("return document.activeElement");
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideWait Wait() {
-    return new SelenideWait(getWebDriver(), config().timeout(), config().pollingInterval());
-  }
-
-  public void zoom(double factor) {
-    executeJavaScript(
-      "document.body.style.transform = 'scale(' + arguments[0] + ')';" +
-        "document.body.style.transformOrigin = '0 0';",
-      factor
-    );
-  }
-
-  @Nullable
-  public String title() {
-    return getWebDriver().getTitle();
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement $(WebElement webElement) {
-    return wrap(driver(), webElement);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement $(String cssSelector) {
-    return find(cssSelector);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement find(String cssSelector) {
-    return find(By.cssSelector(cssSelector));
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement $x(String xpathExpression) {
-    return find(By.xpath(xpathExpression));
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement $(By seleniumSelector) {
-    return find(seleniumSelector);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement $(By seleniumSelector, int index) {
-    return find(seleniumSelector, index);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement $(String cssSelector, int index) {
-    return ElementFinder.wrap(driver(), cssSelector, index);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement find(By criteria) {
-    return ElementFinder.wrap(driver(), null, criteria, 0);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement find(By criteria, int index) {
-    return ElementFinder.wrap(driver(), null, criteria, index);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public ElementsCollection $$(Collection<? extends WebElement> elements) {
-    return new ElementsCollection(driver(), elements);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public ElementsCollection $$(String cssSelector) {
-    return new ElementsCollection(driver(), cssSelector);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public ElementsCollection $$x(String xpathExpression) {
-    return $$(By.xpath(xpathExpression));
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public ElementsCollection findAll(By seleniumSelector) {
-    return new ElementsCollection(driver(), seleniumSelector);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public ElementsCollection findAll(String cssSelector) {
-    return new ElementsCollection(driver(), By.cssSelector(cssSelector));
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public ElementsCollection $$(By criteria) {
-    return findAll(criteria);
-  }
-
-  @CheckReturnValue
-  @Nullable
-  public SelenideElement getSelectedRadio(By radioField) {
-    for (WebElement radio : $$(radioField)) {
-      if (radio.getAttribute("checked") != null) {
-        return $(radio);
-      }
+    @JvmOverloads
+    constructor(config: Config, listeners: List<WebDriverEventListener> = emptyList()) : this(
+        config,
+        LazyDriver(config, null, listeners)
+    ) {
     }
-    return null;
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  public Modal modal() {
-    return new Modal(driver());
-  }
+    constructor(config: Config, driver: Driver) {
+        this.config = config
+        this.driver = driver
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  public WebDriverLogs getWebDriverLogs() {
-    return new WebDriverLogs(driver());
-  }
+    @JvmOverloads
+    constructor(
+        config: Config, webDriver: WebDriver, selenideProxy: SelenideProxyServer,
+        browserDownloadsFolder: DownloadsFolder = SharedDownloadsFolder(config.downloadsFolder())
+    ) {
+        this.config = config
+        driver = WebDriverWrapper(config, webDriver, selenideProxy, browserDownloadsFolder)
+    }
 
-  public void clearBrowserLocalStorage() {
-    executeJavaScript("localStorage.clear();");
-  }
+    @CheckReturnValue
+    fun config(): Config {
+        return config
+    }
 
-  public boolean atBottom() {
-    return executeJavaScript("return window.pageYOffset + window.innerHeight >= document.body.scrollHeight");
-  }
+    @CheckReturnValue
+    fun driver(): Driver {
+        return driver
+    }
 
-  @Nonnull
-  public SelenideTargetLocator switchTo() {
-    return driver().switchTo();
-  }
+    fun open() {
+        navigator.open(this)
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  public String url() {
-    return getWebDriver().getCurrentUrl();
-  }
+    fun open(relativeOrAbsoluteUrl: String) {
+        navigator.open(this, relativeOrAbsoluteUrl)
+    }
 
-  @CheckReturnValue
-  @Nullable
-  public String source() {
-    return getWebDriver().getPageSource();
-  }
+    fun open(absoluteUrl: URL) {
+        navigator.open(this, absoluteUrl)
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  public String getCurrentFrameUrl() {
-    return executeJavaScript("return window.location.href").toString();
-  }
+    fun open(relativeOrAbsoluteUrl: String, domain: String, login: String, password: String) {
+        navigator.open(this, relativeOrAbsoluteUrl, domain, login, password)
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  public String getUserAgent() {
-    return driver().getUserAgent();
-  }
+    fun open(relativeOrAbsoluteUrl: String, authenticationType: AuthenticationType, credentials: Credentials) {
+        navigator.open(this, relativeOrAbsoluteUrl, authenticationType, credentials)
+    }
 
-  /**
-   * Take a screenshot of the current page
-   *
-   * @return absolute path of the screenshot taken or null if failed to create screenshot
-   * @since 5.14.0
-   */
-  @CheckReturnValue
-  @Nullable
-  public String screenshot(String fileName) {
-    return screenshots.takeScreenShot(driver(), fileName);
-  }
+    fun open(absoluteUrl: URL, domain: String, login: String, password: String) {
+        navigator.open(this, absoluteUrl, domain, login, password)
+    }
 
-  /**
-   * Take a screenshot of the current page
-   *
-   * @return The screenshot (as bytes, base64 or temporary file)
-   * @since 5.14.0
-   */
-  @CheckReturnValue
-  @Nullable
-  public <T> T screenshot(OutputType<T> outputType) {
-    return screenshots.takeScreenShot(driver(), outputType);
-  }
+    @CheckReturnValue
+    fun <PageObjectClass> open(
+        relativeOrAbsoluteUrl: String,
+        pageObjectClassClass: Class<PageObjectClass>
+    ): PageObjectClass {
+        return open(relativeOrAbsoluteUrl, "", "", "", pageObjectClassClass)
+    }
 
-  @Nonnull
-  public File download(String url) throws IOException, URISyntaxException {
-    return download(new URI(url), config.timeout());
-  }
+    @CheckReturnValue
+    fun <PageObjectClass> open(
+        absoluteUrl: URL,
+        pageObjectClassClass: Class<PageObjectClass>
+    ): PageObjectClass {
+        return open(absoluteUrl, "", "", "", pageObjectClassClass)
+    }
 
-  @Nonnull
-  public File download(String url, long timeoutMs) throws IOException, URISyntaxException {
-    return download(new URI(url), timeoutMs);
-  }
+    @CheckReturnValue
+    fun <PageObjectClass> open(
+        relativeOrAbsoluteUrl: String,
+        domain: String, login: String, password: String,
+        pageObjectClassClass: Class<PageObjectClass>
+    ): PageObjectClass {
+        open(relativeOrAbsoluteUrl, domain, login, password)
+        return page(pageObjectClassClass)
+    }
 
-  @Nonnull
-  public File download(URI url) throws IOException {
-    return download(url, config.timeout());
-  }
+    @CheckReturnValue
+    fun <PageObjectClass> open(
+        absoluteUrl: URL, domain: String, login: String, password: String,
+        pageObjectClassClass: Class<PageObjectClass>
+    ): PageObjectClass {
+        open(absoluteUrl, domain, login, password)
+        return page(pageObjectClassClass)
+    }
 
-  @Nonnull
-  public File download(URI url, long timeoutMs) throws IOException {
-    return downloadFileWithHttpRequest().download(driver(), url, timeoutMs, none());
-  }
+    @CheckReturnValue
+    fun <PageObjectClass> page(pageObjectClass: Class<PageObjectClass>): PageObjectClass {
+        return pageFactory.page(driver(), pageObjectClass)
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  public LocalStorage getLocalStorage() {
-    return new LocalStorage(driver());
-  }
+    @CheckReturnValue
+    fun <PageObjectClass, T : PageObjectClass> page(pageObject: T): PageObjectClass {
+        return pageFactory.page(driver(), pageObject)
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  public SessionStorage getSessionStorage() {
-    return new SessionStorage(driver());
-  }
+    fun refresh() {
+        navigator.refresh(driver())
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  public Clipboard getClipboard() {
-    return inject(ClipboardService.class).getClipboard(driver());
-  }
+    fun back() {
+        navigator.back(driver())
+    }
 
-  private static final PageObjectFactory pageFactory = inject(PageObjectFactory.class);
-  private static DownloadFileWithHttpRequest downloadFileWithHttpRequest;
+    fun forward() {
+        navigator.forward(driver())
+    }
 
-  private static synchronized DownloadFileWithHttpRequest downloadFileWithHttpRequest() {
-    if (downloadFileWithHttpRequest == null) downloadFileWithHttpRequest = new DownloadFileWithHttpRequest();
-    return downloadFileWithHttpRequest;
-  }
+    fun updateHash(hash: String) {
+        SelenideLogger.run("updateHash", hash) {
+            val localHash = if (hash[0] == '#') hash.substring(1) else hash
+            executeJavaScript<Any>("window.location.hash='$localHash'")
+        }
+    }
+
+    @CheckReturnValue
+    fun browser(): Browser {
+        return driver().browser()
+    }
+
+    @get:CheckReturnValue
+    // TODO: why this was NonNullable in Java code?
+    val proxy: SelenideProxyServer?
+        get() = driver().proxy
+
+    fun hasWebDriverStarted(): Boolean {
+        return driver().hasWebDriverStarted()
+    }
+
+    @get:CheckReturnValue
+    val webDriver: WebDriver
+        get() = driver.webDriver
+
+    val andCheckWebDriver: WebDriver
+        get() = driver.getAndCheckWebDriver
+
+    fun clearCookies() {
+        SelenideLogger.run("clearCookies", "") { driver().clearCookies() }
+    }
+
+    fun close() {
+        driver.close()
+    }
+
+    fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T {
+        return driver().executeJavaScript(jsCode, *arguments)
+    }
+
+    fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T {
+        return driver().executeAsyncJavaScript(jsCode, *arguments)
+    }
+
+    @get:CheckReturnValue
+    val focusedElement: WebElement?
+        get() = executeJavaScript<WebElement>("return document.activeElement")
+
+    @CheckReturnValue
+    fun Wait(): SelenideWait {
+        return SelenideWait(webDriver, config().timeout(), config().pollingInterval())
+    }
+
+    fun zoom(factor: Double) {
+        executeJavaScript<Any>(
+            "document.body.style.transform = 'scale(' + arguments[0] + ')';" +
+                    "document.body.style.transformOrigin = '0 0';",
+            factor
+        )
+    }
+
+    fun title(): String? {
+        return webDriver.title
+    }
+
+    @CheckReturnValue
+    fun `$`(webElement: WebElement): SelenideElement {
+        return WebElementWrapper.wrap(driver(), webElement)
+    }
+
+    @CheckReturnValue
+    fun `$`(cssSelector: String): SelenideElement {
+        return find(cssSelector)
+    }
+
+    @CheckReturnValue
+    fun find(cssSelector: String): SelenideElement {
+        return find(By.cssSelector(cssSelector))
+    }
+
+    @CheckReturnValue
+    fun `$x`(xpathExpression: String): SelenideElement {
+        return find(By.xpath(xpathExpression))
+    }
+
+    @CheckReturnValue
+    fun `$`(seleniumSelector: By): SelenideElement {
+        return find(seleniumSelector)
+    }
+
+    @CheckReturnValue
+    fun `$`(seleniumSelector: By, index: Int): SelenideElement {
+        return find(seleniumSelector, index)
+    }
+
+    @CheckReturnValue
+    fun `$`(cssSelector: String, index: Int): SelenideElement {
+        return ElementFinder.wrap(driver(), cssSelector, index)
+    }
+
+    @CheckReturnValue
+    fun find(criteria: By): SelenideElement {
+        return ElementFinder.wrap(driver(), null, criteria, 0)
+    }
+
+    @CheckReturnValue
+    fun find(criteria: By, index: Int): SelenideElement {
+        return ElementFinder.wrap(driver(), null, criteria, index)
+    }
+
+    @CheckReturnValue
+    fun `$$`(elements: Collection<WebElement>): ElementsCollection {
+        return ElementsCollection(driver(), elements)
+    }
+
+    @CheckReturnValue
+    fun `$$`(cssSelector: String): ElementsCollection {
+        return ElementsCollection(driver(), cssSelector)
+    }
+
+    @CheckReturnValue
+    fun `$$x`(xpathExpression: String): ElementsCollection {
+        return `$$`(By.xpath(xpathExpression))
+    }
+
+    @CheckReturnValue
+    fun findAll(seleniumSelector: By): ElementsCollection {
+        return ElementsCollection(driver(), seleniumSelector)
+    }
+
+    @CheckReturnValue
+    fun findAll(cssSelector: String): ElementsCollection {
+        return ElementsCollection(driver(), By.cssSelector(cssSelector))
+    }
+
+    @CheckReturnValue
+    fun `$$`(criteria: By): ElementsCollection {
+        return findAll(criteria)
+    }
+
+    @CheckReturnValue
+    fun getSelectedRadio(radioField: By): SelenideElement? {
+        for (radio in `$$`(radioField)) {
+            if (radio.getAttribute("checked") != null) {
+                return `$`(radio)
+            }
+        }
+        return null
+    }
+
+    @CheckReturnValue
+    fun modal(): Modal {
+        return Modal(driver())
+    }
+
+    @get:CheckReturnValue
+    val webDriverLogs: WebDriverLogs
+        get() = WebDriverLogs(driver())
+
+    fun clearBrowserLocalStorage() {
+        executeJavaScript<Any>("localStorage.clear();")
+    }
+
+    fun atBottom(): Boolean {
+        return executeJavaScript("return window.pageYOffset + window.innerHeight >= document.body.scrollHeight")
+    }
+
+    fun switchTo(): SelenideTargetLocator {
+        return driver().switchTo()
+    }
+
+    @CheckReturnValue
+    fun url(): String {
+        return webDriver.currentUrl
+    }
+
+    @CheckReturnValue
+    fun source(): String? {
+        return webDriver.pageSource
+    }
+
+    @get:CheckReturnValue
+    val currentFrameUrl: String
+        get() = executeJavaScript<Any>("return window.location.href").toString()
+
+    @get:CheckReturnValue
+    val userAgent: String
+        get() = driver().userAgent
+
+    /**
+     * Take a screenshot of the current page
+     *
+     * @return absolute path of the screenshot taken or null if failed to create screenshot
+     * @since 5.14.0
+     */
+    @CheckReturnValue
+    fun screenshot(fileName: String): String? {
+        return screenshots.takeScreenShot(driver(), fileName)
+    }
+
+    /**
+     * Take a screenshot of the current page
+     *
+     * @return The screenshot (as bytes, base64 or temporary file)
+     * @since 5.14.0
+     */
+    @CheckReturnValue
+    fun <T> screenshot(outputType: OutputType<T>): T? {
+        return screenshots.takeScreenShot(driver(), outputType)
+    }
+
+    @Throws(IOException::class, URISyntaxException::class)
+    fun download(url: String): File {
+        return download(URI(url), config.timeout())
+    }
+
+    @Throws(IOException::class, URISyntaxException::class)
+    fun download(url: String, timeoutMs: Long): File {
+        return download(URI(url), timeoutMs)
+    }
+
+    @Throws(IOException::class)
+    fun download(url: URI): File {
+        return download(url, config.timeout())
+    }
+
+    @Throws(IOException::class)
+    fun download(url: URI, timeoutMs: Long): File {
+        return downloadFileWithHttpRequest()!!.download(driver(), url, timeoutMs, FileFilters.none())
+    }
+
+    @get:CheckReturnValue
+    val localStorage: LocalStorage
+        get() = LocalStorage(driver())
+
+    @get:CheckReturnValue
+    val sessionStorage: SessionStorage
+        get() = SessionStorage(driver())
+
+    @get:CheckReturnValue
+    val clipboard: Clipboard
+        get() = Plugins.inject(ClipboardService::class.java).getClipboard(driver())
+
+    companion object {
+        private val navigator = Navigator()
+        private val screenshots = ScreenShotLaboratory.getInstance()
+        private val pageFactory = Plugins.inject(
+            PageObjectFactory::class.java
+        )
+        private var downloadFileWithHttpRequest: DownloadFileWithHttpRequest? = null
+        @Synchronized
+        private fun downloadFileWithHttpRequest(): DownloadFileWithHttpRequest? {
+            if (downloadFileWithHttpRequest == null) downloadFileWithHttpRequest = DownloadFileWithHttpRequest()
+            return downloadFileWithHttpRequest
+        }
+    }
 }

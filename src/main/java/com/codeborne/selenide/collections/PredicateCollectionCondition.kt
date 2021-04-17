@@ -1,49 +1,39 @@
-package com.codeborne.selenide.collections;
+package com.codeborne.selenide.collections
 
-import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.ex.ElementNotFound;
-import com.codeborne.selenide.ex.MatcherError;
-import com.codeborne.selenide.impl.CollectionSource;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.function.Predicate;
+import com.codeborne.selenide.CollectionCondition
+import com.codeborne.selenide.ex.ElementNotFound
+import com.codeborne.selenide.ex.MatcherError
+import com.codeborne.selenide.impl.CollectionSource
+import org.openqa.selenium.WebElement
+import java.util.function.Predicate
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public abstract class PredicateCollectionCondition extends CollectionCondition {
-  protected final String matcher;
-  protected final String description;
-  protected final Predicate<WebElement> predicate;
-
-  protected PredicateCollectionCondition(String matcher, String description, Predicate<WebElement> predicate) {
-    this.matcher = matcher;
-    this.description = description;
-    this.predicate = predicate;
-  }
-
-  @Override
-  public void fail(CollectionSource collection,
-                   @Nullable List<WebElement> elements,
-                   @Nullable Exception lastError,
-                   long timeoutMs) {
-    if (elements == null || elements.isEmpty()) {
-      ElementNotFound elementNotFound = new ElementNotFound(collection, toString(), lastError);
-      elementNotFound.timeoutMs = timeoutMs;
-      throw elementNotFound;
-    } else {
-      throw new MatcherError(matcher, description, explanation, collection, elements, lastError, timeoutMs);
+abstract class PredicateCollectionCondition protected constructor(
+    protected val matcher: String,
+    protected val description: String,
+    protected val predicate: Predicate<WebElement>
+) : CollectionCondition() {
+    override fun fail(
+        collection: CollectionSource,
+        elements: List<WebElement>?,
+        lastError: Exception?,
+        timeoutMs: Long
+    ) {
+        if (elements == null || elements.isEmpty()) {
+            val elementNotFound = ElementNotFound(collection, toString(), lastError)
+            elementNotFound.timeoutMs = timeoutMs
+            throw elementNotFound
+        } else {
+            throw MatcherError(matcher, description, explanation, collection, elements, lastError, timeoutMs)
+        }
     }
-  }
 
-  @Override
-  public boolean applyNull() {
-    return false;
-  }
+    override fun applyNull(): Boolean {
+        return false
+    }
 
-  @Override
-  public String toString() {
-    return String.format("%s match [%s] predicate", matcher, description);
-  }
+    override fun toString(): String {
+        return String.format("%s match [%s] predicate", matcher, description)
+    }
 }

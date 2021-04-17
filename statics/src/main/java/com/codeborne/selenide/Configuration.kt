@@ -1,6 +1,5 @@
 package com.codeborne.selenide
 
-import org.openqa.selenium.Capabilities
 import org.openqa.selenium.MutableCapabilities
 
 /**

@@ -1,367 +1,333 @@
-package com.codeborne.selenide;
-
-import com.codeborne.selenide.impl.CiReportUrl;
-import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
-import static com.codeborne.selenide.AssertionMode.STRICT;
-import static com.codeborne.selenide.Browsers.CHROME;
-import static com.codeborne.selenide.FileDownloadMode.HTTPGET;
-import static com.codeborne.selenide.SelectorMode.CSS;
-
-public class SelenideConfig implements Config {
-  private String browser = System.getProperty("selenide.browser", CHROME);
-  private boolean headless = Boolean.parseBoolean(System.getProperty("selenide.headless", "false"));
-  private String remote = System.getProperty("selenide.remote");
-  private String browserSize = System.getProperty("selenide.browserSize", "1366x768");
-  private String browserVersion = System.getProperty("selenide.browserVersion");
-  private String browserPosition = System.getProperty("selenide.browserPosition");
-  private boolean startMaximized = Boolean.parseBoolean(System.getProperty("selenide.startMaximized", "false"));
-  private boolean driverManagerEnabled = Boolean.parseBoolean(System.getProperty("selenide.driverManagerEnabled", "true"));
-  private boolean webdriverLogsEnabled = Boolean.parseBoolean(System.getProperty("selenide.webdriverLogsEnabled", "false"));
-  private String browserBinary = System.getProperty("selenide.browserBinary", "");
-  private String pageLoadStrategy = System.getProperty("selenide.pageLoadStrategy", "normal");
-  private long pageLoadTimeout = Long.parseLong(System.getProperty("selenide.pageLoadTimeout", "30000"));
-  private MutableCapabilities browserCapabilities = new DesiredCapabilities();
-
-  private String baseUrl = System.getProperty("selenide.baseUrl", "http://localhost:8080");
-  private long timeout = Long.parseLong(System.getProperty("selenide.timeout", "4000"));
-  private long pollingInterval = Long.parseLong(System.getProperty("selenide.pollingInterval", "200"));
-  private boolean holdBrowserOpen = Boolean.getBoolean("selenide.holdBrowserOpen");
-  private boolean reopenBrowserOnFail = Boolean.parseBoolean(System.getProperty("selenide.reopenBrowserOnFail", "true"));
-  private boolean clickViaJs = Boolean.parseBoolean(System.getProperty("selenide.clickViaJs", "false"));
-  private boolean screenshots = Boolean.parseBoolean(System.getProperty("selenide.screenshots", "true"));
-
-  private boolean savePageSource = Boolean.parseBoolean(System.getProperty("selenide.savePageSource", "true"));
-  private String reportsFolder = System.getProperty("selenide.reportsFolder", "build/reports/tests");
-  private String downloadsFolder = System.getProperty("selenide.downloadsFolder", "build/downloads");
-  private String reportsUrl = new CiReportUrl().getReportsUrl(System.getProperty("selenide.reportsUrl"));
-  private boolean fastSetValue = Boolean.parseBoolean(System.getProperty("selenide.fastSetValue", "false"));
-  private boolean versatileSetValue = Boolean.parseBoolean(System.getProperty("selenide.versatileSetValue", "false"));
-  private SelectorMode selectorMode = SelectorMode.valueOf(System.getProperty("selenide.selectorMode", CSS.name()));
-  private AssertionMode assertionMode = AssertionMode.valueOf(System.getProperty("selenide.assertionMode", STRICT.name()));
-  private FileDownloadMode fileDownload = FileDownloadMode.valueOf(System.getProperty("selenide.fileDownload", HTTPGET.name()));
-  private boolean proxyEnabled = Boolean.parseBoolean(System.getProperty("selenide.proxyEnabled", "false"));
-  private String proxyHost = System.getProperty("selenide.proxyHost", "");
-  private int proxyPort = Integer.parseInt(System.getProperty("selenide.proxyPort", "0"));
-
-  @Override
-  public String baseUrl() {
-    return baseUrl;
-  }
-
-  public SelenideConfig baseUrl(String baseUrl) {
-    this.baseUrl = baseUrl;
-    return this;
-  }
-
-  @Override
-  public long timeout() {
-    return timeout;
-  }
-
-  public SelenideConfig timeout(long timeout) {
-    this.timeout = timeout;
-    return this;
-  }
-
-  @Override
-  public long pollingInterval() {
-    return pollingInterval;
-  }
-
-  public SelenideConfig pollingInterval(long pollingInterval) {
-    this.pollingInterval = pollingInterval;
-    return this;
-  }
-
-  @Override
-  public boolean holdBrowserOpen() {
-    return holdBrowserOpen;
-  }
-
-  public SelenideConfig holdBrowserOpen(boolean holdBrowserOpen) {
-    this.holdBrowserOpen = holdBrowserOpen;
-    return this;
-  }
-
-  @Override
-  public boolean reopenBrowserOnFail() {
-    return reopenBrowserOnFail;
-  }
-
-  public SelenideConfig reopenBrowserOnFail(boolean reopenBrowserOnFail) {
-    this.reopenBrowserOnFail = reopenBrowserOnFail;
-    return this;
-  }
-
-  @Override
-  public boolean clickViaJs() {
-    return clickViaJs;
-  }
-
-  public SelenideConfig clickViaJs(boolean clickViaJs) {
-    this.clickViaJs = clickViaJs;
-    return this;
-  }
-
-  @Override
-  public boolean screenshots() {
-    return screenshots;
-  }
-
-  public SelenideConfig screenshots(boolean screenshots) {
-    this.screenshots = screenshots;
-    return this;
-  }
-
-  @Override
-  public boolean savePageSource() {
-    return savePageSource;
-  }
-
-  public SelenideConfig savePageSource(boolean savePageSource) {
-    this.savePageSource = savePageSource;
-    return this;
-  }
-
-  @Override
-  public String reportsFolder() {
-    return reportsFolder;
-  }
-
-  public SelenideConfig reportsFolder(String reportsFolder) {
-    this.reportsFolder = reportsFolder;
-    return this;
-  }
-
-  @Override
-  public String downloadsFolder() {
-    return downloadsFolder;
-  }
-
-  public SelenideConfig downloadsFolder(String downloadsFolder) {
-    this.downloadsFolder = downloadsFolder;
-    return this;
-  }
-
-  @Override
-  public String reportsUrl() {
-    return reportsUrl;
-  }
-
-  public SelenideConfig reportsUrl(String reportsUrl) {
-    this.reportsUrl = reportsUrl;
-    return this;
-  }
-
-  @Override
-  public boolean fastSetValue() {
-    return fastSetValue;
-  }
-
-  public SelenideConfig fastSetValue(boolean fastSetValue) {
-    this.fastSetValue = fastSetValue;
-    return this;
-  }
-
-  @Override
-  public boolean versatileSetValue() {
-    return versatileSetValue;
-  }
-
-  public SelenideConfig versatileSetValue(boolean versatileSetValue) {
-    this.versatileSetValue = versatileSetValue;
-    return this;
-  }
-
-  @Override
-  public SelectorMode selectorMode() {
-    return selectorMode;
-  }
-
-  public SelenideConfig selectorMode(SelectorMode selectorMode) {
-    this.selectorMode = selectorMode;
-    return this;
-  }
-
-  @Override
-  public AssertionMode assertionMode() {
-    return assertionMode;
-  }
-
-  public SelenideConfig assertionMode(AssertionMode assertionMode) {
-    this.assertionMode = assertionMode;
-    return this;
-  }
-
-  @Override
-  public FileDownloadMode fileDownload() {
-    return fileDownload;
-  }
-
-  public SelenideConfig fileDownload(FileDownloadMode fileDownload) {
-    this.fileDownload = fileDownload;
-    return this;
-  }
-
-  @Override
-  public boolean proxyEnabled() {
-    return proxyEnabled;
-  }
-
-  public SelenideConfig proxyEnabled(boolean proxyEnabled) {
-    this.proxyEnabled = proxyEnabled;
-    return this;
-  }
-
-  @Override
-  public String proxyHost() {
-    return proxyHost;
-  }
-
-  public SelenideConfig proxyHost(String proxyHost) {
-    this.proxyHost = proxyHost;
-    return this;
-  }
-
-  @Override
-  public int proxyPort() {
-    return proxyPort;
-  }
-
-  public SelenideConfig proxyPort(int proxyPort) {
-    this.proxyPort = proxyPort;
-    return this;
-  }
-
-  @Override
-  public String browser() {
-    return browser;
-  }
-
-  public SelenideConfig browser(String browser) {
-    this.browser = browser;
-    return this;
-  }
-
-  @Override
-  public boolean headless() {
-    return headless;
-  }
-
-  public SelenideConfig headless(boolean headless) {
-    this.headless = headless;
-    return this;
-  }
-
-  @Override
-  public String remote() {
-    return remote;
-  }
-
-  public SelenideConfig remote(String remote) {
-    this.remote = remote;
-    return this;
-  }
-
-  @Override
-  public String browserSize() {
-    return browserSize;
-  }
-
-  public SelenideConfig browserSize(String browserSize) {
-    this.browserSize = browserSize;
-    return this;
-  }
-
-  @Override
-  public String browserVersion() {
-    return browserVersion;
-  }
-
-  public SelenideConfig browserVersion(String browserVersion) {
-    this.browserVersion = browserVersion;
-    return this;
-  }
-
-  @Override
-  public String browserPosition() {
-    return browserPosition;
-  }
-
-  public SelenideConfig browserPosition(String browserPosition) {
-    this.browserPosition = browserPosition;
-    return this;
-  }
-
-  @Override
-  public boolean startMaximized() {
-    return startMaximized;
-  }
-
-  public SelenideConfig startMaximized(boolean startMaximized) {
-    this.startMaximized = startMaximized;
-    return this;
-  }
-
-  @Override
-  public boolean driverManagerEnabled() {
-    return driverManagerEnabled;
-  }
-
-  public SelenideConfig driverManagerEnabled(boolean driverManagerEnabled) {
-    this.driverManagerEnabled = driverManagerEnabled;
-    return this;
-  }
-  @Override
-  public boolean webdriverLogsEnabled() {
-    return webdriverLogsEnabled;
-  }
-
-  public SelenideConfig webdriverLogsEnabled(boolean webdriverLogsEnabled) {
-    this.webdriverLogsEnabled = webdriverLogsEnabled;
-    return this;
-  }
-
-  @Override
-  public String browserBinary() {
-    return browserBinary;
-  }
-
-  public SelenideConfig browserBinary(String browserBinary) {
-    this.browserBinary = browserBinary;
-    return this;
-  }
-
-  @Override
-  public String pageLoadStrategy() {
-    return pageLoadStrategy;
-  }
-
-  @Override
-  public long pageLoadTimeout() {
-    return pageLoadTimeout;
-  }
-
-  public SelenideConfig pageLoadStrategy(String pageLoadStrategy) {
-    this.pageLoadStrategy = pageLoadStrategy;
-    return this;
-  }
-
-  public SelenideConfig pageLoadTimeout(long pageLoadTimeout) {
-    this.pageLoadTimeout = pageLoadTimeout;
-    return this;
-  }
-
-  @Override
-  public MutableCapabilities browserCapabilities() {
-    return browserCapabilities;
-  }
-
-  public SelenideConfig browserCapabilities(DesiredCapabilities browserCapabilities) {
-    this.browserCapabilities = browserCapabilities;
-    return this;
-  }
-
+package com.codeborne.selenide
+
+import com.codeborne.selenide.impl.CiReportUrl
+import org.openqa.selenium.MutableCapabilities
+import org.openqa.selenium.remote.DesiredCapabilities
+
+class SelenideConfig : Config {
+    private var browser = System.getProperty("selenide.browser", Browsers.CHROME)
+    private var headless = java.lang.Boolean.parseBoolean(System.getProperty("selenide.headless", "false"))
+    private var remote = System.getProperty("selenide.remote")
+    private var browserSize = System.getProperty("selenide.browserSize", "1366x768")
+    private var browserVersion = System.getProperty("selenide.browserVersion")
+    private var browserPosition = System.getProperty("selenide.browserPosition")
+    private var startMaximized = java.lang.Boolean.parseBoolean(System.getProperty("selenide.startMaximized", "false"))
+    private var driverManagerEnabled =
+        java.lang.Boolean.parseBoolean(System.getProperty("selenide.driverManagerEnabled", "true"))
+    private var webdriverLogsEnabled =
+        java.lang.Boolean.parseBoolean(System.getProperty("selenide.webdriverLogsEnabled", "false"))
+    private var browserBinary = System.getProperty("selenide.browserBinary", "")
+    private var pageLoadStrategy = System.getProperty("selenide.pageLoadStrategy", "normal")
+    private var pageLoadTimeout = System.getProperty("selenide.pageLoadTimeout", "30000").toLong()
+    private var browserCapabilities: MutableCapabilities = DesiredCapabilities()
+    private var baseUrl = System.getProperty("selenide.baseUrl", "http://localhost:8080")
+    private var timeout = System.getProperty("selenide.timeout", "4000").toLong()
+    private var pollingInterval = System.getProperty("selenide.pollingInterval", "200").toLong()
+    private var holdBrowserOpen = java.lang.Boolean.getBoolean("selenide.holdBrowserOpen")
+    private var reopenBrowserOnFail =
+        java.lang.Boolean.parseBoolean(System.getProperty("selenide.reopenBrowserOnFail", "true"))
+    private var clickViaJs = java.lang.Boolean.parseBoolean(System.getProperty("selenide.clickViaJs", "false"))
+    private var screenshots = java.lang.Boolean.parseBoolean(System.getProperty("selenide.screenshots", "true"))
+    private var savePageSource = java.lang.Boolean.parseBoolean(System.getProperty("selenide.savePageSource", "true"))
+    private var reportsFolder = System.getProperty("selenide.reportsFolder", "build/reports/tests")
+    private var downloadsFolder = System.getProperty("selenide.downloadsFolder", "build/downloads")
+    private var reportsUrl = CiReportUrl().getReportsUrl(System.getProperty("selenide.reportsUrl"))
+    private var fastSetValue = java.lang.Boolean.parseBoolean(System.getProperty("selenide.fastSetValue", "false"))
+    private var versatileSetValue =
+        java.lang.Boolean.parseBoolean(System.getProperty("selenide.versatileSetValue", "false"))
+    private var selectorMode = SelectorMode.valueOf(System.getProperty("selenide.selectorMode", SelectorMode.CSS.name))
+    private var assertionMode =
+        AssertionMode.valueOf(System.getProperty("selenide.assertionMode", AssertionMode.STRICT.name))
+    private var fileDownload =
+        FileDownloadMode.valueOf(System.getProperty("selenide.fileDownload", FileDownloadMode.HTTPGET.name))
+    private var proxyEnabled = java.lang.Boolean.parseBoolean(System.getProperty("selenide.proxyEnabled", "false"))
+    private var proxyHost = System.getProperty("selenide.proxyHost", "")
+    private var proxyPort = System.getProperty("selenide.proxyPort", "0").toInt()
+    override fun baseUrl(): String {
+        return baseUrl
+    }
+
+    fun baseUrl(baseUrl: String): SelenideConfig {
+        this.baseUrl = baseUrl
+        return this
+    }
+
+    override fun timeout(): Long {
+        return timeout
+    }
+
+    fun timeout(timeout: Long): SelenideConfig {
+        this.timeout = timeout
+        return this
+    }
+
+    override fun pollingInterval(): Long {
+        return pollingInterval
+    }
+
+    fun pollingInterval(pollingInterval: Long): SelenideConfig {
+        this.pollingInterval = pollingInterval
+        return this
+    }
+
+    override fun holdBrowserOpen(): Boolean {
+        return holdBrowserOpen
+    }
+
+    fun holdBrowserOpen(holdBrowserOpen: Boolean): SelenideConfig {
+        this.holdBrowserOpen = holdBrowserOpen
+        return this
+    }
+
+    override fun reopenBrowserOnFail(): Boolean {
+        return reopenBrowserOnFail
+    }
+
+    fun reopenBrowserOnFail(reopenBrowserOnFail: Boolean): SelenideConfig {
+        this.reopenBrowserOnFail = reopenBrowserOnFail
+        return this
+    }
+
+    override fun clickViaJs(): Boolean {
+        return clickViaJs
+    }
+
+    fun clickViaJs(clickViaJs: Boolean): SelenideConfig {
+        this.clickViaJs = clickViaJs
+        return this
+    }
+
+    override fun screenshots(): Boolean {
+        return screenshots
+    }
+
+    fun screenshots(screenshots: Boolean): SelenideConfig {
+        this.screenshots = screenshots
+        return this
+    }
+
+    override fun savePageSource(): Boolean {
+        return savePageSource
+    }
+
+    fun savePageSource(savePageSource: Boolean): SelenideConfig {
+        this.savePageSource = savePageSource
+        return this
+    }
+
+    override fun reportsFolder(): String {
+        return reportsFolder
+    }
+
+    fun reportsFolder(reportsFolder: String): SelenideConfig {
+        this.reportsFolder = reportsFolder
+        return this
+    }
+
+    override fun downloadsFolder(): String {
+        return downloadsFolder
+    }
+
+    fun downloadsFolder(downloadsFolder: String): SelenideConfig {
+        this.downloadsFolder = downloadsFolder
+        return this
+    }
+
+    override fun reportsUrl(): String {
+        return reportsUrl!!
+    }
+
+    fun reportsUrl(reportsUrl: String?): SelenideConfig {
+        this.reportsUrl = reportsUrl
+        return this
+    }
+
+    override fun fastSetValue(): Boolean {
+        return fastSetValue
+    }
+
+    fun fastSetValue(fastSetValue: Boolean): SelenideConfig {
+        this.fastSetValue = fastSetValue
+        return this
+    }
+
+    override fun versatileSetValue(): Boolean {
+        return versatileSetValue
+    }
+
+    fun versatileSetValue(versatileSetValue: Boolean): SelenideConfig {
+        this.versatileSetValue = versatileSetValue
+        return this
+    }
+
+    override fun selectorMode(): SelectorMode {
+        return selectorMode
+    }
+
+    fun selectorMode(selectorMode: SelectorMode): SelenideConfig {
+        this.selectorMode = selectorMode
+        return this
+    }
+
+    override fun assertionMode(): AssertionMode {
+        return assertionMode
+    }
+
+    fun assertionMode(assertionMode: AssertionMode): SelenideConfig {
+        this.assertionMode = assertionMode
+        return this
+    }
+
+    override fun fileDownload(): FileDownloadMode {
+        return fileDownload
+    }
+
+    fun fileDownload(fileDownload: FileDownloadMode): SelenideConfig {
+        this.fileDownload = fileDownload
+        return this
+    }
+
+    override fun proxyEnabled(): Boolean {
+        return proxyEnabled
+    }
+
+    fun proxyEnabled(proxyEnabled: Boolean): SelenideConfig {
+        this.proxyEnabled = proxyEnabled
+        return this
+    }
+
+    override fun proxyHost(): String {
+        return proxyHost
+    }
+
+    fun proxyHost(proxyHost: String): SelenideConfig {
+        this.proxyHost = proxyHost
+        return this
+    }
+
+    override fun proxyPort(): Int {
+        return proxyPort
+    }
+
+    fun proxyPort(proxyPort: Int): SelenideConfig {
+        this.proxyPort = proxyPort
+        return this
+    }
+
+    override fun browser(): String {
+        return browser
+    }
+
+    fun browser(browser: String): SelenideConfig {
+        this.browser = browser
+        return this
+    }
+
+    override fun headless(): Boolean {
+        return headless
+    }
+
+    fun headless(headless: Boolean): SelenideConfig {
+        this.headless = headless
+        return this
+    }
+
+    override fun remote(): String {
+        return remote
+    }
+
+    fun remote(remote: String): SelenideConfig {
+        this.remote = remote
+        return this
+    }
+
+    override fun browserSize(): String {
+        return browserSize
+    }
+
+    fun browserSize(browserSize: String): SelenideConfig {
+        this.browserSize = browserSize
+        return this
+    }
+
+    override fun browserVersion(): String {
+        return browserVersion
+    }
+
+    fun browserVersion(browserVersion: String): SelenideConfig {
+        this.browserVersion = browserVersion
+        return this
+    }
+
+    override fun browserPosition(): String {
+        return browserPosition
+    }
+
+    fun browserPosition(browserPosition: String): SelenideConfig {
+        this.browserPosition = browserPosition
+        return this
+    }
+
+    override fun startMaximized(): Boolean {
+        return startMaximized
+    }
+
+    fun startMaximized(startMaximized: Boolean): SelenideConfig {
+        this.startMaximized = startMaximized
+        return this
+    }
+
+    override fun driverManagerEnabled(): Boolean {
+        return driverManagerEnabled
+    }
+
+    fun driverManagerEnabled(driverManagerEnabled: Boolean): SelenideConfig {
+        this.driverManagerEnabled = driverManagerEnabled
+        return this
+    }
+
+    override fun webdriverLogsEnabled(): Boolean {
+        return webdriverLogsEnabled
+    }
+
+    fun webdriverLogsEnabled(webdriverLogsEnabled: Boolean): SelenideConfig {
+        this.webdriverLogsEnabled = webdriverLogsEnabled
+        return this
+    }
+
+    override fun browserBinary(): String {
+        return browserBinary
+    }
+
+    fun browserBinary(browserBinary: String): SelenideConfig {
+        this.browserBinary = browserBinary
+        return this
+    }
+
+    override fun pageLoadStrategy(): String {
+        return pageLoadStrategy
+    }
+
+    override fun pageLoadTimeout(): Long {
+        return pageLoadTimeout
+    }
+
+    fun pageLoadStrategy(pageLoadStrategy: String): SelenideConfig {
+        this.pageLoadStrategy = pageLoadStrategy
+        return this
+    }
+
+    fun pageLoadTimeout(pageLoadTimeout: Long): SelenideConfig {
+        this.pageLoadTimeout = pageLoadTimeout
+        return this
+    }
+
+    override fun browserCapabilities(): MutableCapabilities {
+        return browserCapabilities
+    }
+
+    fun browserCapabilities(browserCapabilities: DesiredCapabilities): SelenideConfig {
+        this.browserCapabilities = browserCapabilities
+        return this
+    }
 }

@@ -1,50 +1,37 @@
-package com.codeborne.selenide.collections;
+package com.codeborne.selenide.collections
 
-import com.codeborne.selenide.impl.Html;
-
-import org.openqa.selenium.WebElement;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.impl.Html
+import org.openqa.selenium.WebElement
+import java.util.stream.Collectors
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class TextsInAnyOrder extends ExactTexts {
-  public TextsInAnyOrder(String... expectedTexts) {
-    super(expectedTexts);
-  }
+class TextsInAnyOrder : ExactTexts {
+    constructor(vararg expectedTexts: String) : super(*expectedTexts) {}
+    constructor(expectedTexts: List<String>) : super(expectedTexts) {}
 
-  public TextsInAnyOrder(List<String> expectedTexts) {
-    super(expectedTexts);
-  }
-
-  @CheckReturnValue
-  @Override
-  public boolean test(List<WebElement> elements) {
-    if (elements.size() != expectedTexts.size()) {
-      return false;
-    }
-
-    List<String> elementsTexts = elements.stream().map(WebElement::getText).collect(Collectors.toList());
-
-    for (String expectedText : expectedTexts) {
-      boolean found = false;
-      for (String elementText : elementsTexts) {
-        if (Html.text.contains(elementText, expectedText)) {
-          found = true;
+    @CheckReturnValue
+    override fun test(elements: List<WebElement>): Boolean {
+        if (elements.size != expectedTexts.size) {
+            return false
         }
-      }
-      if (!found) {
-        return false;
-      }
+        val elementsTexts = elements.stream().map { obj: WebElement -> obj.text }.collect(Collectors.toList())
+        for (expectedText in expectedTexts) {
+            var found = false
+            for (elementText in elementsTexts) {
+                if (Html.text.contains(elementText, expectedText)) {
+                    found = true
+                }
+            }
+            if (!found) {
+                return false
+            }
+        }
+        return true
     }
-    return true;
-  }
 
-  @Override
-  public String toString() {
-    return "TextsInAnyOrder " + expectedTexts;
-  }
+    override fun toString(): String {
+        return "TextsInAnyOrder $expectedTexts"
+    }
 }

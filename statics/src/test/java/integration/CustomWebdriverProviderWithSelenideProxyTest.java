@@ -5,6 +5,7 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Credentials;
 import com.codeborne.selenide.WebDriverProvider;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,12 +50,11 @@ final class CustomWebdriverProviderWithSelenideProxyTest extends IntegrationTest
     $("body").shouldHave(text("Hello, scott:tiger!"));
   }
 
-  @ParametersAreNonnullByDefault
   private static class MyWebDriverProvider implements WebDriverProvider {
     @Override
     @CheckReturnValue
     @Nonnull
-    public WebDriver createDriver(DesiredCapabilities desiredCapabilities) {
+    public WebDriver createDriver(@NotNull DesiredCapabilities desiredCapabilities) {
       if (browser().isChrome()) return chrome(desiredCapabilities);
       if (browser().isFirefox()) return firefox(desiredCapabilities);
       throw new IllegalStateException("Unsupported browser: " + browser().name);

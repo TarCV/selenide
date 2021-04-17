@@ -1,15 +1,16 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
 /**
  * Assertion modes available
  */
-public enum AssertionMode {
-  /**
-   * Default mode - tests are failing immediately
-   */
-  STRICT,
-  /**
-   * Test are failing only at the end of the methods.
-   */
-  SOFT
+enum class AssertionMode {
+    /**
+     * Default mode - tests are failing immediately
+     */
+    STRICT,
+
+    /**
+     * Test are failing only at the end of the methods.
+     */
+    SOFT
 }

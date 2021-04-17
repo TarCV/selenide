@@ -1,22 +1,15 @@
-package com.codeborne.selenide.collections;
+package com.codeborne.selenide.collections
 
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.function.Predicate;
+import org.openqa.selenium.WebElement
+import java.util.function.Predicate
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class AllMatch extends PredicateCollectionCondition {
-  public AllMatch(String description, Predicate<WebElement> predicate) {
-    super("all", description, predicate);
-  }
-
-  @Override
-  public boolean test(List<WebElement> elements) {
-    if (elements.isEmpty()) {
-      return false;
+class AllMatch(description: String, predicate: Predicate<WebElement>) :
+    PredicateCollectionCondition("all", description, predicate) {
+    override fun test(elements: List<WebElement>): Boolean {
+        return if (elements.isEmpty()) {
+            false
+        } else elements.stream().allMatch(predicate)
     }
-    return elements.stream().allMatch(predicate);
-  }
 }

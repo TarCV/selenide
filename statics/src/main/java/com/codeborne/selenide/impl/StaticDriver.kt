@@ -36,20 +36,20 @@ class StaticDriver : Driver {
         return WebDriverRunner.hasWebDriverStarted()
     }
 
-    @CheckReturnValue
-    override fun getWebDriver(): WebDriver {
-        return WebDriverRunner.webDriver
-    }
+    override val webDriver: WebDriver
+        get() {
+            return WebDriverRunner.webDriver
+        }
 
-    @CheckReturnValue
-    override fun getProxy(): SelenideProxyServer? {
-        return WebDriverRunner.selenideProxy
-    }
+    override val proxy: SelenideProxyServer?
+      get() {
+          return WebDriverRunner.selenideProxy
+      }
 
-    @CheckReturnValue
-    override fun getAndCheckWebDriver(): WebDriver {
-        return WebDriverRunner.getAndCheckWebDriver
-    }
+      override val getAndCheckWebDriver: WebDriver
+        get() {
+            return WebDriverRunner.getAndCheckWebDriver
+        }
 
     @CheckReturnValue
     override fun browserDownloadsFolder(): DownloadsFolder {

@@ -1,10 +1,6 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class LocalStorage extends JSStorage {
-  LocalStorage(Driver driver) {
-    super(driver, "localStorage");
-  }
-}
+class LocalStorage internal constructor(driver: Driver) : JSStorage(driver, "localStorage")

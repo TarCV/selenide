@@ -1,39 +1,26 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import java.io.File;
-import java.util.List;
+import java.io.File
+import java.util.Arrays
+import javax.annotation.CheckReturnValue
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
+abstract class DownloadsFolder protected constructor(protected val folder: File) {
+    fun toFile(): File {
+        return folder
+    }
 
-public abstract class DownloadsFolder {
-  protected final File folder;
+    @CheckReturnValue
+    fun files(): List<File> {
+        val files = folder.listFiles()
+        return if (files == null) emptyList() else listOf(*files)
+    }
 
-  protected DownloadsFolder(File folder) {
-    this.folder = folder;
-  }
+    abstract fun cleanupBeforeDownload()
+    fun file(fileName: String): File {
+        return File(folder, fileName).absoluteFile
+    }
 
-  public File toFile() {
-    return folder;
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public List<File> files() {
-    File[] files = folder.listFiles();
-    return files == null ? emptyList() : asList(files);
-  }
-
-  public abstract void cleanupBeforeDownload();
-
-  public File file(String fileName) {
-    return new File(folder, fileName).getAbsoluteFile();
-  }
-
-  @Override
-  public String toString() {
-    return folder.getAbsolutePath();
-  }
+    override fun toString(): String {
+        return folder.absolutePath
+    }
 }

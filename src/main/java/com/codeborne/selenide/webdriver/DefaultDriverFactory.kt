@@ -1,108 +1,94 @@
-package com.codeborne.selenide.webdriver;
+package com.codeborne.selenide.webdriver
 
-import com.codeborne.selenide.Browser;
-import com.codeborne.selenide.Config;
-import com.codeborne.selenide.WebDriverProvider;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.Proxy;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import com.codeborne.selenide.Browser
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.WebDriverProvider
+import org.openqa.selenium.Capabilities
+import org.openqa.selenium.MutableCapabilities
+import org.openqa.selenium.Proxy
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.remote.DesiredCapabilities
+import java.io.File
+import java.lang.reflect.InvocationTargetException
+import javax.annotation.CheckReturnValue
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
-@ParametersAreNonnullByDefault
-public class DefaultDriverFactory extends AbstractDriverFactory {
-  @Override
-  public void setupWebdriverBinary() {
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebDriver create(Config config, Browser browser, @Nullable Proxy proxy, File browserDownloadsFolder) {
-    return createInstanceOf(config.browser(), config, browser, proxy, browserDownloadsFolder);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  private WebDriver createInstanceOf(String className, Config config, Browser browser,
-                                     @Nullable Proxy proxy, File browserDownloadsFolder) {
-    Class<?> clazz = classOf(config.browser());
-
-    if (WebDriverProvider.class.isAssignableFrom(clazz)) {
-      Capabilities capabilities = createCapabilities(config, browser, proxy, browserDownloadsFolder);
-      return createInstanceOf(WebDriverProvider.class, clazz).createDriver(new DesiredCapabilities(capabilities));
-    }
-    else if (DriverFactory.class.isAssignableFrom(clazz)) {
-      DriverFactory factory = createInstanceOf(DriverFactory.class, clazz);
-      if (config.driverManagerEnabled()) {
-        factory.setupWebdriverBinary();
-      }
-      return factory.create(config, browser, proxy, browserDownloadsFolder);
-    }
-    else {
-      Capabilities capabilities = createCapabilities(config, browser, proxy, browserDownloadsFolder);
-      return createWebDriver(className, capabilities);
-    }
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public MutableCapabilities createCapabilities(Config config, Browser browser,
-                                                @Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
-    Class<?> clazz = classOf(config.browser());
-
-    if (DriverFactory.class.isAssignableFrom(clazz)) {
-      DriverFactory factory = createInstanceOf(DriverFactory.class, clazz);
-      return factory.createCapabilities(config, browser, proxy, browserDownloadsFolder);
+class DefaultDriverFactory : AbstractDriverFactory() {
+    override fun setupWebdriverBinary() {}
+    @CheckReturnValue
+    override fun create(config: Config?, browser: Browser, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver {
+        return createInstanceOf(config!!.browser(), config, browser, proxy, browserDownloadsFolder)
     }
 
-    return createCommonCapabilities(config, browser, proxy);
-  }
+    @CheckReturnValue
+    private fun createInstanceOf(
+        className: String, config: Config?, browser: Browser,
+        proxy: Proxy?, browserDownloadsFolder: File?
+    ): WebDriver {
+        val clazz = classOf(config!!.browser())
+        return if (WebDriverProvider::class.java.isAssignableFrom(clazz)) {
+            val capabilities: Capabilities =
+                createCapabilities(config, browser, proxy, browserDownloadsFolder)
+            createInstanceOf(WebDriverProvider::class.java, clazz).createDriver(
+                DesiredCapabilities(
+                    capabilities
+                )
+            )
+        } else if (DriverFactory::class.java.isAssignableFrom(clazz)) {
+            val factory = createInstanceOf(DriverFactory::class.java, clazz)
+            if (config.driverManagerEnabled()) {
+                factory.setupWebdriverBinary()
+            }
+            factory.create(config, browser, proxy, browserDownloadsFolder)
+        } else {
+            val capabilities: Capabilities =
+                createCapabilities(config, browser, proxy, browserDownloadsFolder)
+            createWebDriver(className, capabilities)
+        }
+    }
 
-  private Class<?> classOf(String className) {
-    try {
-      return Class.forName(className);
+    @CheckReturnValue
+    override fun createCapabilities(
+      config: Config?, browser: Browser,
+      proxy: Proxy?, browserDownloadsFolder: File?
+    ): MutableCapabilities {
+        val clazz = classOf(config!!.browser())
+        if (DriverFactory::class.java.isAssignableFrom(clazz)) {
+            val factory = createInstanceOf(DriverFactory::class.java, clazz)
+            return factory.createCapabilities(config, browser, proxy, browserDownloadsFolder)
+        }
+        return createCommonCapabilities(config, browser, proxy)
     }
-    catch (ClassNotFoundException e) {
-      throw new IllegalArgumentException("Class not found: " + className, e);
-    }
-  }
 
-  private WebDriver createWebDriver(String className, Capabilities capabilities) {
-    try {
-      Constructor<?> constructor = Class.forName(className).getConstructor(Capabilities.class);
-      return (WebDriver) constructor.newInstance(capabilities);
+    private fun classOf(className: String): Class<*> {
+        return try {
+            Class.forName(className)
+        } catch (e: ClassNotFoundException) {
+            throw IllegalArgumentException("Class not found: $className", e)
+        }
     }
-    catch (Exception e) {
-      throw new IllegalArgumentException("Failed to create WebDriver of type " + className, e);
-    }
-  }
 
-  @SuppressWarnings({"unchecked", "unused"})
-  private <T> T createInstanceOf(Class<T> resultClass, Class<?> clazz) {
-    try {
-      Constructor<?> constructor = clazz.getDeclaredConstructor();
-      constructor.setAccessible(true);
-      return (T) constructor.newInstance();
+    private fun createWebDriver(className: String, capabilities: Capabilities): WebDriver {
+        return try {
+            val constructor = Class.forName(className).getConstructor(Capabilities::class.java)
+            constructor.newInstance(capabilities) as WebDriver
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Failed to create WebDriver of type $className", e)
+        }
     }
-    catch (InvocationTargetException e) {
-      throw runtime(e.getTargetException());
-    }
-    catch (Exception invalidClassName) {
-      throw new IllegalArgumentException(invalidClassName);
-    }
-  }
 
-  private RuntimeException runtime(Throwable exception) {
-    return exception instanceof RuntimeException ? (RuntimeException) exception : new RuntimeException(exception);
-  }
+    private fun <T> createInstanceOf(resultClass: Class<T>, clazz: Class<*>): T {
+        return try {
+            val constructor = clazz.getDeclaredConstructor()
+            constructor.isAccessible = true
+            constructor.newInstance() as T
+        } catch (e: InvocationTargetException) {
+            throw runtime(e.targetException)
+        } catch (invalidClassName: Exception) {
+            throw IllegalArgumentException(invalidClassName)
+        }
+    }
+
+    private fun runtime(exception: Throwable): RuntimeException {
+        return if (exception is RuntimeException) exception else RuntimeException(exception)
+    }
 }

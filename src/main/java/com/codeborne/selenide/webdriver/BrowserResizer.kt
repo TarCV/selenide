@@ -1,43 +1,43 @@
-package com.codeborne.selenide.webdriver;
+package com.codeborne.selenide.webdriver
 
-import com.codeborne.selenide.Config;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.codeborne.selenide.Config
+import org.openqa.selenium.Dimension
+import org.openqa.selenium.Point
+import org.openqa.selenium.WebDriver
+import org.slf4j.LoggerFactory
 
-class BrowserResizer {
-  private static final Logger log = LoggerFactory.getLogger(BrowserResizer.class);
-
-  void adjustBrowserPosition(Config config, WebDriver driver) {
-    if (config.browserPosition() != null) {
-      log.info("Set browser position to {}", config.browserPosition());
-      String[] coordinates = config.browserPosition().split("x");
-      int x = Integer.parseInt(coordinates[0]);
-      int y = Integer.parseInt(coordinates[1]);
-      Point target = new Point(x, y);
-      Point current = driver.manage().window().getPosition();
-      if (!current.equals(target)) {
-        driver.manage().window().setPosition(target);
-      }
+internal class BrowserResizer {
+    fun adjustBrowserPosition(config: Config, driver: WebDriver) {
+        if (config.browserPosition() != null) {
+            log.info("Set browser position to {}", config.browserPosition())
+            val coordinates = config.browserPosition()!!.split("x").toTypedArray()
+            val x = coordinates[0].toInt()
+            val y = coordinates[1].toInt()
+            val target = Point(x, y)
+            val current = driver.manage().window().position
+            if (current != target) {
+                driver.manage().window().position = target
+            }
+        }
     }
-  }
 
-  void adjustBrowserSize(Config config, WebDriver driver) {
-    if (config.browserSize() != null && !config.startMaximized()) {
-      log.info("Set browser size to {}", config.browserSize());
-      String[] dimension = config.browserSize().split("x");
-      int width = Integer.parseInt(dimension[0]);
-      int height = Integer.parseInt(dimension[1]);
-      driver.manage().window().setSize(new org.openqa.selenium.Dimension(width, height));
+    fun adjustBrowserSize(config: Config, driver: WebDriver) {
+        if (config.browserSize() != null && !config.startMaximized()) {
+            log.info("Set browser size to {}", config.browserSize())
+            val dimension = config.browserSize()!!.split("x").toTypedArray()
+            val width = dimension[0].toInt()
+            val height = dimension[1].toInt()
+            driver.manage().window().size = Dimension(width, height)
+        } else if (config.startMaximized()) {
+            try {
+                driver.manage().window().maximize()
+            } catch (cannotMaximize: Exception) {
+                log.warn("Cannot maximize {}: {}", driver.javaClass.simpleName, cannotMaximize)
+            }
+        }
     }
-    else if (config.startMaximized()) {
-      try {
-        driver.manage().window().maximize();
-      }
-      catch (Exception cannotMaximize) {
-        log.warn("Cannot maximize {}: {}", driver.getClass().getSimpleName(), cannotMaximize);
-      }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(BrowserResizer::class.java)
     }
-  }
 }

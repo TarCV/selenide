@@ -1,15 +1,9 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
+import java.io.File
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class SharedDownloadsFolder extends DownloadsFolder {
-  public SharedDownloadsFolder(String folder) {
-    super(new File(folder));
-  }
-
-  @Override
-  public void cleanupBeforeDownload() {
-  }
+class SharedDownloadsFolder(folder: String) : DownloadsFolder(File(folder)) {
+    override fun cleanupBeforeDownload() {}
 }

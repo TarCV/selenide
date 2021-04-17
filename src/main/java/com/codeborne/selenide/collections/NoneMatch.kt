@@ -1,22 +1,15 @@
-package com.codeborne.selenide.collections;
+package com.codeborne.selenide.collections
 
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.function.Predicate;
+import org.openqa.selenium.WebElement
+import java.util.function.Predicate
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class NoneMatch extends PredicateCollectionCondition {
-  public NoneMatch(String description, Predicate<WebElement> predicate) {
-    super("none", description, predicate);
-  }
-
-  @Override
-  public boolean test(List<WebElement> elements) {
-    if (elements.isEmpty()) {
-      return false;
+class NoneMatch(description: String, predicate: Predicate<WebElement>) :
+    PredicateCollectionCondition("none", description, predicate) {
+    override fun test(elements: List<WebElement>): Boolean {
+        return if (elements.isEmpty()) {
+            false
+        } else elements.stream().noneMatch(predicate)
     }
-    return elements.stream().noneMatch(predicate);
-  }
 }

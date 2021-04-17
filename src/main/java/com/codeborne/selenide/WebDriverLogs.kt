@@ -1,58 +1,42 @@
-package com.codeborne.selenide;
+package com.codeborne.selenide
 
-import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogEntry;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.logging.Level;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-import static java.util.stream.Collectors.toList;
+import org.openqa.selenium.logging.LogEntries
+import org.openqa.selenium.logging.LogEntry
+import java.util.Collections
+import java.util.logging.Level
+import java.util.stream.Collectors
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class WebDriverLogs {
-  private final Driver driver;
-
-  WebDriverLogs(Driver driver) {
-    this.driver = driver;
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public List<String> logs(String logType) {
-    return logs(logType, Level.ALL);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public List<String> logs(String logType, Level logLevel) {
-    return listToString(getLogEntries(logType, logLevel));
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  private List<LogEntry> getLogEntries(String logType, Level logLevel) {
-    try {
-      return filter(driver.getWebDriver().manage().logs().get(logType), logLevel);
+class WebDriverLogs internal constructor(private val driver: Driver) {
+    @CheckReturnValue
+    fun logs(logType: String): List<String> {
+        return logs(logType, Level.ALL)
     }
-    catch (UnsupportedOperationException ignore) {
-      return emptyList();
+
+    @CheckReturnValue
+    fun logs(logType: String, logLevel: Level): List<String> {
+        return listToString(getLogEntries(logType, logLevel))
     }
-  }
 
-  private List<LogEntry> filter(LogEntries entries, Level level) {
-    return unmodifiableList(entries.getAll().stream()
-      .filter(entry -> entry.getLevel().intValue() >= level.intValue())
-      .collect(toList()));
-  }
+    @CheckReturnValue
+    private fun getLogEntries(logType: String, logLevel: Level): List<LogEntry> {
+        return try {
+            filter(driver.webDriver.manage().logs()[logType], logLevel)
+        } catch (ignore: UnsupportedOperationException) {
+            emptyList()
+        }
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  private <T> List<String> listToString(List<T> objects) {
-    return objects.stream().map(Object::toString).collect(toList());
-  }
+    private fun filter(entries: LogEntries, level: Level): List<LogEntry> {
+        return Collections.unmodifiableList(entries.all.stream()
+            .filter { entry: LogEntry -> entry.level.intValue() >= level.intValue() }
+            .collect(Collectors.toList()))
+    }
+
+    @CheckReturnValue
+    private fun <T> listToString(objects: List<T>): List<String> {
+        return objects.stream().map { obj: T -> obj.toString() }.collect(Collectors.toList())
+    }
 }

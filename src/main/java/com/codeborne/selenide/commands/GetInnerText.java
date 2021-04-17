@@ -17,9 +17,6 @@ public class GetInnerText implements Command<String> {
   @Nonnull
   public String execute(SelenideElement proxy, WebElementSource locator, @Nullable Object[] args) {
     WebElement element = locator.getWebElement();
-    if (locator.driver().browser().isIE()) {
-      return element.getAttribute("innerText");
-    }
     return element.getAttribute("textContent");
   }
 }

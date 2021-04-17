@@ -75,7 +75,7 @@ public class DriverStub implements Driver {
   @Override
   @CheckReturnValue
   @Nonnull
-  public WebDriver getAndCheckWebDriver() {
+  public WebDriver getGetAndCheckWebDriver() {
     return webDriver;
   }
 

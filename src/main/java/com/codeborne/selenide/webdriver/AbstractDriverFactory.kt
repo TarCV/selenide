@@ -1,136 +1,118 @@
-package com.codeborne.selenide.webdriver;
+package com.codeborne.selenide.webdriver
 
-import com.codeborne.selenide.Browser;
-import com.codeborne.selenide.Config;
-import com.codeborne.selenide.impl.FileNamer;
-import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.Proxy;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.service.DriverService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.codeborne.selenide.impl.FileHelper.ensureFolderExists;
-import static java.lang.Integer.parseInt;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.openqa.selenium.remote.CapabilityType.ACCEPT_INSECURE_CERTS;
-import static org.openqa.selenium.remote.CapabilityType.ACCEPT_SSL_CERTS;
-import static org.openqa.selenium.remote.CapabilityType.PAGE_LOAD_STRATEGY;
-import static org.openqa.selenium.remote.CapabilityType.PROXY;
-import static org.openqa.selenium.remote.CapabilityType.SUPPORTS_ALERTS;
-import static org.openqa.selenium.remote.CapabilityType.TAKES_SCREENSHOT;
+import com.codeborne.selenide.Browser
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.impl.FileHelper
+import com.codeborne.selenide.impl.FileNamer
+import org.apache.commons.lang3.StringUtils
+import org.openqa.selenium.MutableCapabilities
+import org.openqa.selenium.Proxy
+import org.openqa.selenium.remote.CapabilityType
+import org.openqa.selenium.remote.DesiredCapabilities
+import org.openqa.selenium.remote.service.DriverService
+import org.slf4j.LoggerFactory
+import java.io.File
+import java.util.regex.Pattern
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public abstract class AbstractDriverFactory implements DriverFactory {
-  private static final Logger log = LoggerFactory.getLogger(AbstractDriverFactory.class);
-  private static final Pattern REGEX_SIGNED_INTEGER = Pattern.compile("^-?\\d+$");
-  private static final Pattern REGEX_VERSION = Pattern.compile("(\\d+)(\\..*)?");
-  private final FileNamer fileNamer = new FileNamer();
-
-  @CheckReturnValue
-  @Nonnull
-  protected File webdriverLog(Config config) {
-    File logFolder = ensureFolderExists(new File(config.reportsFolder()).getAbsoluteFile());
-    String logFileName = String.format("webdriver.%s.log", fileNamer.generateFileName());
-    File logFile = new File(logFolder, logFileName).getAbsoluteFile();
-    log.info("Write webdriver logs to: {}", logFile);
-    return logFile;
-  }
-
-  protected <DS extends DriverService, B extends DriverService.Builder<DS, ?>> DS withLog(Config config, B dsBuilder) {
-    if (config.webdriverLogsEnabled()) {
-      dsBuilder.withLogFile(webdriverLog(config));
+abstract class AbstractDriverFactory : DriverFactory {
+    private val fileNamer = FileNamer()
+    @CheckReturnValue
+    protected fun webdriverLog(config: Config): File {
+        val logFolder = FileHelper.ensureFolderExists(File(config.reportsFolder()).absoluteFile)
+        val logFileName = String.format("webdriver.%s.log", fileNamer.generateFileName())
+        val logFile = File(logFolder, logFileName).absoluteFile
+        log.info("Write webdriver logs to: {}", logFile)
+        return logFile
     }
-    return dsBuilder.build();
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  protected MutableCapabilities createCommonCapabilities(Config config, Browser browser, @Nullable Proxy proxy) {
-    DesiredCapabilities capabilities = new DesiredCapabilities();
-    if (proxy != null) {
-      capabilities.setCapability(PROXY, proxy);
+    protected fun <DS : DriverService?, B : DriverService.Builder<DS, *>?> withLog(config: Config, dsBuilder: B): DS {
+        if (config.webdriverLogsEnabled()) {
+            dsBuilder!!.withLogFile(webdriverLog(config))
+        }
+        return dsBuilder!!.build()
     }
-    if (config.browserVersion() != null && !config.browserVersion().isEmpty()) {
-      capabilities.setVersion(config.browserVersion());
+
+    @CheckReturnValue
+    fun createCommonCapabilities(config: Config, browser: Browser, proxy: Proxy?): MutableCapabilities {
+        val capabilities = DesiredCapabilities()
+        if (proxy != null) {
+            capabilities.setCapability(CapabilityType.PROXY, proxy)
+        }
+        if (config.browserVersion() != null && !config.browserVersion()!!.isEmpty()) {
+            capabilities.version = config.browserVersion()
+        }
+        capabilities.setCapability(CapabilityType.PAGE_LOAD_STRATEGY, config.pageLoadStrategy())
+        capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true)
+        if (browser.supportsInsecureCerts()) {
+            capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true)
+        }
+        capabilities.isJavascriptEnabled = true
+        capabilities.setCapability(CapabilityType.TAKES_SCREENSHOT, true)
+        capabilities.setCapability(CapabilityType.SUPPORTS_ALERTS, true)
+        transferCapabilitiesFromSystemProperties(capabilities)
+        return MergeableCapabilities(capabilities, config.browserCapabilities()!!)
     }
-    capabilities.setCapability(PAGE_LOAD_STRATEGY, config.pageLoadStrategy());
-    capabilities.setCapability(ACCEPT_SSL_CERTS, true);
 
-    if (browser.supportsInsecureCerts()) {
-      capabilities.setCapability(ACCEPT_INSECURE_CERTS, true);
+    protected fun transferCapabilitiesFromSystemProperties(currentBrowserCapabilities: DesiredCapabilities) {
+        val prefix = "capabilities."
+        for (key in System.getProperties().stringPropertyNames()) {
+            if (key.startsWith(prefix)) {
+                val capability = key.substring(prefix.length)
+                val value = System.getProperties().getProperty(key)
+                log.debug("Use {}={}", key, value)
+                currentBrowserCapabilities.setCapability(capability, convertStringToNearestObjectType(value))
+            }
+        }
     }
-    capabilities.setJavascriptEnabled(true);
-    capabilities.setCapability(TAKES_SCREENSHOT, true);
-    capabilities.setCapability(SUPPORTS_ALERTS, true);
 
-    transferCapabilitiesFromSystemProperties(capabilities);
-    return new MergeableCapabilities(capabilities, config.browserCapabilities());
-  }
-
-  protected void transferCapabilitiesFromSystemProperties(DesiredCapabilities currentBrowserCapabilities) {
-    String prefix = "capabilities.";
-    for (String key : System.getProperties().stringPropertyNames()) {
-      if (key.startsWith(prefix)) {
-        String capability = key.substring(prefix.length());
-        String value = System.getProperties().getProperty(key);
-        log.debug("Use {}={}", key, value);
-        currentBrowserCapabilities.setCapability(capability, convertStringToNearestObjectType(value));
-      }
+    /**
+     * Converts String to Boolean\Integer or returns original String.
+     * @param value string to convert
+     * @return string's object representation
+     */
+    @CheckReturnValue
+    fun convertStringToNearestObjectType(value: String): Any {
+        return if (isBoolean(value)) {
+            java.lang.Boolean.valueOf(value)
+        } else if (isInteger(value)) {
+            value.toInt()
+        } else {
+            value
+        }
     }
-  }
 
-  /**
-   * Converts String to Boolean\Integer or returns original String.
-   * @param value string to convert
-   * @return string's object representation
-   */
-  @CheckReturnValue
-  @Nonnull
-  protected Object convertStringToNearestObjectType(String value) {
-    if (isBoolean(value)) {
-      return Boolean.valueOf(value);
+    @CheckReturnValue
+    protected fun isInteger(value: String): Boolean {
+        return REGEX_SIGNED_INTEGER.matcher(value).matches()
     }
-    else if (isInteger(value)) {
-      return parseInt(value);
+
+    @CheckReturnValue
+    protected fun isBoolean(value: String?): Boolean {
+        return "true".equals(value, ignoreCase = true) || "false".equals(value, ignoreCase = true)
     }
-    else {
-      return value;
+
+    @CheckReturnValue
+    protected fun isSystemPropertyNotSet(key: String): Boolean {
+        return StringUtils.isBlank(System.getProperty(key, ""))
     }
-  }
 
-  @CheckReturnValue
-  protected boolean isInteger(String value) {
-    return REGEX_SIGNED_INTEGER.matcher(value).matches();
-  }
+    @CheckReturnValue
+    fun majorVersion(browserVersion: String): Int {
+        if (StringUtils.isBlank(browserVersion)) return 0
+        val matcher = REGEX_VERSION.matcher(browserVersion)
+        return if (matcher.matches()) matcher.replaceFirst("$1").toInt() else 0
+    }
 
-  @CheckReturnValue
-  protected boolean isBoolean(String value) {
-    return "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
-  }
+    protected fun <T> cast(value: Any): T {
+        return value as T
+    }
 
-  @CheckReturnValue
-  protected boolean isSystemPropertyNotSet(String key) {
-    return isBlank(System.getProperty(key, ""));
-  }
-
-  @CheckReturnValue
-  protected int majorVersion(@Nullable String browserVersion) {
-    if (isBlank(browserVersion)) return 0;
-    Matcher matcher = REGEX_VERSION.matcher(browserVersion);
-    return matcher.matches() ? parseInt(matcher.replaceFirst("$1")) : 0;
-  }
-
-  @SuppressWarnings("unchecked")
-  protected <T> T cast(Object value) {
-    return (T) value;
-  }
+    companion object {
+        private val log = LoggerFactory.getLogger(AbstractDriverFactory::class.java)
+        private val REGEX_SIGNED_INTEGER = Pattern.compile("^-?\\d+$")
+        private val REGEX_VERSION = Pattern.compile("(\\d+)(\\..*)?")
+    }
 }

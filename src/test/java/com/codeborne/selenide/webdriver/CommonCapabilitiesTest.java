@@ -4,6 +4,8 @@ import com.codeborne.selenide.Browser;
 import com.codeborne.selenide.Config;
 import com.codeborne.selenide.SelenideConfig;
 import org.assertj.core.api.WithAssertions;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.MutableCapabilities;
@@ -13,7 +15,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 
@@ -81,7 +82,6 @@ final class CommonCapabilitiesTest implements WithAssertions {
     return new Browser(config.browser(), config.headless());
   }
 
-  @ParametersAreNonnullByDefault
   private static class DummyDriverFactory extends AbstractDriverFactory {
     @Override
     public void setupWebdriverBinary() {
@@ -90,15 +90,15 @@ final class CommonCapabilitiesTest implements WithAssertions {
     @Override
     @CheckReturnValue
     @Nonnull
-    public MutableCapabilities createCapabilities(Config config, Browser browser,
-                                                  @Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
+    public MutableCapabilities createCapabilities(@org.jetbrains.annotations.Nullable Config config, @NotNull Browser browser,
+                                                  @org.jetbrains.annotations.Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
       return new DesiredCapabilities();
     }
 
     @Override
     @CheckReturnValue
     @Nonnull
-    public WebDriver create(Config config, Browser browser, @Nullable Proxy proxy, File browserDownloadsFolder) {
+    public WebDriver create(@Nullable Config config, @NotNull Browser browser, @Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
       return mock(WebDriver.class);
     }
   }
