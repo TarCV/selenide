@@ -1,21 +1,15 @@
-package com.codeborne.selenide.files;
+package com.codeborne.selenide.files
 
-class FilenameFilter implements FileFilter {
-  private final String fileName;
+internal class FilenameFilter(private val fileName: String) : FileFilter {
+    override fun match(file: DownloadedFile): Boolean {
+        return file.file.name == fileName
+    }
 
-  FilenameFilter(String fileName) {
-    this.fileName = fileName;
-  }
+    override fun description(): String {
+        return "with file name \"$fileName\""
+    }
 
-  @Override public boolean match(DownloadedFile file) {
-    return file.getFile().getName().equals(fileName);
-  }
-
-  @Override public String description() {
-    return "with file name \"" + fileName + "\"";
-  }
-
-  @Override public String toString() {
-    return description();
-  }
+    override fun toString(): String {
+        return description()
+    }
 }

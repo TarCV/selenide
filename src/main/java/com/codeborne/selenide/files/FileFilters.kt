@@ -1,21 +1,24 @@
-package com.codeborne.selenide.files;
+package com.codeborne.selenide.files
 
-public class FileFilters {
-  private static final FileFilter NONE = new EmptyFileFilter();
+object FileFilters {
+    private val NONE: FileFilter = EmptyFileFilter()
+    @JvmStatic
+    fun none(): FileFilter {
+        return NONE
+    }
 
-  public static FileFilter none() {
-    return NONE;
-  }
+    @JvmStatic
+    fun withName(fileName: String): FileFilter {
+        return FilenameFilter(fileName)
+    }
 
-  public static FileFilter withName(String fileName) {
-    return new FilenameFilter(fileName);
-  }
+    @JvmStatic
+    fun withNameMatching(fileNameRegex: String): FileFilter {
+        return FilenameRegexFilter(fileNameRegex)
+    }
 
-  public static FileFilter withNameMatching(String fileNameRegex) {
-    return new FilenameRegexFilter(fileNameRegex);
-  }
-
-  public static FileFilter withExtension(String extension) {
-    return new ExtensionFilter(extension);
-  }
+    @JvmStatic
+    fun withExtension(extension: String): FileFilter {
+        return ExtensionFilter(extension)
+    }
 }

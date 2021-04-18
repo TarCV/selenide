@@ -1,23 +1,20 @@
-package com.codeborne.selenide.files;
+package com.codeborne.selenide.files
 
-import java.util.regex.Pattern;
+import java.util.regex.Pattern
 
-class FilenameRegexFilter implements FileFilter {
-  private final Pattern fileNameRegex;
+internal class FilenameRegexFilter(fileNameRegex: String) : FileFilter {
+    private val fileNameRegex: Pattern = Pattern.compile(fileNameRegex)
 
-  FilenameRegexFilter(String fileNameRegex) {
-    this.fileNameRegex = Pattern.compile(fileNameRegex);
-  }
+    override fun match(file: DownloadedFile): Boolean {
+        return fileNameRegex.matcher(file.file.name).matches()
+    }
 
-  @Override public boolean match(DownloadedFile file) {
-    return fileNameRegex.matcher(file.getFile().getName()).matches();
-  }
+    override fun description(): String {
+        return "with file name matching \"$fileNameRegex\""
+    }
 
-  @Override public String description() {
-    return "with file name matching \"" + fileNameRegex + "\"";
-  }
+    override fun toString(): String {
+        return description()
+    }
 
-  @Override public String toString() {
-    return description();
-  }
 }

@@ -1,23 +1,17 @@
-package com.codeborne.selenide.files;
+package com.codeborne.selenide.files
 
-class EmptyFileFilter implements FileFilter {
-  @Override
-  public boolean match(DownloadedFile file) {
-    return true;
-  }
+internal class EmptyFileFilter : FileFilter {
+    override fun match(file: DownloadedFile): Boolean {
+        return true
+    }
 
-  @Override
-  public String description() {
-    return "";
-  }
+    override fun description(): String {
+        return ""
+    }
 
-  @Override
-  public boolean isEmpty() {
-    return true;
-  }
+    override val isEmpty: Boolean = true
 
-  @Override
-  public String toString() {
-    return description();
-  }
+    override fun toString(): String {
+        return description()
+    }
 }

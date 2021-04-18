@@ -1,23 +1,17 @@
-package com.codeborne.selenide.files;
+package com.codeborne.selenide.files
 
-import static org.apache.commons.io.FilenameUtils.isExtension;
+import org.apache.commons.io.FilenameUtils
 
-class ExtensionFilter implements FileFilter {
-  private final String extension;
+internal class ExtensionFilter(private val extension: String) : FileFilter {
+    override fun match(file: DownloadedFile): Boolean {
+        return FilenameUtils.isExtension(file.file.name, extension)
+    }
 
-  ExtensionFilter(String extension) {
-    this.extension = extension;
-  }
+    override fun description(): String {
+        return "with extension \"$extension\""
+    }
 
-  @Override public boolean match(DownloadedFile file) {
-    return isExtension(file.getFile().getName(), extension);
-  }
-
-  @Override public String description() {
-    return "with extension \"" + extension + "\"";
-  }
-
-  @Override public String toString() {
-    return description();
-  }
+    override fun toString(): String {
+        return description()
+    }
 }

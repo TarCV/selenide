@@ -1,12 +1,10 @@
-package com.codeborne.selenide.files;
+package com.codeborne.selenide.files
 
-import java.io.Serializable;
+import java.io.Serializable
 
-public interface FileFilter extends Serializable {
-  boolean match(DownloadedFile file);
-  String description();
-
-  default boolean isEmpty() {
-    return false;
-  }
+interface FileFilter : Serializable {
+    fun match(file: DownloadedFile): Boolean
+    fun description(): String
+    val isEmpty: Boolean
+        get() = false
 }
