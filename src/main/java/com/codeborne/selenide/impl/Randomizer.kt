@@ -1,13 +1,11 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import java.util.UUID;
+import java.util.UUID
+import javax.annotation.CheckReturnValue
 
-public class Randomizer {
-  @CheckReturnValue
-  @Nonnull
-  public String text() {
-    return UUID.randomUUID().toString();
-  }
+open class Randomizer {
+    @CheckReturnValue
+    open fun text(): String {
+        return UUID.randomUUID().toString()
+    }
 }

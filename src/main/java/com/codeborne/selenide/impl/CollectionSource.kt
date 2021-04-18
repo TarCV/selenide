@@ -1,36 +1,29 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public interface CollectionSource {
-  /**
-   * get elements of this collection (probably cached).
-   */
-  @CheckReturnValue
-  @Nonnull
-  List<WebElement> getElements();
+interface CollectionSource {
+    /**
+     * get elements of this collection (probably cached).
+     */
+    @get:CheckReturnValue
+    val elements: List<WebElement>
 
-  /**
-   * get Nth element of this collection
-   */
-  @CheckReturnValue
-  @Nonnull
-  WebElement getElement(int index);
+    /**
+     * get Nth element of this collection
+     */
+    @CheckReturnValue
+    fun getElement(index: Int): WebElement
 
-  @CheckReturnValue
-  @Nonnull
-  String description();
+    @CheckReturnValue
+    fun description(): String
 
-  @CheckReturnValue
-  @Nonnull
-  Driver driver();
+    @CheckReturnValue
+    fun driver(): Driver
 
-  void setAlias(String alias);
+    fun setAlias(alias: String)
 }

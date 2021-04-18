@@ -1,60 +1,40 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.lang.reflect.Proxy;
-
-import static com.codeborne.selenide.impl.Plugins.inject;
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.Plugins.inject
+import org.openqa.selenium.WebElement
+import java.lang.reflect.Proxy
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class WebElementWrapper extends WebElementSource {
-  public static SelenideElement wrap(Driver driver, WebElement element) {
-    return element instanceof SelenideElement ?
-        (SelenideElement) element :
-        (SelenideElement) Proxy.newProxyInstance(
-            element.getClass().getClassLoader(), new Class<?>[]{SelenideElement.class},
-            new SelenideElementProxy(new WebElementWrapper(driver, element)));
-  }
+class WebElementWrapper(
+    private val driver: Driver, @get:CheckReturnValue
+    override val webElement: WebElement
+) : WebElementSource() {
+    private val describe = inject(ElementDescriber::class.java)
 
-  private final ElementDescriber describe = inject(ElementDescriber.class);
-  private final Driver driver;
-  private final WebElement delegate;
+    @get:CheckReturnValue
+    override val searchCriteria: String
+        get() = describe.briefly(driver, webElement)
 
-  protected WebElementWrapper(Driver driver, WebElement delegate) {
-    this.driver = driver;
-    this.delegate = delegate;
-  }
+    @CheckReturnValue
+    override fun toString(): String {
+        return alias.getOrElse { describe.fully(driver(), webElement) }
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebElement getWebElement() {
-    return delegate;
-  }
+    @CheckReturnValue
+    override fun driver(): Driver {
+        return driver
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String getSearchCriteria() {
-    return describe.briefly(driver, delegate);
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String toString() {
-    return getAlias().getOrElse(() -> describe.fully(driver(), delegate));
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Driver driver() {
-    return driver;
-  }
+    companion object {
+        fun wrap(driver: Driver, element: WebElement): SelenideElement {
+            return if (element is SelenideElement) element else (Proxy.newProxyInstance(
+                element.javaClass.classLoader, arrayOf<Class<*>>(SelenideElement::class.java),
+                SelenideElementProxy(WebElementWrapper(driver, element))
+            ) as SelenideElement)
+        }
+    }
 }

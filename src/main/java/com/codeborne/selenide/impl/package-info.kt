@@ -6,14 +6,14 @@
  *
  * <pre>
  * Screenshots.screenshots = new ScreenShotLaboratory() {
- *   {@code @Override}
- *   protected File savePageImageToFile(String fileName, WebDriver webdriver) {
- *     // your custom logic
- *   }
+ * `@Override`
+ * protected File savePageImageToFile(String fileName, WebDriver webdriver) {
+ * // your custom logic
+ * }
  * };
- * </pre>
+</pre> *
  *
  * NB! But "com.codeborne.selenide.impl" package is subject to change.
  * It's up to you to maintain your overridden logic.
  */
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl

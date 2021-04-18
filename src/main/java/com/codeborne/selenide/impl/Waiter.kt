@@ -1,33 +1,30 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static java.lang.System.currentTimeMillis;
-
-import java.util.function.Predicate;
+import java.util.function.Predicate
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-class Waiter {
-  @CheckReturnValue
-  public <T> void wait(T subject, Predicate<T> condition, long timeout, long pollingInterval) {
-    sleep(pollingInterval);
-    for (long start = currentTimeMillis();
-         !isTimeoutExceeded(timeout, start) && !condition.test(subject); ) {
-      sleep(pollingInterval);
+internal open class Waiter {
+    @CheckReturnValue
+    open fun <T> wait(subject: T, condition: Predicate<T>, timeout: Long, pollingInterval: Long) {
+        sleep(pollingInterval)
+        val start = System.currentTimeMillis()
+        while (!isTimeoutExceeded(timeout, start) && !condition.test(subject)) {
+            sleep(pollingInterval)
+        }
     }
-  }
 
-  private boolean isTimeoutExceeded(long timeout, long start) {
-    return currentTimeMillis() - start > timeout;
-  }
-
-  private void sleep(long milliseconds) {
-    try {
-      Thread.sleep(milliseconds);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      throw new RuntimeException(e);
+    private fun isTimeoutExceeded(timeout: Long, start: Long): Boolean {
+        return System.currentTimeMillis() - start > timeout
     }
-  }
+
+    private fun sleep(milliseconds: Long) {
+        try {
+            Thread.sleep(milliseconds)
+        } catch (e: InterruptedException) {
+            Thread.currentThread().interrupt()
+            throw RuntimeException(e)
+        }
+    }
 }

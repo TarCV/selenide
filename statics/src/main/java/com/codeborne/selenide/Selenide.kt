@@ -159,7 +159,7 @@ object Selenide {
      */
     @CheckReturnValue
     @JvmStatic
-    fun <PageObjectClass> open(
+    fun <PageObjectClass: Any> open(
         relativeOrAbsoluteUrl: String,
         pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
@@ -172,7 +172,7 @@ object Selenide {
      */
     @CheckReturnValue
     @JvmStatic
-    fun <PageObjectClass> open(
+    fun <PageObjectClass: Any> open(
         absoluteUrl: URL,
         pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
@@ -185,7 +185,7 @@ object Selenide {
      */
     @CheckReturnValue
     @JvmStatic
-    fun<PageObjectClass> open(
+    fun<PageObjectClass: Any> open(
         relativeOrAbsoluteUrl: String,
         domain: String, login: String, password: String,
         pageObjectClassClass: Class<PageObjectClass>
@@ -200,7 +200,7 @@ object Selenide {
      */
     @CheckReturnValue
     @JvmStatic
-    fun<PageObjectClass> open(
+    fun<PageObjectClass: Any> open(
         absoluteUrl: URL, domain: String, login: String, password: String,
         pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
@@ -304,7 +304,7 @@ object Selenide {
      */
     @CheckReturnValue
     @JvmStatic
-    fun <T> screenshot(outputType: OutputType<T>): T? {
+    fun <T: Any> screenshot(outputType: OutputType<T>): T? {
         return WebDriverRunner.selenideDriver.screenshot(outputType)
     }
 
@@ -825,7 +825,7 @@ object Selenide {
      */
     @CheckReturnValue
     @JvmStatic
-    fun <PageObjectClass> page(pageObjectClass: Class<PageObjectClass>): PageObjectClass {
+    fun <PageObjectClass: Any> page(pageObjectClass: Class<PageObjectClass>): PageObjectClass {
         return WebDriverRunner.selenideDriver.page(pageObjectClass)
     }
 
@@ -834,7 +834,7 @@ object Selenide {
      */
     @CheckReturnValue
     @JvmStatic
-    fun <PageObjectClass, T : PageObjectClass> page(pageObject: T): PageObjectClass {
+    fun <PageObjectClass: Any, T : PageObjectClass> page(pageObject: T): PageObjectClass {
         return WebDriverRunner.selenideDriver.page(pageObject)
     }
 

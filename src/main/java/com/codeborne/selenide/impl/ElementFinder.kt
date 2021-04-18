@@ -1,163 +1,136 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.ex.ElementNotFound;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.lang.reflect.Proxy;
-import java.util.List;
-
-import static com.codeborne.selenide.Condition.exist;
-import static com.codeborne.selenide.impl.Plugins.inject;
-import static java.lang.Thread.currentThread;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.ex.ElementNotFound
+import org.openqa.selenium.By
+import org.openqa.selenium.NoSuchElementException
+import org.openqa.selenium.SearchContext
+import org.openqa.selenium.WebElement
+import java.lang.reflect.Proxy
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class ElementFinder extends WebElementSource {
-  private final ElementDescriber describe = inject(ElementDescriber.class);
+class ElementFinder internal constructor(
+    private val driver: Driver,
+    private val parent: SearchContext?,
+    private val criteria: By,
+    private val index: Int
+) : WebElementSource() {
+    private val describe = Plugins.inject(
+        ElementDescriber::class.java
+    )
 
-  @CheckReturnValue
-  @Nonnull
-  public static SelenideElement wrap(Driver driver, WebElement parent, String cssSelector) {
-    return wrap(driver, parent, By.cssSelector(cssSelector), 0);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public static SelenideElement wrap(Driver driver, String cssSelector, int index) {
-    return wrap(driver, null, By.cssSelector(cssSelector), index);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public static SelenideElement wrap(Driver driver, WebElement parent, String cssSelector, int index) {
-    return wrap(driver, WebElementWrapper.wrap(driver, parent), By.cssSelector(cssSelector), index);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public static SelenideElement wrap(Driver driver, By criteria) {
-    return wrap(driver, null, criteria, 0);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public static SelenideElement wrap(Driver driver, @Nullable SearchContext parent, By criteria, int index) {
-    return wrap(driver, SelenideElement.class, parent, criteria, index);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  @SuppressWarnings("unchecked")
-  public static <T extends SelenideElement> T wrap(Driver driver,
-                                                   Class<T> clazz,
-                                                   @Nullable SearchContext parent,
-                                                   By criteria,
-                                                   int index) {
-    return (T) Proxy.newProxyInstance(
-      currentThread().getContextClassLoader(),
-      new Class<?>[]{clazz},
-      new SelenideElementProxy(new ElementFinder(driver, parent, criteria, index)));
-  }
-
-  private final Driver driver;
-  private final SearchContext parent;
-  private final By criteria;
-  private final int index;
-
-  ElementFinder(Driver driver, @Nullable SearchContext parent, By criteria, int index) {
-    this.driver = driver;
-    this.parent = parent;
-    this.criteria = criteria;
-    this.index = index;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement find(SelenideElement proxy, Object arg, int index) {
-    return arg instanceof By ?
-        wrap(driver, proxy, (By) arg, index) :
-        wrap(driver, proxy, By.cssSelector((String) arg), index);
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Driver driver() {
-    return driver;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebElement getWebElement() throws NoSuchElementException, IndexOutOfBoundsException {
-    return index == 0 ?
-        WebElementSelector.instance.findElement(driver, getSearchContext(), criteria) :
-        WebElementSelector.instance.findElements(driver, getSearchContext(), criteria).get(index);
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public List<WebElement> findAll() throws NoSuchElementException, IndexOutOfBoundsException {
-    return index == 0 ?
-        WebElementSelector.instance.findElements(driver(), getSearchContext(), criteria) :
-        super.findAll();
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  private SearchContext getSearchContext() {
-    return parent == null ? driver().getWebDriver() :
-        (parent instanceof SelenideElement) ? ((SelenideElement) parent).toWebElement() :
-        parent;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public ElementNotFound createElementNotFoundError(Condition condition, Throwable lastError) {
-    if (parent instanceof SelenideElement) {
-      ((SelenideElement) parent).should(exist);
-    }
-    else if (parent instanceof WebElement) {
-      WebElementWrapper.wrap(driver(), (WebElement) parent).should(exist);
+    @CheckReturnValue
+    override fun find(proxy: SelenideElement, arg: Any, index: Int): SelenideElement {
+        return if (arg is By) wrap(driver, proxy, arg, index) else wrap(
+            driver, proxy, By.cssSelector(arg as String), index
+        )
     }
 
-    return super.createElementNotFoundError(condition, lastError);
-  }
+    @CheckReturnValue
+    override fun driver(): Driver {
+        return driver
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String getSearchCriteria() {
-    return parent == null ?
-      elementCriteria() :
-      (parent instanceof SelenideElement) ?
-        ((SelenideElement) parent).getSearchCriteria() + "/" + elementCriteria() :
-        elementCriteria();
-  }
+    @get:CheckReturnValue
+    override val webElement: WebElement
+        @Throws(NoSuchElementException::class, IndexOutOfBoundsException::class)
+        get() {
+            return if (index == 0) WebElementSelector.instance.findElement(
+                driver,
+                searchContext,
+                criteria
+            ) else WebElementSelector.instance.findElements(
+                driver, searchContext, criteria
+            )[index]
+        }
 
-  @Nonnull
-  private String elementCriteria() {
-    return index == 0 ?
-      describe.selector(criteria) :
-      describe.selector(criteria) + '[' + index + ']';
-  }
+    @CheckReturnValue
+    @Throws(NoSuchElementException::class, IndexOutOfBoundsException::class)
+    override fun findAll(): List<WebElement> {
+        return if (index == 0) WebElementSelector.instance.findElements(
+            driver(),
+            searchContext,
+            criteria
+        ) else super.findAll()
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String toString() {
-    return "{" + description() + '}';
-  }
+    @get:CheckReturnValue
+    private val searchContext: SearchContext
+        get() = if (parent == null) driver().webDriver else if (parent is SelenideElement) parent.toWebElement() else parent
+
+    @CheckReturnValue
+    override fun createElementNotFoundError(condition: Condition, lastError: Throwable?): ElementNotFound {
+        if (parent is SelenideElement) {
+            parent.should(Condition.exist)
+        } else if (parent is WebElement) {
+            WebElementWrapper.wrap(driver(), parent).should(Condition.exist)
+        }
+        return super.createElementNotFoundError(condition, lastError)
+    }
+
+    @get:CheckReturnValue
+    override val searchCriteria: String
+        get() {
+            return if (parent == null) elementCriteria() else if (parent is SelenideElement) parent.searchCriteria + "/" + elementCriteria() else elementCriteria()
+        }
+
+    private fun elementCriteria(): String {
+        return if (index == 0) describe.selector(criteria) else describe.selector(criteria) + '[' + index + ']'
+    }
+
+    @CheckReturnValue
+    override fun toString(): String {
+        return "{" + description() + '}'
+    }
+
+    companion object {
+        @JvmStatic
+        @CheckReturnValue
+        fun wrap(driver: Driver, parent: WebElement?, cssSelector: String?): SelenideElement {
+            return wrap(driver, parent, By.cssSelector(cssSelector), 0)
+        }
+
+        @JvmStatic
+        @CheckReturnValue
+        fun wrap(driver: Driver, cssSelector: String?, index: Int): SelenideElement {
+            return wrap(driver, null, By.cssSelector(cssSelector), index)
+        }
+
+        @JvmStatic
+        @CheckReturnValue
+        fun wrap(driver: Driver, parent: WebElement, cssSelector: String?, index: Int): SelenideElement {
+            return wrap(driver, WebElementWrapper.wrap(driver, parent), By.cssSelector(cssSelector), index)
+        }
+
+        @JvmStatic
+        @CheckReturnValue
+        fun wrap(driver: Driver, criteria: By): SelenideElement {
+            return wrap(driver, null, criteria, 0)
+        }
+
+        @JvmStatic
+        @CheckReturnValue
+        fun wrap(driver: Driver, parent: SearchContext?, criteria: By, index: Int): SelenideElement {
+            return wrap(driver, SelenideElement::class.java, parent, criteria, index)
+        }
+
+        @JvmStatic
+        @CheckReturnValue
+        fun <T : SelenideElement?> wrap(
+            driver: Driver,
+            clazz: Class<T>,
+            parent: SearchContext?,
+            criteria: By,
+            index: Int
+        ): T {
+            return Proxy.newProxyInstance(
+                Thread.currentThread().contextClassLoader, arrayOf<Class<*>>(clazz),
+                SelenideElementProxy(ElementFinder(driver, parent, criteria, index))
+            ) as T
+        }
+    }
 }

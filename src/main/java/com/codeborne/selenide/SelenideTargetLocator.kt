@@ -120,7 +120,7 @@ class SelenideTargetLocator(private val driver: Driver) : TargetLocator {
      *
      * @param index index of window (0-based)
      */
-    fun window(index: Int): WebDriver {
+    fun window(index: Int): WebDriver? {
         return try {
             Wait().until(WindowByIndex(index))
         } catch (e: TimeoutException) {

@@ -1,94 +1,80 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Config;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.UnhandledAlertException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.impl.FileHelper.copyFile
+import org.openqa.selenium.UnhandledAlertException
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.WebDriverException
+import org.slf4j.LoggerFactory
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.IOException
+import java.nio.charset.StandardCharsets
+import java.util.concurrent.ConcurrentSkipListSet
+import javax.annotation.CheckReturnValue
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+open class WebPageSourceExtractor : PageSourceExtractor {
+    private val printedErrors: MutableSet<String> = ConcurrentSkipListSet()
+    @CheckReturnValue
+    override fun extract(config: Config?, driver: WebDriver?, fileName: String?): File {
+        return extract(config, driver, fileName, true)
+    }
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+    private fun extract(config: Config?, driver: WebDriver?, fileName: String?, retryIfAlert: Boolean): File {
+        val pageSource = createFile(config, fileName)
+        try {
+            writeToFile(driver!!.pageSource, pageSource)
+        } catch (e: UnhandledAlertException) {
+            if (retryIfAlert) {
+                retryingExtractionOnAlert(config, driver, fileName, e)
+            } else {
+                printOnce("savePageSourceToFile", e)
+            }
+        } catch (e: WebDriverException) {
+            log.warn("Failed to save page source to {}", fileName, e)
+            writeToFile(e.toString(), pageSource)
+            return pageSource
+        } catch (e: RuntimeException) {
+            log.error("Failed to save page source to {}", fileName, e)
+            writeToFile(e.toString(), pageSource)
+        }
+        return pageSource
+    }
 
-@ParametersAreNonnullByDefault
-public class WebPageSourceExtractor implements PageSourceExtractor {
-  private static final Logger log = LoggerFactory.getLogger(WebPageSourceExtractor.class);
-  private final Set<String> printedErrors = new ConcurrentSkipListSet<>();
+    protected fun createFile(config: Config?, fileName: String?): File {
+        return File(config!!.reportsFolder(), "$fileName.html").absoluteFile
+    }
 
-  @Nonnull
-  @CheckReturnValue
-  @Override
-  public File extract(Config config, WebDriver driver, String fileName) {
-    return extract(config, driver, fileName, true);
-  }
+    protected fun writeToFile(content: String, targetFile: File) {
+        try {
+            ByteArrayInputStream(content.toByteArray(StandardCharsets.UTF_8)).use { `in` -> copyFile(`in`, targetFile) }
+        } catch (e: IOException) {
+            log.error("Failed to write file {}", targetFile.absolutePath, e)
+        }
+    }
 
-  private File extract(Config config, WebDriver driver, String fileName, boolean retryIfAlert) {
-    File pageSource = createFile(config, fileName);
-    try {
-      writeToFile(driver.getPageSource(), pageSource);
+    @Synchronized
+    protected fun printOnce(action: String, error: Throwable) {
+        if (!printedErrors.contains(action)) {
+            log.error(error.message, error)
+            printedErrors.add(action)
+        } else {
+            log.error("Failed to {}: {}", action, error)
+        }
     }
-    catch (UnhandledAlertException e) {
-      if (retryIfAlert) {
-        retryingExtractionOnAlert(config, driver, fileName, e);
-      }
-      else {
-        printOnce("savePageSourceToFile", e);
-      }
-    }
-    catch (WebDriverException e) {
-      log.warn("Failed to save page source to {}", fileName, e);
-      writeToFile(e.toString(), pageSource);
-      return pageSource;
-    }
-    catch (RuntimeException e) {
-      log.error("Failed to save page source to {}", fileName, e);
-      writeToFile(e.toString(), pageSource);
-    }
-    return pageSource;
-  }
 
-  @Nonnull
-  protected File createFile(Config config, String fileName) {
-    return new File(config.reportsFolder(), fileName + ".html").getAbsoluteFile();
-  }
+    private fun retryingExtractionOnAlert(config: Config?, driver: WebDriver?, fileName: String?, e: Exception) {
+        try {
+            val alert = driver!!.switchTo().alert()
+            log.error("{}: {}", e, alert.text)
+            alert.accept()
+            extract(config, driver, fileName, false)
+        } catch (unableToCloseAlert: Exception) {
+            log.error("Failed to close alert", unableToCloseAlert)
+        }
+    }
 
-  protected void writeToFile(String content, File targetFile) {
-    try (ByteArrayInputStream in = new ByteArrayInputStream(content.getBytes(UTF_8))) {
-      FileHelper.copyFile(in, targetFile);
+    companion object {
+        private val log = LoggerFactory.getLogger(WebPageSourceExtractor::class.java)
     }
-    catch (IOException e) {
-      log.error("Failed to write file {}", targetFile.getAbsolutePath(), e);
-    }
-  }
-
-  protected synchronized void printOnce(String action, Throwable error) {
-    if (!printedErrors.contains(action)) {
-      log.error(error.getMessage(), error);
-      printedErrors.add(action);
-    }
-    else {
-      log.error("Failed to {}: {}", action, error);
-    }
-  }
-
-  private void retryingExtractionOnAlert(Config config, WebDriver driver, String fileName, Exception e) {
-    try {
-      Alert alert = driver.switchTo().alert();
-      log.error("{}: {}", e, alert.getText());
-      alert.accept();
-      extract(config, driver, fileName, false);
-    }
-    catch (Exception unableToCloseAlert) {
-      log.error("Failed to close alert", unableToCloseAlert);
-    }
-  }
 }

@@ -1,25 +1,23 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.time.Duration;
+import java.time.Duration
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class DurationFormat {
-  @CheckReturnValue
-  public String format(Duration duration) {
-    return format(duration.toMillis());
-  }
-
-  @CheckReturnValue
-  public String format(long milliseconds) {
-    if (milliseconds < 1000) {
-      return String.format("%d ms.", milliseconds);
-    }
-    if (milliseconds % 1000 == 0) {
-      return String.format("%d s.", milliseconds / 1000);
+class DurationFormat {
+    @CheckReturnValue
+    fun format(duration: Duration): String {
+        return format(duration.toMillis())
     }
 
-    return String.format("%.3f s.", milliseconds / 1000.0);
-  }
+    @CheckReturnValue
+    fun format(milliseconds: Long): String {
+        if (milliseconds < 1000) {
+            return String.format("%d ms.", milliseconds)
+        }
+        return if (milliseconds % 1000 == 0L) {
+            String.format("%d s.", milliseconds / 1000)
+        } else String.format("%.3f s.", milliseconds / 1000.0)
+    }
 }

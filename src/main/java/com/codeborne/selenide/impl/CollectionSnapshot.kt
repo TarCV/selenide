@@ -1,60 +1,46 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.codeborne.selenide.impl.Alias.NONE;
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class CollectionSnapshot implements CollectionSource {
+class CollectionSnapshot(private val originalCollection: CollectionSource) : CollectionSource {
+    private val elementsSnapshot: List<WebElement>
+    private var alias = Alias.NONE
+    @get:CheckReturnValue
+    override val elements: List<WebElement>
+        get() {
+            return elementsSnapshot
+        }
 
-  private final CollectionSource originalCollection;
-  private final List<WebElement> elementsSnapshot;
-  private Alias alias = NONE;
+    @CheckReturnValue
+    override fun getElement(index: Int): WebElement {
+        return elementsSnapshot[index]
+    }
 
-  public CollectionSnapshot(CollectionSource collection) {
-    this.originalCollection = collection;
-    this.elementsSnapshot = new ArrayList<>(collection.getElements());
-  }
+    @CheckReturnValue
+    override fun description(): String {
+        return alias.getOrElse {
+            String.format(
+              "%s.snapshot(%d elements)",
+              originalCollection.description(),
+              elementsSnapshot.size
+            )
+        }
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public List<WebElement> getElements() {
-    return elementsSnapshot;
-  }
+    @CheckReturnValue
+    override fun driver(): Driver {
+        return originalCollection.driver()
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebElement getElement(int index) {
-    return elementsSnapshot.get(index);
-  }
+    override fun setAlias(alias: String) {
+        this.alias = Alias(alias)
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String description() {
-    return alias.getOrElse(() ->
-      String.format("%s.snapshot(%d elements)", originalCollection.description(), elementsSnapshot.size())
-    );
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Driver driver() {
-    return originalCollection.driver();
-  }
-
-  @Override
-  public void setAlias(String alias) {
-    this.alias = new Alias(alias);
-  }
+    init {
+        elementsSnapshot = ArrayList(originalCollection.elements)
+    }
 }

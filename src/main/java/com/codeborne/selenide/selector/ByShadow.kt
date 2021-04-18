@@ -66,14 +66,14 @@ object ByShadow {
 
         private fun findElementsInDocument(context: JavascriptExecutor): List<WebElement> {
             return context.executeScript(
-                "return " + jsSource.content() + "(arguments[0], arguments[1])", target, shadowHostsChain
+                "return " + jsSource.content + "(arguments[0], arguments[1])", target, shadowHostsChain
             ) as List<WebElement>
         }
 
         private fun findElementsInElement(context: SearchContext): List<WebElement> {
             val js = (context as WrapsDriver).wrappedDriver as JavascriptExecutor
             return js.executeScript(
-                "return " + jsSource.content() + "(arguments[0], arguments[1], arguments[2])",
+                "return " + jsSource.content + "(arguments[0], arguments[1], arguments[2])",
                 target,
                 shadowHostsChain,
                 context

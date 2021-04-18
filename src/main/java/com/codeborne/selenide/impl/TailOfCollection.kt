@@ -1,65 +1,43 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import javax.annotation.CheckReturnValue
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
+class TailOfCollection(private val originalCollection: CollectionSource, private val size: Int) : CollectionSource {
+    private var alias = Alias.NONE
 
-import static com.codeborne.selenide.impl.Alias.NONE;
+    @get:CheckReturnValue
+    override val elements: List<WebElement>
+        get() {
+            val source = originalCollection.elements
+            val sourceCollectionSize = source.size
+            return source.subList(startingIndex(sourceCollectionSize), sourceCollectionSize)
+        }
 
-@ParametersAreNonnullByDefault
-public class TailOfCollection implements CollectionSource {
-  private final CollectionSource originalCollection;
-  private final int size;
-  private Alias alias = NONE;
+    @CheckReturnValue
+    override fun getElement(index: Int): WebElement {
+        val source = originalCollection.elements
+        val sourceCollectionSize = source.size
+        val startingIndex = startingIndex(sourceCollectionSize)
+        return originalCollection.getElement(startingIndex + index)
+    }
 
-  public TailOfCollection(CollectionSource originalCollection, int size) {
-    this.originalCollection = originalCollection;
-    this.size = size;
-  }
+    private fun startingIndex(sourceCollectionSize: Int): Int {
+        return sourceCollectionSize - Math.min(sourceCollectionSize, size)
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public List<WebElement> getElements() {
-    List<WebElement> source = originalCollection.getElements();
-    int sourceCollectionSize = source.size();
-    return source.subList(startingIndex(sourceCollectionSize), sourceCollectionSize);
-  }
+    @CheckReturnValue
+    override fun description(): String {
+        return alias.getOrElse { originalCollection.description() + ":last(" + size + ')' }
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebElement getElement(int index) {
-    List<WebElement> source = originalCollection.getElements();
-    int sourceCollectionSize = source.size();
-    int startingIndex = startingIndex(sourceCollectionSize);
-    return originalCollection.getElement(startingIndex + index);
-  }
+    @CheckReturnValue
+    override fun driver(): Driver {
+        return originalCollection.driver()
+    }
 
-  private int startingIndex(int sourceCollectionSize) {
-    return sourceCollectionSize - Math.min(sourceCollectionSize, this.size);
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String description() {
-    return alias.getOrElse(() -> originalCollection.description() + ":last(" + size + ')');
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Driver driver() {
-    return originalCollection.driver();
-  }
-
-  @Override
-  public void setAlias(String alias) {
-    this.alias = new Alias(alias);
-  }
+    override fun setAlias(alias: String) {
+        this.alias = Alias(alias)
+    }
 }

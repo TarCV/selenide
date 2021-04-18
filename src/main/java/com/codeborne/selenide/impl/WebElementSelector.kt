@@ -1,110 +1,106 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.By;
-import org.openqa.selenium.By.ByCssSelector;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-import static com.codeborne.selenide.SelectorMode.CSS;
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.SelectorMode
+import com.codeborne.selenide.SelenideElement
+import org.openqa.selenium.By
+import org.openqa.selenium.By.ByCssSelector
+import org.openqa.selenium.By.ByXPath
+import org.openqa.selenium.NoSuchElementException
+import org.openqa.selenium.SearchContext
+import org.openqa.selenium.WebDriverException
+import org.openqa.selenium.WebElement
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 /**
  * Thanks to http://selenium.polteq.com/en/injecting-the-sizzle-css-selector-library/
  */
 @ParametersAreNonnullByDefault
-public class WebElementSelector {
-  public static WebElementSelector instance = new WebElementSelector();
-
-  protected final FileContent sizzleSource = new FileContent("sizzle.js");
-
-  @CheckReturnValue
-  @Nonnull
-  public WebElement findElement(Driver driver, SearchContext context, By selector) {
-    checkThatXPathNotStartingFromSlash(context, selector);
-
-    if (driver.config().selectorMode() == CSS || !(selector instanceof ByCssSelector)) {
-      return findElement(context, selector);
-    }
-
-    List<WebElement> webElements = evaluateSizzleSelector(driver, context, (ByCssSelector) selector);
-    if (webElements.isEmpty()) {
-      throw new NoSuchElementException("Cannot locate an element using " + selector);
-    }
-    return webElements.get(0);
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public List<WebElement> findElements(Driver driver, SearchContext context, By selector) {
-    checkThatXPathNotStartingFromSlash(context, selector);
-
-    if (driver.config().selectorMode() == CSS || !(selector instanceof ByCssSelector)) {
-      return findElements(context, selector);
-    }
-
-    return evaluateSizzleSelector(driver, context, (ByCssSelector) selector);
-  }
-
-  private WebElement findElement(SearchContext context, By selector) {
-    return context instanceof SelenideElement ?
-      ((SelenideElement) context).toWebElement().findElement(selector) :
-      context.findElement(selector);
-  }
-
-  private List<WebElement> findElements(SearchContext context, By selector) {
-    return context instanceof SelenideElement ?
-      ((SelenideElement) context).toWebElement().findElements(selector) :
-      context.findElements(selector);
-  }
-
-  protected void checkThatXPathNotStartingFromSlash(SearchContext context, By selector) {
-    if (context instanceof WebElement) {
-      if (selector instanceof By.ByXPath) {
-        if (selector.toString().startsWith("By.xpath: /")) {
-          throw new IllegalArgumentException("XPath starting from / searches from root");
+open class WebElementSelector {
+    protected val sizzleSource = FileContent("sizzle.js")
+    @CheckReturnValue
+    fun findElement(driver: Driver, context: SearchContext, selector: By): WebElement {
+        checkThatXPathNotStartingFromSlash(context, selector)
+        if (driver.config().selectorMode() === SelectorMode.CSS || selector !is ByCssSelector) {
+            return findElement(context, selector)
         }
-      }
+        val webElements = evaluateSizzleSelector(driver, context, selector)
+        if (webElements.isEmpty()) {
+            throw NoSuchElementException("Cannot locate an element using $selector")
+        }
+        return webElements[0]
     }
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  protected List<WebElement> evaluateSizzleSelector(Driver driver, SearchContext context, ByCssSelector sizzleCssSelector) {
-    injectSizzleIfNeeded(driver);
-
-    String sizzleSelector = sizzleCssSelector.toString()
-        .replace("By.selector: ", "")
-        .replace("By.cssSelector: ", "");
-
-    if (context instanceof WebElement)
-      return driver.executeJavaScript("return Sizzle(arguments[0], arguments[1])", sizzleSelector, context);
-    else
-      return driver.executeJavaScript("return Sizzle(arguments[0])", sizzleSelector);
-  }
-
-  protected void injectSizzleIfNeeded(Driver driver) {
-    if (!sizzleLoaded(driver)) {
-      injectSizzle(driver);
+    @CheckReturnValue
+    fun findElements(driver: Driver, context: SearchContext, selector: By): List<WebElement> {
+        checkThatXPathNotStartingFromSlash(context, selector)
+        return if (driver.config().selectorMode() === SelectorMode.CSS || selector !is ByCssSelector) {
+            findElements(context, selector)
+        } else evaluateSizzleSelector(
+            driver,
+            context,
+            selector
+        )
     }
-  }
 
-  protected Boolean sizzleLoaded(Driver driver) {
-    try {
-      return driver.executeJavaScript("return typeof Sizzle != 'undefined'");
-    } catch (WebDriverException e) {
-      return false;
+    private fun findElement(context: SearchContext, selector: By): WebElement {
+        return if (context is SelenideElement) context.toWebElement().findElement(selector) else context.findElement(
+            selector
+        )
     }
-  }
 
-  protected synchronized void injectSizzle(Driver driver) {
-    driver.executeJavaScript(sizzleSource.content());
-  }
+    private fun findElements(context: SearchContext, selector: By): List<WebElement> {
+        return if (context is SelenideElement) context.toWebElement().findElements(selector) else context.findElements(
+            selector
+        )
+    }
+
+    protected fun checkThatXPathNotStartingFromSlash(context: SearchContext?, selector: By) {
+        if (context is WebElement) {
+            if (selector is ByXPath) {
+                require(!selector.toString().startsWith("By.xpath: /")) { "XPath starting from / searches from root" }
+            }
+        }
+    }
+
+    @CheckReturnValue
+    protected fun evaluateSizzleSelector(
+        driver: Driver,
+        context: SearchContext?,
+        sizzleCssSelector: ByCssSelector
+    ): List<WebElement> {
+        injectSizzleIfNeeded(driver)
+        val sizzleSelector = sizzleCssSelector.toString()
+            .replace("By.selector: ", "")
+            .replace("By.cssSelector: ", "")
+        return if (context is WebElement) driver.executeJavaScript(
+            "return Sizzle(arguments[0], arguments[1])",
+            sizzleSelector,
+            context
+        ) else driver.executeJavaScript("return Sizzle(arguments[0])", sizzleSelector)
+    }
+
+    protected fun injectSizzleIfNeeded(driver: Driver) {
+        if (!sizzleLoaded(driver)) {
+            injectSizzle(driver)
+        }
+    }
+
+    protected fun sizzleLoaded(driver: Driver): Boolean {
+        return try {
+            driver.executeJavaScript("return typeof Sizzle != 'undefined'")
+        } catch (e: WebDriverException) {
+            false
+        }
+    }
+
+    @Synchronized
+    protected fun injectSizzle(driver: Driver) {
+        driver.executeJavaScript<Any>(sizzleSource.content)
+    }
+
+    companion object {
+        var instance = WebElementSelector()
+    }
 }

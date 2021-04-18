@@ -11,9 +11,9 @@ class Find : Command<SelenideElement> {
     @CheckReturnValue
     override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): SelenideElement {
       checkNotNull(args)
-      return if (args.size == 1) locator.find(proxy, args[0], 0) else locator.find(
+      return if (args.size == 1) locator.find(proxy, args[0]!!, 0) else locator.find(
             proxy,
-            args[0],
+            args[0]!!,
             (args[1] as Int?)!!
         )
     }

@@ -23,10 +23,11 @@ class GetSelectedOptions : Command<ElementsCollection?> {
     private class SelectedOptionsCollection constructor(private val selectElement: WebElementSource) :
         CollectionSource {
         private var alias = Alias.NONE
-        @CheckReturnValue
-        override fun getElements(): List<WebElement> {
-            return select(selectElement).allSelectedOptions
-        }
+        @get:CheckReturnValue
+        override val elements: List<WebElement>
+            get() {
+                return select(selectElement).allSelectedOptions
+            }
 
         @CheckReturnValue
         override fun getElement(index: Int): WebElement {

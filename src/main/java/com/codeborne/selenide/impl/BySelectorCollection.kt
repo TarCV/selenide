@@ -1,82 +1,58 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-import static com.codeborne.selenide.impl.Alias.NONE;
-import static com.codeborne.selenide.impl.Plugins.inject;
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.SelenideElement
+import org.openqa.selenium.By
+import org.openqa.selenium.SearchContext
+import org.openqa.selenium.WebElement
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class BySelectorCollection implements CollectionSource {
-  private static final ElementDescriber describe = inject(ElementDescriber.class);
+class BySelectorCollection(private val driver: Driver, private val parent: SearchContext?, private val selector: By) :
+    CollectionSource {
+    private var alias = Alias.NONE
 
-  private final Driver driver;
-  private final SearchContext parent;
-  private final By selector;
-  private Alias alias = NONE;
+    constructor(driver: Driver, selector: By) : this(driver, null, selector) {}
 
-  public BySelectorCollection(Driver driver, By selector) {
-    this(driver, null, selector);
-  }
+    @get:CheckReturnValue
+    override val elements: List<WebElement>
+        get(){
+            val searchContext = parent ?: driver.webDriver
+            return WebElementSelector.instance.findElements(driver, searchContext, selector)
+        }
 
-  public BySelectorCollection(Driver driver, @Nullable SearchContext parent, By selector) {
-    this.driver = driver;
-    this.parent = parent;
-    this.selector = selector;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public List<WebElement> getElements() {
-    SearchContext searchContext = parent == null ? driver.getWebDriver() : parent;
-    return WebElementSelector.instance.findElements(driver, searchContext, selector);
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebElement getElement(int index) {
-    SearchContext searchContext = parent == null ? driver.getWebDriver() : parent;
-    if (index == 0) {
-      return WebElementSelector.instance.findElement(driver, searchContext, selector);
+    @CheckReturnValue
+    override fun getElement(index: Int): WebElement {
+        val searchContext = parent ?: driver.webDriver
+        return if (index == 0) {
+            WebElementSelector.instance.findElement(driver, searchContext, selector)
+        } else WebElementSelector.instance.findElements(driver, searchContext, selector)[index]
     }
-    return WebElementSelector.instance.findElements(driver, searchContext, selector).get(index);
-  }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String description() {
-    return alias.getOrElse(this::composeDescription);
-  }
+    @CheckReturnValue
+    override fun description(): String {
+        return alias.getOrElse { composeDescription() }
+    }
 
-  @Nonnull
-  private String composeDescription() {
-    return parent == null ? describe.selector(selector) :
-      (parent instanceof SelenideElement) ?
-        ((SelenideElement) parent).getSearchCriteria() + "/" + describe.selector(selector) :
-        describe.selector(selector);
-  }
+    private fun composeDescription(): String {
+        return if (parent == null) describe.selector(selector) else if (parent is SelenideElement) parent.searchCriteria + "/" + describe.selector(
+            selector
+        ) else describe.selector(selector)
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Driver driver() {
-    return driver;
-  }
+    @CheckReturnValue
+    override fun driver(): Driver {
+        return driver
+    }
 
-  @Override
-  public void setAlias(String alias) {
-    this.alias = new Alias(alias);
-  }
+    override fun setAlias(alias: String) {
+        this.alias = Alias(alias)
+    }
+
+    companion object {
+        private val describe = Plugins.inject(
+            ElementDescriber::class.java
+        )
+    }
 }

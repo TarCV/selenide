@@ -72,6 +72,6 @@ open class Click : Command<Void?> {
     }
 
     private fun clickViaJS(driver: Driver, element: WebElement, offsetX: Int, offsetY: Int) {
-        driver.executeJavaScript<Any>(jsSource.content(), element, offsetX, offsetY)
+        driver.executeJavaScript<Any>(jsSource.content, element, offsetX, offsetY)
     }
 }

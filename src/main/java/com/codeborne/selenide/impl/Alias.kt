@@ -1,53 +1,38 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.function.Supplier;
+import java.util.function.Supplier
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Alias {
-  private final String text;
-
-  public Alias(String text) {
-    if (text.isEmpty()) throw new IllegalArgumentException("Empty alias not allowed");
-    this.text = text;
-  }
-
-  @CheckReturnValue
-  public String getOrElse(Supplier<String> defaultValue) {
-    return text;
-  }
-
-  /**
-   * As a rule, you don't need to use this method directly.
-   * @return text value of this alias (or empty text if alias is not defined)
-   * @since 5.20.0
-   */
-  @Nullable
-  @CheckReturnValue
-  public String getText() {
-    return text;
-  }
-
-  public static final Alias NONE = new NoneAlias();
-
-  private static final class NoneAlias extends Alias {
-    NoneAlias() {
-      super("-");
+open class Alias(text: String) {
+    init {
+      require(text.isNotEmpty()) { "Empty alias not allowed" }
     }
 
-    @Override
+    @get:CheckReturnValue
+    open val text: String? = text
+
     @CheckReturnValue
-    public String getOrElse(Supplier<String> defaultValue) {
-      return defaultValue.get();
+    open fun getOrElse(defaultValue: Supplier<String>): String {
+        return text ?: defaultValue.get() // TODO: java code just returned text value here
     }
 
-    @Override
-    @Nullable
-    @CheckReturnValue
-    public String getText() {
-      return null;
+    private class NoneAlias internal constructor() : Alias("-") {
+        @CheckReturnValue
+        override fun getOrElse(defaultValue: Supplier<String>): String {
+            return defaultValue.get()
+        }
+
+        @get:CheckReturnValue
+        override val text: String?
+            get() {
+              return null
+            }
+      }
+
+    companion object {
+        @JvmField
+        val NONE: Alias = NoneAlias()
     }
-  }
 }

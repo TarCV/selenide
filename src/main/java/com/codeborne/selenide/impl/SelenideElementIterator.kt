@@ -1,40 +1,28 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.SelenideElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.CollectionElement.Companion.wrap
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class SelenideElementIterator implements Iterator<SelenideElement> {
-  protected final CollectionSource collection;
-  protected int index;
-
-  public SelenideElementIterator(CollectionSource collection) {
-    this.collection = collection;
-  }
-
-  @Override
-  @CheckReturnValue
-  public boolean hasNext() {
-    return collection.getElements().size() > index;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement next() {
-    if (!hasNext()) {
-      throw new NoSuchElementException();
+open class SelenideElementIterator(protected val collection: CollectionSource) : MutableIterator<SelenideElement> {
+    @JvmField
+    protected var index = 0
+    @CheckReturnValue
+    override fun hasNext(): Boolean {
+        return collection.elements.size > index
     }
-    return CollectionElement.wrap(collection, index++);
-  }
 
-  @Override
-  public void remove() {
-    throw new UnsupportedOperationException("Cannot remove elements from web page");
-  }
+    @CheckReturnValue
+    override fun next(): SelenideElement {
+        if (!hasNext()) {
+            throw NoSuchElementException()
+        }
+        return wrap(collection, index++)
+    }
+
+    override fun remove() {
+        throw UnsupportedOperationException("Cannot remove elements from web page")
+    }
 }

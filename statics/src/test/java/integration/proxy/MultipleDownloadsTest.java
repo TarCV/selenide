@@ -30,6 +30,6 @@ public class MultipleDownloadsTest extends IntegrationTest {
     );
 
     assertEquals("empty.html", text.getName());
-    assertEquals(new FileContent("empty.html").content().length(), text.length());
+    assertEquals(new FileContent("empty.html").getContent().length(), text.length());
   }
 }

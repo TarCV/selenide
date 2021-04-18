@@ -1,36 +1,37 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.regex.Pattern;
-
-import static java.util.regex.Pattern.DOTALL;
+import java.util.regex.Pattern
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Html {
-  private static final Pattern REGEX_SPACES = Pattern.compile("[\\s\\n\\r\u00a0]+");
-  public static Html text = new Html();
+class Html {
+    fun matches(text: String, regex: String): Boolean {
+        return Pattern.compile(".*$regex.*", Pattern.DOTALL).matcher(text).matches()
+    }
 
-  public boolean matches(String text, String regex) {
-    return Pattern.compile(".*" + regex + ".*", DOTALL).matcher(text).matches();
-  }
+    fun contains(text: String, subtext: String): Boolean {
+        return reduceSpaces(text.toLowerCase()).contains(reduceSpaces(subtext.toLowerCase()))
+    }
 
-  public boolean contains(String text, String subtext) {
-    return reduceSpaces(text.toLowerCase()).contains(reduceSpaces(subtext.toLowerCase()));
-  }
+    fun containsCaseSensitive(text: String, subtext: String): Boolean {
+        return reduceSpaces(text).contains(reduceSpaces(subtext))
+    }
 
-  public boolean containsCaseSensitive(String text, String subtext) {
-    return reduceSpaces(text).contains(reduceSpaces(subtext));
-  }
+    fun equals(text: String, subtext: String): Boolean {
+        return reduceSpaces(text).equals(reduceSpaces(subtext.toLowerCase()), ignoreCase = true)
+    }
 
-  public boolean equals(String text, String subtext) {
-    return reduceSpaces(text).equalsIgnoreCase(reduceSpaces(subtext.toLowerCase()));
-  }
+    fun equalsCaseSensitive(text: String, subtext: String): Boolean {
+        return reduceSpaces(text) == reduceSpaces(subtext)
+    }
 
-  public boolean equalsCaseSensitive(String text, String subtext) {
-    return reduceSpaces(text).equals(reduceSpaces(subtext));
-  }
+    fun reduceSpaces(text: String): String {
+        return REGEX_SPACES.matcher(text).replaceAll(" ").trim { it <= ' ' }
+    }
 
-  String reduceSpaces(String text) {
-    return REGEX_SPACES.matcher(text).replaceAll(" ").trim();
-  }
+    companion object {
+        private val REGEX_SPACES = Pattern.compile("[\\s\\n\\r\u00a0]+")
+        @JvmField
+        var text = Html()
+    }
 }

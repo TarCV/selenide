@@ -89,7 +89,7 @@ open class SelenideDriver {
     }
 
     @CheckReturnValue
-    fun <PageObjectClass> open(
+    fun <PageObjectClass: Any> open(
         relativeOrAbsoluteUrl: String,
         pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
@@ -97,7 +97,7 @@ open class SelenideDriver {
     }
 
     @CheckReturnValue
-    fun <PageObjectClass> open(
+    fun <PageObjectClass: Any> open(
         absoluteUrl: URL,
         pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
@@ -105,7 +105,7 @@ open class SelenideDriver {
     }
 
     @CheckReturnValue
-    fun <PageObjectClass> open(
+    fun <PageObjectClass: Any> open(
         relativeOrAbsoluteUrl: String,
         domain: String, login: String, password: String,
         pageObjectClassClass: Class<PageObjectClass>
@@ -115,7 +115,7 @@ open class SelenideDriver {
     }
 
     @CheckReturnValue
-    fun <PageObjectClass> open(
+    fun <PageObjectClass: Any> open(
         absoluteUrl: URL, domain: String, login: String, password: String,
         pageObjectClassClass: Class<PageObjectClass>
     ): PageObjectClass {
@@ -124,12 +124,12 @@ open class SelenideDriver {
     }
 
     @CheckReturnValue
-    fun <PageObjectClass> page(pageObjectClass: Class<PageObjectClass>): PageObjectClass {
+    fun <PageObjectClass: Any> page(pageObjectClass: Class<PageObjectClass>): PageObjectClass {
         return pageFactory.page(driver(), pageObjectClass)
     }
 
     @CheckReturnValue
-    fun <PageObjectClass, T : PageObjectClass> page(pageObject: T): PageObjectClass {
+    fun <PageObjectClass: Any, T : PageObjectClass> page(pageObject: T): PageObjectClass {
         return pageFactory.page(driver(), pageObject)
     }
 
@@ -181,11 +181,11 @@ open class SelenideDriver {
         driver.close()
     }
 
-    fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T {
+    fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T? {
         return driver().executeJavaScript(jsCode, *arguments)
     }
 
-    fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T {
+    fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T? {
         return driver().executeAsyncJavaScript(jsCode, *arguments)
     }
 
@@ -310,6 +310,7 @@ open class SelenideDriver {
 
     fun atBottom(): Boolean {
         return executeJavaScript("return window.pageYOffset + window.innerHeight >= document.body.scrollHeight")
+          ?: false // TODO: was unsafe in java code
     }
 
     fun switchTo(): SelenideTargetLocator {
@@ -352,7 +353,7 @@ open class SelenideDriver {
      * @since 5.14.0
      */
     @CheckReturnValue
-    fun <T> screenshot(outputType: OutputType<T>): T? {
+    fun <T: Any> screenshot(outputType: OutputType<T>): T? {
         return screenshots.takeScreenShot(driver(), outputType)
     }
 
@@ -390,7 +391,7 @@ open class SelenideDriver {
 
     companion object {
         private val navigator = Navigator()
-        private val screenshots = ScreenShotLaboratory.getInstance()
+        private val screenshots = ScreenShotLaboratory.instance
         private val pageFactory = Plugins.inject(
             PageObjectFactory::class.java
         )

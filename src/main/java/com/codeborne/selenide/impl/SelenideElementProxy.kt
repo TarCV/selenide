@@ -85,7 +85,7 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
       proxy: Any?, method: Method, args: Array<out Any?>?
     ): Any? {
         val stopwatch = Stopwatch(timeoutMs)
-        var lastError: Throwable?
+        lateinit var lastError: Throwable
         do {
             lastError = try {
                 return if (isSelenideElementMethod(method)) {
@@ -105,7 +105,7 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
             if (Cleanup.of.isInvalidSelectorError(lastError)) {
                 throw Cleanup.of.wrap(lastError)
             } else if (!shouldRetryAfterError(lastError)) {
-                throw lastError!!
+                throw lastError
             }
             stopwatch.sleep(pollingIntervalMs)
         } while (!stopwatch.isTimeoutReached)

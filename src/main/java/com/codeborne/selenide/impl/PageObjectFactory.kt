@@ -1,26 +1,31 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.ElementsContainer;
-import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.ElementsContainer
+import com.codeborne.selenide.SelenideElement
+import org.openqa.selenium.By
+import org.openqa.selenium.SearchContext
+import java.lang.reflect.Field
+import java.lang.reflect.Type
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public interface PageObjectFactory {
-  <PageObjectClass> PageObjectClass page(Driver driver, Class<PageObjectClass> pageObjectClass);
+interface PageObjectFactory {
+    fun <PageObjectClass : Any> page(driver: Driver, pageObjectClass: Class<PageObjectClass>): PageObjectClass
+    fun <PageObjectClass : Any, T : PageObjectClass> page(driver: Driver, pageObject: T): PageObjectClass
+    fun createElementsContainer(
+        driver: Driver?,
+        searchContext: SearchContext?,
+        field: Field?,
+        selector: By?
+    ): ElementsContainer
 
-  <PageObjectClass, T extends PageObjectClass> PageObjectClass page(Driver driver, T pageObject);
-
-  ElementsContainer createElementsContainer(Driver driver, SearchContext searchContext, Field field, By selector);
-
-  ElementsContainer initElementsContainer(Driver driver,
-                                          Field field,
-                                          SelenideElement self,
-                                          Class<?> type,
-                                          Type[] genericTypes) throws ReflectiveOperationException;
+    @Throws(ReflectiveOperationException::class)
+    fun initElementsContainer(
+        driver: Driver?,
+        field: Field?,
+        self: SelenideElement?,
+        type: Class<*>,
+        genericTypes: Array<Type>
+    ): ElementsContainer
 }

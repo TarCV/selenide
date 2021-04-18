@@ -12,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 object Screenshots {
     @JvmField
-    var screenshots: ScreenShotLaboratory = ScreenShotLaboratory.getInstance()
+    var screenshots: ScreenShotLaboratory = ScreenShotLaboratory.instance
 
     @CheckReturnValue
     fun saveScreenshotAndPageSource(): String {

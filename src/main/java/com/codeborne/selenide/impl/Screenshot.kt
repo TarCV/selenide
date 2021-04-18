@@ -1,53 +1,30 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.CheckReturnValue
 
-public class Screenshot {
-  private final String image;
-  private final String source;
+class Screenshot(@get:CheckReturnValue val image: String?, @get:CheckReturnValue val source: String?) {
 
-  public Screenshot(@Nullable String image, @Nullable String source) {
-    this.image = image;
-    this.source = source;
-  }
-
-  @CheckReturnValue
-  @Nullable
-  public String getImage() {
-    return image;
-  }
-
-  @CheckReturnValue
-  @Nullable
-  public String getSource() {
-    return source;
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public static Screenshot none() {
-    return new Screenshot((String) null, null);
-  }
-
-  public String summary() {
-    if (image != null && source != null) {
-      return String.format("%nScreenshot: %s%nPage source: %s", image, source);
+    fun summary(): String {
+        return if (image != null && source != null) {
+            String.format("%nScreenshot: %s%nPage source: %s", image, source)
+        } else if (source != null) {
+            String.format("%nPage source: %s", source)
+        } else if (image != null) {
+            String.format("%nScreenshot: %s", image)
+        } else {
+            ""
+        }
     }
-    else if (source != null) {
-      return String.format("%nPage source: %s", source);
-    }
-    else if (image != null) {
-      return String.format("%nScreenshot: %s", image);
-    }
-    else {
-      return "";
-    }
-  }
 
-  @Override
-  public String toString() {
-    return summary();
-  }
+    override fun toString(): String {
+        return summary()
+    }
+
+    companion object {
+        @JvmStatic
+        @CheckReturnValue
+        fun none(): Screenshot {
+            return Screenshot(null as String?, null)
+        }
+    }
 }

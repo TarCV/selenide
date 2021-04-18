@@ -1,70 +1,54 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.SelenideElement
+import org.openqa.selenium.By
+import org.openqa.selenium.WebDriverException
+import org.openqa.selenium.WebElement
+import javax.annotation.CheckReturnValue
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-public class SelenideElementDescriber implements ElementDescriber {
-  @CheckReturnValue
-  @Nonnull
-  @Override
-  public String fully(Driver driver, @Nullable WebElement element) {
-    try {
-      if (element == null) {
-        return "null";
-      }
-      return new Describe(driver, element)
-        .appendAttributes()
-        .isSelected(element)
-        .isDisplayed(element)
-        .serialize();
-    } catch (WebDriverException elementDoesNotExist) {
-      return failedToDescribe(Cleanup.of.webdriverExceptionMessage(elementDoesNotExist));
+class SelenideElementDescriber : ElementDescriber {
+    @CheckReturnValue
+    override fun fully(driver: Driver, element: WebElement?): String {
+        return try {
+            if (element == null) {
+                "null"
+            } else Describe(driver, element)
+                .appendAttributes()
+                .isSelected(element)
+                .isDisplayed(element)
+                .serialize()
+        } catch (elementDoesNotExist: WebDriverException) {
+            failedToDescribe(Cleanup.of.webdriverExceptionMessage(elementDoesNotExist))
+        } catch (e: RuntimeException) {
+            failedToDescribe(e.toString())
+        }
     }
-    catch (RuntimeException e) {
-      return failedToDescribe(e.toString());
-    }
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  @Override
-  public String briefly(Driver driver, @Nonnull WebElement element) {
-    try {
-      if (element == null) {
-        return "null";
-      }
-      if (element instanceof SelenideElement) {
-        return briefly(driver, ((SelenideElement) element).toWebElement());
-      }
-      return new Describe(driver, element).attr("id").attr("name").flush();
-    } catch (WebDriverException elementDoesNotExist) {
-      return failedToDescribe(Cleanup.of.webdriverExceptionMessage(elementDoesNotExist));
+    @CheckReturnValue
+    override fun briefly(driver: Driver, element: WebElement): String {
+        return try {
+            if (element == null) {
+                return "null"
+            }
+            if (element is SelenideElement) {
+                briefly(driver, element.toWebElement())
+            } else Describe(driver, element).attr("id").attr("name").flush()
+        } catch (elementDoesNotExist: WebDriverException) {
+            failedToDescribe(Cleanup.of.webdriverExceptionMessage(elementDoesNotExist))
+        } catch (e: RuntimeException) {
+            failedToDescribe(e.toString())
+        }
     }
-    catch (RuntimeException e) {
-      return failedToDescribe(e.toString());
+
+    private fun failedToDescribe(s2: String): String {
+        return "Ups, failed to described the element [caused by: $s2]"
     }
-  }
 
-  @Nonnull
-  private String failedToDescribe(String s2) {
-    return "Ups, failed to described the element [caused by: " + s2 + ']';
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String selector(By selector) {
-    return selector.toString()
-      .replace("By.selector: ", "")
-      .replace("By.cssSelector: ", "");
-  }
+    @CheckReturnValue
+    override fun selector(selector: By?): String {
+        return selector.toString()
+            .replace("By.selector: ", "")
+            .replace("By.cssSelector: ", "")
+    }
 }

@@ -1,58 +1,33 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.WebElement;
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.WebElement
+import javax.annotation.CheckReturnValue
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+class WebElementsCollectionWrapper(private val driver: Driver, elements: Collection<WebElement>?) : CollectionSource {
+    @get:CheckReturnValue
+    override val elements: List<WebElement>
+    private var alias = Alias.NONE
+    @CheckReturnValue
+    override fun getElement(index: Int): WebElement {
+        return elements[index]
+    }
 
-import static com.codeborne.selenide.impl.Alias.NONE;
+    @CheckReturnValue
+    override fun description(): String {
+        return alias.getOrElse { "$$(" + elements.size + " elements)" }
+    }
 
-@ParametersAreNonnullByDefault
-public class WebElementsCollectionWrapper implements CollectionSource {
-  private final List<WebElement> elements;
-  private final Driver driver;
-  private Alias alias = NONE;
+    @CheckReturnValue
+    override fun driver(): Driver {
+        return driver
+    }
 
-  public WebElementsCollectionWrapper(Driver driver, Collection<? extends WebElement> elements) {
-    this.driver = driver;
-    this.elements = new ArrayList<>(elements);
-  }
+    override fun setAlias(alias: String) {
+        this.alias = Alias(alias)
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public List<WebElement> getElements() {
-    return elements;
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public WebElement getElement(int index) {
-    return elements.get(index);
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public String description() {
-    return alias.getOrElse(() -> "$$(" + elements.size() + " elements)");
-  }
-
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public Driver driver() {
-    return driver;
-  }
-
-  @Override
-  public void setAlias(String alias) {
-    this.alias = new Alias(alias);
-  }
+    init {
+        this.elements = ArrayList(elements)
+    }
 }

@@ -12,6 +12,6 @@ import javax.annotation.ParametersAreNonnullByDefault
 class TakeScreenshot : Command<File?> {
     @CheckReturnValue
     override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): File? {
-        return ScreenShotLaboratory.getInstance().takeScreenshot(locator.driver(), locator.webElement)
+        return ScreenShotLaboratory.instance.takeScreenshot(locator.driver(), locator.webElement)
     }
 }

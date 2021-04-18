@@ -1,51 +1,43 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.SelenideElement;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ListIterator;
+import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.CollectionElement.Companion.wrap
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class SelenideElementListIterator extends SelenideElementIterator implements ListIterator<SelenideElement> {
-  public SelenideElementListIterator(CollectionSource collection, int index) {
-    super(collection);
-    this.index = index;
-  }
+class SelenideElementListIterator(collection: CollectionSource, index: Int) : SelenideElementIterator(
+  collection
+), MutableListIterator<SelenideElement> {
+    @CheckReturnValue
+    override fun hasPrevious(): Boolean {
+        return index > 0
+    }
 
-  @Override
-  @CheckReturnValue
-  public boolean hasPrevious() {
-    return index > 0;
-  }
+    @CheckReturnValue
+    override fun previous(): SelenideElement {
+        return wrap(collection, --index)
+    }
 
-  @Override
-  @CheckReturnValue
-  @Nonnull
-  public SelenideElement previous() {
-    return CollectionElement.wrap(collection, --index);
-  }
+    @CheckReturnValue
+    override fun nextIndex(): Int {
+        return index + 1
+    }
 
-  @Override
-  @CheckReturnValue
-  public int nextIndex() {
-    return index + 1;
-  }
+    @CheckReturnValue
+    override fun previousIndex(): Int {
+        return index - 1
+    }
 
-  @Override
-  @CheckReturnValue
-  public int previousIndex() {
-    return index - 1;
-  }
+    override fun set(element: SelenideElement) {
+        throw UnsupportedOperationException("Cannot set elements to web page")
+    }
 
-  @Override
-  public void set(SelenideElement selenideElement) {
-    throw new UnsupportedOperationException("Cannot set elements to web page");
-  }
+    override fun add(element: SelenideElement) {
+        throw UnsupportedOperationException("Cannot add elements to web page")
+    }
 
-  @Override
-  public void add(SelenideElement selenideElement) {
-    throw new UnsupportedOperationException("Cannot add elements to web page");
-  }
+    init {
+        this.index = index
+    }
 }

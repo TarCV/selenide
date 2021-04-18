@@ -1,31 +1,27 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import org.apache.hc.client5.http.cookie.BasicCookieStore;
-import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Set;
-
-import static org.apache.hc.client5.http.cookie.Cookie.DOMAIN_ATTR;
+import org.apache.hc.client5.http.cookie.BasicCookieStore
+import org.apache.hc.client5.http.impl.cookie.BasicClientCookie
+import org.openqa.selenium.Cookie
+import org.openqa.selenium.WebDriver
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-class WebdriverCookieStore extends BasicCookieStore {
-  WebdriverCookieStore(WebDriver webDriver) {
-    Set<Cookie> seleniumCookieSet = webDriver.manage().getCookies();
-    for (Cookie seleniumCookie : seleniumCookieSet) {
-      addCookie(duplicateCookie(seleniumCookie));
+internal class WebdriverCookieStore(webDriver: WebDriver) : BasicCookieStore() {
+    private fun duplicateCookie(seleniumCookie: Cookie): BasicClientCookie {
+        val duplicateCookie = BasicClientCookie(seleniumCookie.name, seleniumCookie.value)
+        duplicateCookie.domain = seleniumCookie.domain
+        duplicateCookie.setAttribute(org.apache.hc.client5.http.cookie.Cookie.DOMAIN_ATTR, seleniumCookie.domain)
+        duplicateCookie.isSecure = seleniumCookie.isSecure
+        duplicateCookie.expiryDate = seleniumCookie.expiry
+        duplicateCookie.path = seleniumCookie.path
+        return duplicateCookie
     }
-  }
 
-  private BasicClientCookie duplicateCookie(Cookie seleniumCookie) {
-    BasicClientCookie duplicateCookie = new BasicClientCookie(seleniumCookie.getName(), seleniumCookie.getValue());
-    duplicateCookie.setDomain(seleniumCookie.getDomain());
-    duplicateCookie.setAttribute(DOMAIN_ATTR, seleniumCookie.getDomain());
-    duplicateCookie.setSecure(seleniumCookie.isSecure());
-    duplicateCookie.setExpiryDate(seleniumCookie.getExpiry());
-    duplicateCookie.setPath(seleniumCookie.getPath());
-    return duplicateCookie;
-  }
+    init {
+        val seleniumCookieSet = webDriver.manage().cookies
+        for (seleniumCookie in seleniumCookieSet) {
+            addCookie(duplicateCookie(seleniumCookie))
+        }
+    }
 }

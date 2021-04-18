@@ -65,7 +65,7 @@ open class DragAndDropTo : Command<SelenideElement> {
     }
 
     private fun dragAndDropUsingJavaScript(driver: Driver, from: WebElement, to: WebElement) {
-        driver.executeJavaScript<Any>(js.content() + "; dragAndDrop(arguments[0], arguments[1])", from, to)
+        driver.executeJavaScript<Any>(js.content + "; dragAndDrop(arguments[0], arguments[1])", from, to)
     }
 
     companion object {

@@ -1,18 +1,16 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Driver;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+import com.codeborne.selenide.Driver
+import org.openqa.selenium.OutputType
+import org.openqa.selenium.TakesScreenshot
+import java.util.Optional
 
-import java.util.Optional;
-
-public class WebdriverPhotographer implements Photographer {
-  @Override
-  public <T> Optional<T> takeScreenshot(Driver driver, OutputType<T> outputType) {
-    if (driver.getWebDriver() instanceof TakesScreenshot) {
-      T screenshot = ((TakesScreenshot) driver.getWebDriver()).getScreenshotAs(outputType);
-      return Optional.of(screenshot);
+class WebdriverPhotographer : Photographer {
+    override fun <T: Any> takeScreenshot(driver: Driver, outputType: OutputType<T>): Optional<T> {
+        if (driver.webDriver is TakesScreenshot) {
+            val screenshot = (driver.webDriver as TakesScreenshot).getScreenshotAs(outputType)
+            return Optional.of(screenshot)
+        }
+        return Optional.empty()
     }
-    return Optional.empty();
-  }
 }

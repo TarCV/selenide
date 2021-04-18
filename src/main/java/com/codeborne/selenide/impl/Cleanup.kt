@@ -1,73 +1,70 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import org.openqa.selenium.InvalidSelectorException;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.regex.Pattern;
-
-import static java.util.Objects.requireNonNull;
-import static java.util.regex.Pattern.DOTALL;
+import org.openqa.selenium.InvalidSelectorException
+import java.util.Objects
+import java.util.regex.Pattern
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class Cleanup {
-  private static final Pattern REGEX_FIRST_LINE = Pattern.compile("([^\\n]*)\\n.*", DOTALL);
-  private static final Pattern REGEX_SELENIUM_WARNING = Pattern.compile("(.*)\\(WARNING: The server did not provide any stacktrace.*");
-  private static final Pattern REGEX_SELENIUM_PACKAGE = Pattern.compile("org\\.openqa\\.selenium\\.(.*)");
-  public static Cleanup of = new Cleanup();
+class Cleanup {
+    @CheckReturnValue
+    fun webdriverExceptionMessage(webDriverException: Throwable): String {
+        return checkNotNull(webdriverExceptionMessage(webDriverException.toString()))
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  public String webdriverExceptionMessage(Throwable webDriverException) {
-    return requireNonNull(webdriverExceptionMessage(webDriverException.toString()));
-  }
+    @CheckReturnValue
+    fun webdriverExceptionMessage(webDriverExceptionInfo: String?): String? {
+        return if (webDriverExceptionInfo == null) null else cleanupSeleniumPackage(
+            cleanupSeleniumWarning(
+                extractFirstLine(
+                    webDriverExceptionInfo
+                )
+            )
+        ).trim { it <= ' ' }
+    }
 
-  @CheckReturnValue
-  @Nullable
-  public String webdriverExceptionMessage(@Nullable String webDriverExceptionInfo) {
-    if (webDriverExceptionInfo == null) return null;
+    private fun extractFirstLine(text: String): String {
+        return REGEX_FIRST_LINE.matcher(text).replaceFirst("$1")
+    }
 
-    return cleanupSeleniumPackage(cleanupSeleniumWarning(extractFirstLine(webDriverExceptionInfo))).trim();
-  }
+    private fun cleanupSeleniumWarning(firstLine: String): String {
+        return REGEX_SELENIUM_WARNING.matcher(firstLine).replaceFirst("$1")
+    }
 
-  private String extractFirstLine(String text) {
-    return REGEX_FIRST_LINE.matcher(text).replaceFirst("$1");
-  }
+    private fun cleanupSeleniumPackage(withoutSeleniumBloat: String): String {
+        return REGEX_SELENIUM_PACKAGE.matcher(withoutSeleniumBloat).replaceFirst("$1")
+    }
 
-  private String cleanupSeleniumWarning(String firstLine) {
-    return REGEX_SELENIUM_WARNING.matcher(firstLine).replaceFirst("$1");
-  }
+    fun isInvalidSelectorError(error: Throwable?): Boolean {
+        if (error == null) return false
+        if (error is AssertionError) return false
+        val message = error.message ?: return false
+        return error is InvalidSelectorException && !message.contains("\"Element is not selectable\"") ||
+                isInvalidSelectorMessage(message) || error.cause != null && error.cause !== error && isInvalidSelectorError(
+            error.cause
+        )
+    }
 
-  private String cleanupSeleniumPackage(String withoutSeleniumBloat) {
-    return REGEX_SELENIUM_PACKAGE.matcher(withoutSeleniumBloat).replaceFirst("$1");
-  }
+    private fun isInvalidSelectorMessage(message: String): Boolean {
+        return message.contains("invalid or illegal string was specified") ||
+                message.contains("Invalid selector") ||
+                message.contains("invalid selector") ||
+                message.contains("is not a valid selector") ||
+                message.contains("SYNTAX_ERR") ||
+                message.contains("INVALID_EXPRESSION_ERR")
+    }
 
-  public boolean isInvalidSelectorError(@Nullable Throwable error) {
-    if (error == null) return false;
-    if (error instanceof AssertionError) return false;
+    fun wrap(error: Throwable?): InvalidSelectorException {
+        return if (error is InvalidSelectorException) error else InvalidSelectorException("Invalid selector", error)
+    }
 
-    String message = error.getMessage();
-    if (message == null) return false;
-
-    return (error instanceof InvalidSelectorException && !message.contains("\"Element is not selectable\"")) ||
-      isInvalidSelectorMessage(message) ||
-      error.getCause() != null && error.getCause() != error && isInvalidSelectorError(error.getCause());
-  }
-
-  private boolean isInvalidSelectorMessage(String message) {
-    return message.contains("invalid or illegal string was specified") ||
-      message.contains("Invalid selector") ||
-      message.contains("invalid selector") ||
-      message.contains("is not a valid selector") ||
-      message.contains("SYNTAX_ERR") ||
-      message.contains("INVALID_EXPRESSION_ERR");
-  }
-
-  public InvalidSelectorException wrap(Throwable error) {
-    return (error instanceof InvalidSelectorException) ?
-      (InvalidSelectorException) error :
-      new InvalidSelectorException("Invalid selector", error);
-  }
+    companion object {
+        private val REGEX_FIRST_LINE = Pattern.compile("([^\\n]*)\\n.*", Pattern.DOTALL)
+        private val REGEX_SELENIUM_WARNING =
+            Pattern.compile("(.*)\\(WARNING: The server did not provide any stacktrace.*")
+        private val REGEX_SELENIUM_PACKAGE = Pattern.compile("org\\.openqa\\.selenium\\.(.*)")
+        @JvmField
+        var of = Cleanup()
+    }
 }

@@ -1,7 +1,7 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-class Clock {
-  public long timestamp() {
-    return System.currentTimeMillis();
-  }
+open class Clock {
+    open fun timestamp(): Long {
+        return System.currentTimeMillis()
+    }
 }

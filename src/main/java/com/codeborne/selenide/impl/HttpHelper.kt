@@ -1,92 +1,76 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import org.apache.commons.io.FilenameUtils;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
-import static org.apache.commons.lang3.StringUtils.left;
+import org.apache.commons.io.FilenameUtils
+import org.apache.commons.lang3.StringUtils
+import java.io.UnsupportedEncodingException
+import java.net.URLDecoder
+import java.util.Optional
+import java.util.regex.Pattern
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class HttpHelper {
-
-  private static final Pattern FILENAME_IN_CONTENT_DISPOSITION_HEADER =
-    Pattern.compile(".*filename\\*?=\"?((.+)'')?([^\";?]*)\"?(;charset=(.*))?.*", CASE_INSENSITIVE);
-
-  private static final Pattern FILENAME_FORBIDDEN_CHARACTERS =
-    Pattern.compile("[#%&{}/\\\\<>*?$!'\":@+`|=]");
-
-  @CheckReturnValue
-  @Nonnull
-  public Optional<String> getFileNameFromContentDisposition(Map<String, String> headers) {
-    return getFileNameFromContentDisposition(headers.entrySet());
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public Optional<String> getFileNameFromContentDisposition(Collection<Map.Entry<String, String>> headers) {
-    for (Map.Entry<String, String> header : headers) {
-      Optional<String> fileName = getFileNameFromContentDisposition(header.getKey(), header.getValue());
-      if (fileName.isPresent()) {
-        return fileName;
-      }
+class HttpHelper {
+    @CheckReturnValue
+    fun getFileNameFromContentDisposition(headers: Map<String, String?>): Optional<String> {
+        return getFileNameFromContentDisposition(headers.entries)
     }
-    return Optional.empty();
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  public Optional<String> getFileNameFromContentDisposition(String headerName, @Nullable String headerValue) {
-    if (!"Content-Disposition".equalsIgnoreCase(headerName) || headerValue == null) {
-      return Optional.empty();
+    @CheckReturnValue
+    fun getFileNameFromContentDisposition(headers: Collection<Map.Entry<String, String?>>): Optional<String> {
+        for ((key, value) in headers) {
+            val fileName = getFileNameFromContentDisposition(key, value)
+            if (fileName.isPresent) {
+                return fileName
+            }
+        }
+        return Optional.empty()
     }
-    Matcher regex = FILENAME_IN_CONTENT_DISPOSITION_HEADER.matcher(headerValue);
-    if (!regex.matches()) {
-      return Optional.empty();
+
+    @CheckReturnValue
+    fun getFileNameFromContentDisposition(headerName: String, headerValue: String?): Optional<String> {
+        if (!"Content-Disposition".equals(headerName, ignoreCase = true) || headerValue == null) {
+            return Optional.empty()
+        }
+        val regex = FILENAME_IN_CONTENT_DISPOSITION_HEADER.matcher(headerValue)
+        if (!regex.matches()) {
+            return Optional.empty()
+        }
+        val fileName = regex.replaceFirst("$3")
+        val encoding = StringUtils.defaultIfEmpty(regex.replaceFirst("$2"), regex.replaceFirst("$5"))
+        return Optional.of(decodeHttpHeader(fileName, encoding))
     }
-    String fileName = regex.replaceFirst("$3");
-    String encoding = defaultIfEmpty(regex.replaceFirst("$2"), regex.replaceFirst("$5"));
-    return Optional.of(decodeHttpHeader(fileName, encoding));
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  private String decodeHttpHeader(String encoded, String encoding) {
-    try {
-      return URLDecoder.decode(encoded, defaultIfEmpty(encoding, "UTF-8"));
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
+    @CheckReturnValue
+    private fun decodeHttpHeader(encoded: String, encoding: String): String {
+        return try {
+            URLDecoder.decode(encoded, StringUtils.defaultIfEmpty(encoding, "UTF-8"))
+        } catch (e: UnsupportedEncodingException) {
+            throw RuntimeException(e)
+        }
     }
-  }
 
-  @CheckReturnValue
-  @Nonnull
-  public String getFileName(String url) {
-    return normalize(trimQuery(FilenameUtils.getName(url)));
-  }
+    @CheckReturnValue
+    fun getFileName(url: String?): String {
+        return normalize(trimQuery(FilenameUtils.getName(url)))
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  private String trimQuery(String filenameWithQuery) {
-    return filenameWithQuery.contains("?")
-      ? left(filenameWithQuery, filenameWithQuery.indexOf('?'))
-      : filenameWithQuery;
-  }
+    @CheckReturnValue
+    private fun trimQuery(filenameWithQuery: String): String {
+        return if (filenameWithQuery.contains("?")) StringUtils.left(
+            filenameWithQuery,
+            filenameWithQuery.indexOf('?')
+        ) else filenameWithQuery
+    }
 
-  @CheckReturnValue
-  @Nonnull
-  public String normalize(String fileName) {
-    return FILENAME_FORBIDDEN_CHARACTERS.matcher(fileName).replaceAll("_").replace(' ', '+');
-  }
+    @CheckReturnValue
+    fun normalize(fileName: String): String {
+        return FILENAME_FORBIDDEN_CHARACTERS.matcher(fileName).replaceAll("_").replace(' ', '+')
+    }
+
+    companion object {
+        private val FILENAME_IN_CONTENT_DISPOSITION_HEADER =
+            Pattern.compile(".*filename\\*?=\"?((.+)'')?([^\";?]*)\"?(;charset=(.*))?.*", Pattern.CASE_INSENSITIVE)
+        private val FILENAME_FORBIDDEN_CHARACTERS = Pattern.compile("[#%&{}/\\\\<>*?$!'\":@+`|=]")
+    }
 }

@@ -1,134 +1,111 @@
-package com.codeborne.selenide.impl;
+package com.codeborne.selenide.impl
 
-import com.codeborne.selenide.Config;
-import com.codeborne.selenide.DownloadsFolder;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.files.FileFilter;
-import com.codeborne.selenide.files.DownloadedFile;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.function.Predicate;
-
-import static com.codeborne.selenide.impl.FileHelper.moveFile;
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toList;
+import com.codeborne.selenide.Config
+import com.codeborne.selenide.DownloadsFolder
+import com.codeborne.selenide.files.DownloadedFile
+import com.codeborne.selenide.files.FileFilter
+import org.openqa.selenium.WebElement
+import org.slf4j.LoggerFactory
+import java.io.File
+import java.io.FileNotFoundException
+import java.util.function.Predicate
+import java.util.stream.Collectors
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class DownloadFileToFolder {
-  private static final Logger log = LoggerFactory.getLogger(DownloadFileToFolder.class);
+class DownloadFileToFolder internal constructor(
+    private val downloader: Downloader,
+    private val waiter: Waiter,
+    private val windowsCloser: WindowsCloser
+) {
+    constructor() : this(Downloader(), Waiter(), WindowsCloser()) {}
 
-  private final Downloader downloader;
-  private final Waiter waiter;
-  private final WindowsCloser windowsCloser;
-
-  DownloadFileToFolder(Downloader downloader, Waiter waiter, WindowsCloser windowsCloser) {
-    this.downloader = downloader;
-    this.waiter = waiter;
-    this.windowsCloser = windowsCloser;
-  }
-
-  public DownloadFileToFolder() {
-    this(new Downloader(), new Waiter(), new WindowsCloser());
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  public File download(WebElementSource anyClickableElement,
-                       WebElement clickable, long timeout,
-                       FileFilter fileFilter) throws FileNotFoundException {
-
-    WebDriver webDriver = anyClickableElement.driver().getWebDriver();
-    return windowsCloser.runAndCloseArisedWindows(webDriver, () ->
-      clickAndWaitForNewFilesInDownloadsFolder(anyClickableElement, clickable, timeout, fileFilter)
-    );
-  }
-
-  @CheckReturnValue
-  @Nonnull
-  private File clickAndWaitForNewFilesInDownloadsFolder(WebElementSource anyClickableElement, WebElement clickable,
-                                                        long timeout,
-                                                        FileFilter fileFilter) throws FileNotFoundException {
-    Driver driver = anyClickableElement.driver();
-    Config config = driver.config();
-    DownloadsFolder folder = driver.browserDownloadsFolder();
-
-    if (folder == null) {
-      throw new IllegalStateException("Downloads folder is not configured");
+    @CheckReturnValue
+    @Throws(FileNotFoundException::class)
+    fun download(
+        anyClickableElement: WebElementSource,
+        clickable: WebElement, timeout: Long,
+        fileFilter: FileFilter
+    ): File {
+        val webDriver = anyClickableElement.driver().webDriver
+        return windowsCloser.runAndCloseArisedWindows(
+            webDriver
+        ) { clickAndWaitForNewFilesInDownloadsFolder(anyClickableElement, clickable, timeout, fileFilter) }
     }
 
-    folder.cleanupBeforeDownload();
-    long downloadStartedAt = System.currentTimeMillis();
-
-    clickable.click();
-
-    Downloads newDownloads = waitForNewFiles(timeout, fileFilter, config, folder, downloadStartedAt);
-    File downloadedFile = newDownloads.firstDownloadedFile(anyClickableElement.toString(), timeout, fileFilter);
-    return archiveFile(config, downloadedFile);
-  }
-
-  @Nonnull
-  private Downloads waitForNewFiles(long timeout, FileFilter fileFilter, Config config,
-                                    DownloadsFolder folder, long clickMoment) {
-    HasDownloads hasDownloads = new HasDownloads(fileFilter, clickMoment);
-    waiter.wait(folder, hasDownloads, timeout, config.pollingInterval());
-
-    if (log.isInfoEnabled()) {
-      log.info(hasDownloads.downloads.filesAsString());
-    }
-    if (log.isDebugEnabled()) {
-      log.debug("All downloaded files in {}: {}", folder, folder.files());
-    }
-    return hasDownloads.downloads;
-  }
-
-  @Nonnull
-  private File archiveFile(Config config, File downloadedFile) {
-    File uniqueFolder = downloader.prepareTargetFolder(config);
-    File archivedFile = new File(uniqueFolder, downloadedFile.getName()).getAbsoluteFile();
-    moveFile(downloadedFile, archivedFile);
-    return archivedFile;
-  }
-
-  @ParametersAreNonnullByDefault
-  private static class HasDownloads implements Predicate<DownloadsFolder> {
-    private final FileFilter fileFilter;
-    private final long downloadStartedAt;
-    Downloads downloads;
-
-    private HasDownloads(FileFilter fileFilter, long downloadStartedAt) {
-      this.fileFilter = fileFilter;
-      this.downloadStartedAt = downloadStartedAt;
+    @CheckReturnValue
+    @Throws(FileNotFoundException::class)
+    private fun clickAndWaitForNewFilesInDownloadsFolder(
+        anyClickableElement: WebElementSource,
+        clickable: WebElement,
+        timeout: Long,
+        fileFilter: FileFilter
+    ): File {
+        val driver = anyClickableElement.driver()
+        val config = driver.config()
+        val folder =
+            driver.browserDownloadsFolder() ?: throw IllegalStateException("Downloads folder is not configured")
+        folder.cleanupBeforeDownload()
+        val downloadStartedAt = System.currentTimeMillis()
+        clickable.click()
+        val newDownloads = waitForNewFiles(timeout, fileFilter, config, folder, downloadStartedAt)
+        val downloadedFile = newDownloads.firstDownloadedFile(anyClickableElement.toString(), timeout, fileFilter)
+        return archiveFile(config, downloadedFile)
     }
 
-    @Override
-    public boolean test(DownloadsFolder folder) {
-      downloads = new Downloads(newFiles(folder));
-      return !downloads.files(fileFilter).isEmpty();
+    private fun waitForNewFiles(
+      timeout: Long, fileFilter: FileFilter, config: Config,
+      folder: DownloadsFolder, clickMoment: Long
+    ): Downloads {
+        val hasDownloads = HasDownloads(fileFilter, clickMoment)
+        waiter.wait(folder, hasDownloads, timeout, config.pollingInterval())
+        if (log.isInfoEnabled) {
+          log.info(hasDownloads.downloads.filesAsString())
+        }
+        if (log.isDebugEnabled) {
+          log.debug("All downloaded files in {}: {}", folder, folder.files())
+        }
+        return hasDownloads.downloads
     }
 
-    private List<DownloadedFile> newFiles(DownloadsFolder folder) {
-      return folder.files().stream()
-        .filter(File::isFile)
-        .filter(file -> isFileModifiedLaterThan(file, downloadStartedAt))
-        .map(file -> new DownloadedFile(file, emptyMap()))
-        .collect(toList());
+    private fun archiveFile(config: Config, downloadedFile: File): File {
+        val uniqueFolder = downloader.prepareTargetFolder(config)
+        val archivedFile = File(uniqueFolder, downloadedFile.name).absoluteFile
+        FileHelper.moveFile(downloadedFile, archivedFile)
+        return archivedFile
     }
-  }
 
-  /**
-   * Depending on OS, file modification time can have seconds precision, not milliseconds.
-   * We have to ignore the difference in milliseconds.
-   */
-  static boolean isFileModifiedLaterThan(File file, long timestamp) {
-    return file.lastModified() >= timestamp / 1000L * 1000L;
-  }
+    @ParametersAreNonnullByDefault
+    private class HasDownloads(private val fileFilter: FileFilter, private val downloadStartedAt: Long) :
+        Predicate<DownloadsFolder> {
+        lateinit var downloads: Downloads
+        override fun test(folder: DownloadsFolder): Boolean {
+            Downloads(newFiles(folder)).let {
+              downloads = it
+              return it.files(fileFilter).isNotEmpty()
+            }
+        }
+
+        private fun newFiles(folder: DownloadsFolder): List<DownloadedFile> {
+            return folder.files().stream()
+                .filter { obj: File -> obj.isFile }
+                .filter { file: File -> isFileModifiedLaterThan(file, downloadStartedAt) }
+                .map { file: File -> DownloadedFile(file, emptyMap()) }
+                .collect(Collectors.toList())
+        }
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(DownloadFileToFolder::class.java)
+
+        /**
+         * Depending on OS, file modification time can have seconds precision, not milliseconds.
+         * We have to ignore the difference in milliseconds.
+         */
+        @JvmStatic
+        fun isFileModifiedLaterThan(file: File, timestamp: Long): Boolean {
+            return file.lastModified() >= timestamp / 1000L * 1000L
+        }
+    }
 }
