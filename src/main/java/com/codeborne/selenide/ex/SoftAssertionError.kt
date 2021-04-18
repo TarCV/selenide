@@ -1,10 +1,6 @@
-package com.codeborne.selenide.ex;
+package com.codeborne.selenide.ex
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class SoftAssertionError extends AssertionError {
-  public SoftAssertionError(String message) {
-    super(message);
-  }
-}
+class SoftAssertionError(message: String?) : AssertionError(message)

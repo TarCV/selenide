@@ -1,41 +1,50 @@
-package com.codeborne.selenide.ex;
+package com.codeborne.selenide.ex
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.impl.CollectionSource;
-import org.openqa.selenium.By;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
+import com.codeborne.selenide.Condition
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.impl.CollectionSource
+import org.openqa.selenium.By
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class ElementNotFound extends UIAssertionError {
-  public ElementNotFound(Driver driver, By searchCriteria, Condition expectedCondition) {
-    this(driver, searchCriteria.toString(), expectedCondition, null);
-  }
+class ElementNotFound : UIAssertionError {
+    constructor(driver: Driver, searchCriteria: By, expectedCondition: Condition?) : this(
+        driver,
+        searchCriteria.toString(),
+        expectedCondition,
+        null
+    ) {
+    }
 
-  public ElementNotFound(Driver driver, String searchCriteria, Condition expectedCondition) {
-    super(driver,
-      String.format("Element not found {%s}" +
-        "%nExpected: %s", searchCriteria, expectedCondition));
-  }
+    constructor(driver: Driver, searchCriteria: String?, expectedCondition: Condition?) : super(
+      driver, String.format(
+            "Element not found {%s}" +
+                    "%nExpected: %s", searchCriteria, expectedCondition
+        )
+    ) {
+    }
 
-  public ElementNotFound(Driver driver, String searchCriteria, Condition expectedCondition, @Nullable Throwable lastError) {
-    super(driver,
-      String.format("Element not found {%s}" +
-        "%nExpected: %s", searchCriteria, expectedCondition), lastError);
-  }
+    constructor(driver: Driver, searchCriteria: String?, expectedCondition: Condition?, lastError: Throwable?) : super(
+      driver, String.format(
+            "Element not found {%s}" +
+                    "%nExpected: %s", searchCriteria, expectedCondition
+        ), lastError
+    ) {
+    }
 
-  public ElementNotFound(CollectionSource collection, List<String> expectedTexts, @Nullable Throwable lastError) {
-    super(collection.driver(),
-      String.format("Element not found {%s}" +
-        "%nExpected: %s", collection.description(), expectedTexts), lastError);
-  }
+    constructor(collection: CollectionSource, expectedTexts: List<String?>?, lastError: Throwable?) : super(
+        collection.driver(), String.format(
+            "Element not found {%s}" +
+                    "%nExpected: %s", collection.description(), expectedTexts
+        ), lastError
+    ) {
+    }
 
-  public ElementNotFound(CollectionSource collection, String description, @Nullable Throwable lastError) {
-    super(collection.driver(),
-      String.format("Element not found {%s}" +
-        "%nExpected: %s", collection.description(), description), lastError);
-  }
+    constructor(collection: CollectionSource, description: String?, lastError: Throwable?) : super(
+        collection.driver(), String.format(
+            "Element not found {%s}" +
+                    "%nExpected: %s", collection.description(), description
+        ), lastError
+    ) {
+    }
 }

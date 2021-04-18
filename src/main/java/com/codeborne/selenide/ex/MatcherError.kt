@@ -1,33 +1,28 @@
-package com.codeborne.selenide.ex;
+package com.codeborne.selenide.ex
 
-import com.codeborne.selenide.impl.CollectionSource;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-import static com.codeborne.selenide.ElementsCollection.elementsToString;
-import static java.lang.System.lineSeparator;
+import com.codeborne.selenide.ElementsCollection.Companion.elementsToString
+import com.codeborne.selenide.impl.CollectionSource
+import org.openqa.selenium.WebElement
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class MatcherError extends UIAssertionError {
-
-  public MatcherError(String matcher,
-                      String predicateDescription,
-                      @Nullable String explanation,
-                      CollectionSource collection,
-                      List<WebElement> actualElements,
-                      @Nullable Exception lastError,
-                      long timeoutMs) {
-    super(collection.driver(),
-      "Collection matcher error" +
-        lineSeparator() + "Expected: " + matcher + " of elements to match [" + predicateDescription + "] predicate" +
-        (explanation == null ? "" : lineSeparator() + "Because: " + explanation) +
-        lineSeparator() + "Collection: " + collection.description() +
-        lineSeparator() + "Elements: " + elementsToString(collection.driver(), actualElements), lastError
-    );
-    super.timeoutMs = timeoutMs;
-  }
-
+class MatcherError(
+    matcher: String,
+    predicateDescription: String,
+    explanation: String?,
+    collection: CollectionSource,
+    actualElements: List<WebElement>?,
+    lastError: Exception?,
+    timeoutMs: Long
+) : UIAssertionError(
+    collection.driver(),
+    "Collection matcher error" +
+            System.lineSeparator() + "Expected: " + matcher + " of elements to match [" + predicateDescription + "] predicate" +
+            (if (explanation == null) "" else System.lineSeparator() + "Because: " + explanation) +
+            System.lineSeparator() + "Collection: " + collection.description() +
+            System.lineSeparator() + "Elements: " + elementsToString(collection.driver(), actualElements), lastError
+) {
+    init {
+        super.timeoutMs = timeoutMs
+    }
 }

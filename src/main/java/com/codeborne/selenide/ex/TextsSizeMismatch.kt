@@ -1,24 +1,21 @@
-package com.codeborne.selenide.ex;
+package com.codeborne.selenide.ex
 
-import com.codeborne.selenide.impl.CollectionSource;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-import static java.lang.System.lineSeparator;
+import com.codeborne.selenide.impl.CollectionSource
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class TextsSizeMismatch extends UIAssertionError {
-  public TextsSizeMismatch(CollectionSource collection, List<String> actualTexts,
-                           List<String> expectedTexts, @Nullable String explanation, long timeoutMs) {
-    super(collection.driver(),
-      "Texts size mismatch" +
-        lineSeparator() + "Actual: " + actualTexts + ", List size: " + actualTexts.size() +
-        lineSeparator() + "Expected: " + expectedTexts + ", List size: " + expectedTexts.size() +
-        (explanation == null ? "" : lineSeparator() + "Because: " + explanation) +
-        lineSeparator() + "Collection: " + collection.description()
-    );
-    super.timeoutMs = timeoutMs;
-  }
+class TextsSizeMismatch(
+    collection: CollectionSource, actualTexts: List<String?>,
+    expectedTexts: List<String?>, explanation: String?, timeoutMs: Long
+) : UIAssertionError(
+    collection.driver(),
+    "Texts size mismatch" +
+            System.lineSeparator() + "Actual: " + actualTexts + ", List size: " + actualTexts.size +
+            System.lineSeparator() + "Expected: " + expectedTexts + ", List size: " + expectedTexts.size +
+            (if (explanation == null) "" else System.lineSeparator() + "Because: " + explanation) +
+            System.lineSeparator() + "Collection: " + collection.description()
+) {
+    init {
+        super.timeoutMs = timeoutMs
+    }
 }

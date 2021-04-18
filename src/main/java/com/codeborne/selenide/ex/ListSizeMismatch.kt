@@ -1,31 +1,28 @@
-package com.codeborne.selenide.ex;
+package com.codeborne.selenide.ex
 
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.impl.CollectionSource;
-import org.openqa.selenium.WebElement;
-
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-
-import static com.codeborne.selenide.ElementsCollection.elementsToString;
-import static java.lang.System.lineSeparator;
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.ElementsCollection.Companion.elementsToString
+import com.codeborne.selenide.impl.CollectionSource
+import org.openqa.selenium.WebElement
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class ListSizeMismatch extends UIAssertionError {
-  public ListSizeMismatch(Driver driver, String operator, int expectedSize,
-                          @Nullable String explanation,
-                          CollectionSource collection,
-                          @Nullable List<WebElement> actualElements,
-                          @Nullable Exception lastError,
-                          long timeoutMs) {
-    super(driver,
-      "List size mismatch: expected: " + operator + ' ' + expectedSize +
-        (explanation == null ? "" : " (because " + explanation + ")") +
-        ", actual: " + (actualElements == null ? 0 : actualElements.size()) +
-        ", collection: " + collection.description() +
-        lineSeparator() + "Elements: " + elementsToString(collection.driver(), actualElements), lastError
-    );
-    super.timeoutMs = timeoutMs;
-  }
+class ListSizeMismatch(
+    driver: Driver, operator: String, expectedSize: Int,
+    explanation: String?,
+    collection: CollectionSource,
+    actualElements: List<WebElement>?,
+    lastError: Exception?,
+    timeoutMs: Long
+) : UIAssertionError(
+  driver,
+    "List size mismatch: expected: " + operator + ' ' + expectedSize +
+            (if (explanation == null) "" else " (because $explanation)") +
+            ", actual: " + (actualElements?.size ?: 0) +
+            ", collection: " + collection.description() +
+            System.lineSeparator() + "Elements: " + elementsToString(collection.driver(), actualElements), lastError
+) {
+    init {
+        super.timeoutMs = timeoutMs
+    }
 }

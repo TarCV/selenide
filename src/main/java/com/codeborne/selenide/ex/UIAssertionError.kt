@@ -1,85 +1,73 @@
-package com.codeborne.selenide.ex;
+package com.codeborne.selenide.ex
 
-import com.codeborne.selenide.Driver;
-import com.codeborne.selenide.impl.Cleanup;
-import com.codeborne.selenide.impl.ScreenShotLaboratory;
-import com.codeborne.selenide.impl.Screenshot;
-import org.openqa.selenium.WebDriverException;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-import static com.codeborne.selenide.ex.ErrorMessages.causedBy;
-import static com.codeborne.selenide.ex.ErrorMessages.timeout;
-
+import com.codeborne.selenide.Driver
+import com.codeborne.selenide.impl.Cleanup
+import com.codeborne.selenide.impl.ScreenShotLaboratory.Companion.instance
+import com.codeborne.selenide.impl.Screenshot.Companion.none
+import org.openqa.selenium.WebDriverException
+import javax.annotation.CheckReturnValue
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class UIAssertionError extends AssertionError {
-  private final Driver driver;
+open class UIAssertionError : AssertionError {
+    private val driver: Driver
 
-  private Screenshot screenshot = Screenshot.none();
-  public long timeoutMs;
+    /**
+     * Get path to screenshot taken after failed test
+     *
+     * @return empty string if screenshots are disabled
+     */
+    @get:CheckReturnValue
+    var screenshot = none()
+        private set
+    @JvmField
+    var timeoutMs: Long = 0
 
-  protected UIAssertionError(Driver driver, String message) {
-    super(message);
-    this.driver = driver;
-  }
+    protected constructor(driver: Driver, message: String?) : super(message) {
+        this.driver = driver
+    }
 
-  protected UIAssertionError(Driver driver, String message, @Nullable Throwable cause) {
-    super(message, cause);
-    this.driver = driver;
-  }
+    constructor(driver: Driver, message: String?, cause: Throwable?) : super(message, cause) {
+        this.driver = driver
+    }
 
-  @CheckReturnValue
-  @Override
-  public final String getMessage() {
-    return super.getMessage() + uiDetails();
-  }
+    @get:CheckReturnValue
+    override val message: String
+        get() = super.message + uiDetails()
 
-  @CheckReturnValue
-  @Override
-  public final String toString() {
-    return getMessage();
-  }
+    @CheckReturnValue
+    override fun toString(): String {
+        return message
+    }
 
-  @CheckReturnValue
-  protected String uiDetails() {
-    return screenshot.summary() + timeout(timeoutMs) + causedBy(getCause());
-  }
+    @CheckReturnValue
+    protected fun uiDetails(): String {
+        return screenshot.summary() + ErrorMessages.timeout(timeoutMs) + ErrorMessages.causedBy(cause)
+    }
 
-  /**
-   * Get path to screenshot taken after failed test
-   *
-   * @return empty string if screenshots are disabled
-   */
-  @CheckReturnValue
-  public Screenshot getScreenshot() {
-    return screenshot;
-  }
+    companion object {
+        @CheckReturnValue
+        fun wrap(driver: Driver, error: Error, timeoutMs: Long): Error {
+            return if (Cleanup.of.isInvalidSelectorError(error)) error else wrapThrowable(driver, error, timeoutMs)
+        }
 
-  @CheckReturnValue
-  public static Error wrap(Driver driver, Error error, long timeoutMs) {
-    return Cleanup.of.isInvalidSelectorError(error) ? error : wrapThrowable(driver, error, timeoutMs);
-  }
+        @CheckReturnValue
+        fun wrap(driver: Driver, error: WebDriverException, timeoutMs: Long): Throwable {
+            return if (Cleanup.of.isInvalidSelectorError(error)) error else wrapThrowable(driver, error, timeoutMs)
+        }
 
-  @CheckReturnValue
-  public static Throwable wrap(Driver driver, WebDriverException error, long timeoutMs) {
-    return Cleanup.of.isInvalidSelectorError(error) ? error : wrapThrowable(driver, error, timeoutMs);
-  }
+        @CheckReturnValue
+        private fun wrapThrowable(driver: Driver, error: Throwable, timeoutMs: Long): UIAssertionError {
+            val uiError = if (error is UIAssertionError) error else wrapToUIAssertionError(driver, error)
+            uiError.timeoutMs = timeoutMs
+            uiError.screenshot = instance.takeScreenshot(driver)
+            return uiError
+        }
 
-  @CheckReturnValue
-  private static UIAssertionError wrapThrowable(Driver driver, Throwable error, long timeoutMs) {
-    UIAssertionError uiError = error instanceof UIAssertionError ?
-      (UIAssertionError) error : wrapToUIAssertionError(driver, error);
-    uiError.timeoutMs = timeoutMs;
-    uiError.screenshot = ScreenShotLaboratory.getInstance().takeScreenshot(driver);
-    return uiError;
-  }
-
-  @CheckReturnValue
-  private static UIAssertionError wrapToUIAssertionError(Driver driver, Throwable error) {
-    String message = error.getClass().getSimpleName() + ": " + Cleanup.of.webdriverExceptionMessage(error.getMessage());
-    return new UIAssertionError(driver, message, error);
-  }
+        @CheckReturnValue
+        private fun wrapToUIAssertionError(driver: Driver, error: Throwable): UIAssertionError {
+            val message = error.javaClass.simpleName + ": " + Cleanup.of.webdriverExceptionMessage(error.message)
+            return UIAssertionError(driver, message, error)
+        }
+    }
 }

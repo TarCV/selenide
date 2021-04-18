@@ -1,12 +1,9 @@
-package com.codeborne.selenide.ex;
+package com.codeborne.selenide.ex
 
-import com.codeborne.selenide.Driver;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.codeborne.selenide.Driver
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class ElementIsNotClickableException extends UIAssertionError {
-  public ElementIsNotClickableException(Driver driver, Throwable cause) {
-    super(driver, "Element is not clickable", cause);
-  }
-}
+class ElementIsNotClickableException(driver: Driver, cause: Throwable?) : UIAssertionError(
+  driver, "Element is not clickable", cause
+)

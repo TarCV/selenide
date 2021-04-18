@@ -1,11 +1,7 @@
-package com.codeborne.selenide.ex;
+package com.codeborne.selenide.ex
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.net.SocketTimeoutException;
+import java.net.SocketTimeoutException
+import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-public class TimeoutException extends RuntimeException {
-  public TimeoutException(String message, SocketTimeoutException cause) {
-    super(message, cause);
-  }
-}
+class TimeoutException(message: String?, cause: SocketTimeoutException?) : RuntimeException(message, cause)
