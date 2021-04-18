@@ -20,7 +20,7 @@ class Val : Command<Any?> {
         this.setValue = setValue
     }
 
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): Any? {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Any? {
         return if (args == null || args.isEmpty()) {
             getValue.execute(proxy, locator, Command.NO_ARGS)
         } else {

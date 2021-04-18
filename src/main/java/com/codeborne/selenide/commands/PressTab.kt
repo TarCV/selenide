@@ -8,7 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class PressTab : Command<SelenideElement> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
         locator.findAndAssertElementIsInteractable().sendKeys(Keys.TAB)
         return proxy
     }

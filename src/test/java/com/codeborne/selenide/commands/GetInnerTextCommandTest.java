@@ -26,6 +26,6 @@ final class GetInnerTextCommandTest implements WithAssertions {
     when(locator.driver()).thenReturn(new DriverStub("firefox"));
 
     when(mockedElement.getAttribute("textContent")).thenReturn("hello");
-    assertThat(getInnerTextCommand.execute(proxy, locator, null)).isEqualTo("hello");
+    assertThat(getInnerTextCommand.execute(proxy, locator, new Object[0])).isEqualTo("hello");
   }
 }

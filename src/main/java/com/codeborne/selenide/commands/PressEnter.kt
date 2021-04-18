@@ -8,7 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class PressEnter : Command<SelenideElement> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
         locator.findAndAssertElementIsInteractable().sendKeys(Keys.ENTER)
         return proxy
     }

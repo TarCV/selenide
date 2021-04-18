@@ -22,7 +22,7 @@ class GetSelectedValue : Command<String?> {
 
     @CheckReturnValue
     @Throws(IOException::class)
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): String? {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): String? {
         val option: WebElement? = getSelectedOption.execute(proxy, locator, args)
         return option?.getAttribute("value")
     }

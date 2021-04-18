@@ -26,6 +26,6 @@ final class GetInnerHtmlCommandTest implements WithAssertions {
     when(locator.driver()).thenReturn(new DriverStub("firefox"));
 
     when(mockedElement.getAttribute("innerHTML")).thenReturn("hello");
-    assertThat(getInnerHtmlCommand.execute(proxy, locator, null)).isEqualTo("hello");
+    assertThat(getInnerHtmlCommand.execute(proxy, locator, new Object[0])).isEqualTo("hello");
   }
 }

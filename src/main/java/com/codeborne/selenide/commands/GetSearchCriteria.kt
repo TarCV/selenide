@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class GetSearchCriteria : Command<String> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): String {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): String {
         return locator.searchCriteria
     }
 }

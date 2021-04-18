@@ -11,7 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class FindAll : Command<ElementsCollection> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): ElementsCollection {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): ElementsCollection {
         val selector = Util.firstOf<Any>(args)
         return ElementsCollection(
             BySelectorCollection(locator.driver(), proxy, WebElementSource.getSelector(selector))

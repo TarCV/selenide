@@ -15,7 +15,7 @@ class GetSelectedOptions : Command<ElementsCollection?> {
     override fun execute(
       proxy: SelenideElement,
       locator: WebElementSource,
-      args: Array<out Any>?
+      args: Array<out Any>
     ): ElementsCollection {
         return ElementsCollection(SelectedOptionsCollection(locator))
     }

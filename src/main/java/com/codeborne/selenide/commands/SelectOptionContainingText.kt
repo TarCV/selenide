@@ -12,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class SelectOptionContainingText : Command<Void?> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): Void? {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Void? {
         val text = Util.firstOf<String>(args)
         val element = locator.webElement
         val select = Select(element)

@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class FindByXpath : Command<SelenideElement> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
         checkNotNull(args)
 
         val xpath = Util.firstOf<String>(args)

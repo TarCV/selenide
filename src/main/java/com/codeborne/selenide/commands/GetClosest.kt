@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class GetClosest : Command<SelenideElement> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
         val tagOrClass = Util.firstOf<String>(args)
         val xpath = if (tagOrClass.startsWith(".")) String.format(
             "ancestor::*[contains(concat(' ', normalize-space(@class), ' '), ' %s ')][1]",

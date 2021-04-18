@@ -20,7 +20,7 @@ final class GetSelectedTextCommandTest implements WithAssertions {
     SelenideElement option = mockElement("option", "Option text");
     when(getSelectedOptionCommand.execute(any(), any(), any())).thenReturn(option);
 
-    assertThat(command.execute(proxy, selectElement, null)).isEqualTo("Option text");
+    assertThat(command.execute(proxy, selectElement, new Object[0])).isEqualTo("Option text");
 
     verify(getSelectedOptionCommand).execute(proxy, selectElement, Command.NO_ARGS);
   }

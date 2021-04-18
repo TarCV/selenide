@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class GetCssValue : Command<String> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): String {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): String {
         val cssPropertyName = Util.firstOf<String>(args)
         return locator.webElement.getCssValue(cssPropertyName)
     }

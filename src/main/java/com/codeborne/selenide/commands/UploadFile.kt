@@ -25,7 +25,7 @@ class UploadFile : Command<File> {
 
     @CheckReturnValue
     @Throws(IOException::class)
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): File {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): File {
         checkNotNull(args)
         val file = getFiles(args)
         checkFilesGiven(file)

@@ -33,7 +33,7 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
             proxy,
             webElementSource,
             method.name,
-            args
+            args ?: emptyArray()
         )!!
         if (isMethodForSoftAssertion(method)) {
             validateAssertionMode(config())
@@ -42,7 +42,7 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
         val pollingIntervalMs = getPollingIntervalMs(method, arguments)
         val log = beginStep(webElementSource.description(), method.name, *args ?: arrayOfNulls(1))
         return try {
-            val result = dispatchAndRetry(timeoutMs, pollingIntervalMs, proxy, method, args)!!
+            val result = dispatchAndRetry(timeoutMs, pollingIntervalMs, proxy, method, args ?: emptyArray())!!
             commitStep(log, EventStatus.PASS)
             result
         } catch (error: Error) {
@@ -82,7 +82,7 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
     @Throws(Throwable::class)
     protected fun dispatchAndRetry(
       timeoutMs: Long, pollingIntervalMs: Long,
-      proxy: Any, method: Method, args: Array<out Any>?
+      proxy: Any, method: Method, args: Array<out Any>
     ): Any? {
         val stopwatch = Stopwatch(timeoutMs)
         lateinit var lastError: Throwable

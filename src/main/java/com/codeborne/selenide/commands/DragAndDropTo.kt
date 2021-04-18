@@ -19,7 +19,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 open class DragAndDropTo : Command<SelenideElement> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
         val target = findTarget(locator.driver(), args)
         target.shouldBe(Condition.visible)
         val options = Arguments(args)

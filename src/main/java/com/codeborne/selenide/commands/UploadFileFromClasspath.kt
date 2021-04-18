@@ -14,7 +14,7 @@ open class UploadFileFromClasspath : Command<File?> {
     var uploadFile = UploadFile()
     @CheckReturnValue
     @Throws(IOException::class)
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): File {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): File {
         val fileName = Util.firstOf<Array<String>>(args)
         val files = Array(fileName.size) { i ->
             findFileInClasspath(fileName[i])

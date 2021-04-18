@@ -18,7 +18,7 @@ class SetSelected : Command<SelenideElement> {
         this.click = click
     }
 
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
         val selected = Util.firstOf<Boolean>(args)
         val element = locator.webElement
         if (!element.isDisplayed) {

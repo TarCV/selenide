@@ -22,9 +22,10 @@ internal class BrowserResizer {
     }
 
     fun adjustBrowserSize(config: Config, driver: WebDriver) {
-        if (config.browserSize() != null && !config.startMaximized()) {
-            log.info("Set browser size to {}", config.browserSize())
-            val dimension = config.browserSize()!!.split("x").toTypedArray()
+      val configBrowserSize = config.browserSize()
+      if (configBrowserSize != null && !config.startMaximized()) {
+            log.info("Set browser size to {}", configBrowserSize)
+            val dimension = configBrowserSize.split("x").toTypedArray()
             val width = dimension[0].toInt()
             val height = dimension[1].toInt()
             driver.manage().window().size = Dimension(width, height)

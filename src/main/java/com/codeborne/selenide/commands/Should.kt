@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 open class Should protected constructor(private val prefix: String) : Command<SelenideElement> {
     constructor() : this("") {}
 
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
         for (condition in Util.argsToConditions(args)) {
             locator.checkCondition(prefix, condition, false)
         }

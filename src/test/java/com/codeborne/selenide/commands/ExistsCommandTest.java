@@ -29,7 +29,7 @@ final class ExistsCommandTest implements WithAssertions {
   @Test
   void testExistExecuteMethod() {
     when(locator.getWebElement()).thenReturn(element);
-    assertThat(existsCommand.execute(proxy, locator, null))
+    assertThat(existsCommand.execute(proxy, locator, new Object[0]))
       .isTrue();
   }
 
@@ -40,7 +40,7 @@ final class ExistsCommandTest implements WithAssertions {
 
   private <T extends Throwable> void checkExecuteMethodWithException(T exception) {
     doThrow(exception).when(locator).getWebElement();
-    assertThat(existsCommand.execute(proxy, locator, null))
+    assertThat(existsCommand.execute(proxy, locator, new Object[0]))
       .isFalse();
   }
 

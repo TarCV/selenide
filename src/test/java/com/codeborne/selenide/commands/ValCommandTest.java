@@ -38,7 +38,7 @@ final class ValCommandTest implements WithAssertions {
   void testExecuteValueWithNoArgs() {
     String getValueResult = "getValueResult";
     when(mockedGetValue.execute(proxy, locator, Command.NO_ARGS)).thenReturn(getValueResult);
-    assertThat(valCommand.execute(proxy, locator, null))
+    assertThat(valCommand.execute(proxy, locator, new Object[0]))
       .isEqualTo(getValueResult);
     assertThat(valCommand.execute(proxy, locator, new Object[]{}))
       .isEqualTo(getValueResult);

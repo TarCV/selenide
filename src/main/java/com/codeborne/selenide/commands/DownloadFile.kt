@@ -34,7 +34,7 @@ class DownloadFile internal constructor(
 
     @CheckReturnValue
     @Throws(IOException::class)
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): File {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): File {
         val link = locator.findAndAssertElementIsInteractable()
         val config = locator.driver().config()
         val options = getDownloadOptions(config, args)
