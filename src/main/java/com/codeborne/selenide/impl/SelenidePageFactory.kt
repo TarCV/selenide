@@ -53,7 +53,7 @@ open class SelenidePageFactory : PageObjectFactory {
      *
      * @param page      The object to decorate the fields of
      */
-    fun initElements(driver: Driver?, searchContext: SearchContext?, page: Any, genericTypes: Array<Type>) {
+    fun initElements(driver: Driver, searchContext: SearchContext, page: Any, genericTypes: Array<Type>) {
         var proxyIn: Class<*> = page.javaClass
         while (proxyIn != Any::class.java) {
             initFields(driver, searchContext, page, proxyIn, genericTypes)
@@ -62,7 +62,7 @@ open class SelenidePageFactory : PageObjectFactory {
     }
 
     protected fun initFields(
-        driver: Driver?, searchContext: SearchContext?,
+        driver: Driver, searchContext: SearchContext,
         page: Any, proxyIn: Class<*>, genericTypes: Array<Type>
     ) {
         val fields = proxyIn.declaredFields
@@ -100,24 +100,24 @@ open class SelenidePageFactory : PageObjectFactory {
 
     @CheckReturnValue
     override fun createElementsContainer(
-        driver: Driver?,
-        searchContext: SearchContext?,
-        field: Field?,
-        selector: By?
+      driver: Driver,
+      searchContext: SearchContext?,
+      field: Field,
+      selector: By
     ): ElementsContainer {
         return try {
-            val self = wrap(driver!!, searchContext, selector!!, 0)
+            val self = wrap(driver, searchContext, selector, 0)
             initElementsContainer(driver, field, self)
         } catch (e: ReflectiveOperationException) {
-            throw PageObjectException("Failed to create elements container for field " + field!!.name, e)
+            throw PageObjectException("Failed to create elements container for field " + field.name, e)
         }
     }
 
     @CheckReturnValue
     @Throws(ReflectiveOperationException::class)
-    fun initElementsContainer(driver: Driver?, field: Field?, self: SelenideElement?): ElementsContainer {
+    fun initElementsContainer(driver: Driver, field: Field, self: SelenideElement): ElementsContainer {
         val genericTypes =
-            if (field!!.genericType is ParameterizedType) (field.genericType as ParameterizedType).actualTypeArguments else arrayOfNulls(
+            if (field.genericType is ParameterizedType) (field.genericType as ParameterizedType).actualTypeArguments else arrayOfNulls(
                 0
             )
         return initElementsContainer(driver, field, self, field.type, genericTypes)
@@ -126,11 +126,11 @@ open class SelenidePageFactory : PageObjectFactory {
     @CheckReturnValue
     @Throws(ReflectiveOperationException::class)
     override fun initElementsContainer(
-        driver: Driver?,
-        field: Field?,
-        self: SelenideElement?,
-        type: Class<*>,
-        genericTypes: Array<Type>
+      driver: Driver,
+      field: Field?,
+      self: SelenideElement,
+      type: Class<*>,
+      genericTypes: Array<Type>
     ): ElementsContainer {
         require(!Modifier.isInterface(type.modifiers)) { "Cannot initialize field $field: $type is interface" }
         require(!Modifier.isAbstract(type.modifiers)) { "Cannot initialize field $field: $type is abstract" }
@@ -144,8 +144,8 @@ open class SelenidePageFactory : PageObjectFactory {
     @CheckReturnValue
     fun decorate(
         loader: ClassLoader?,
-        driver: Driver?, searchContext: SearchContext?,
-        field: Field, selector: By?
+        driver: Driver, searchContext: SearchContext,
+        field: Field, selector: By
     ): Any? {
         val classGenericTypes = field.declaringClass.genericInterfaces
         return decorate(loader, driver, searchContext, field, selector, classGenericTypes)
@@ -154,8 +154,8 @@ open class SelenidePageFactory : PageObjectFactory {
     @CheckReturnValue
     fun decorate(
         loader: ClassLoader?,
-        driver: Driver?, searchContext: SearchContext?,
-        field: Field, selector: By?, genericTypes: Array<Type>
+        driver: Driver, searchContext: SearchContext,
+        field: Field, selector: By, genericTypes: Array<Type>
     ): Any? {
         if (ElementsContainer::class.java == field.declaringClass && "self" == field.name) {
             return if (searchContext is SelenideElement) {
@@ -166,12 +166,12 @@ open class SelenidePageFactory : PageObjectFactory {
             }
         }
         if (WebElement::class.java.isAssignableFrom(field.type)) {
-            return wrap(driver!!, searchContext, selector!!, 0)
+            return wrap(driver, searchContext, selector, 0)
         }
         if (ElementsCollection::class.java.isAssignableFrom(field.type) ||
             isDecoratableList(field, genericTypes, WebElement::class.java)
         ) {
-            return ElementsCollection(BySelectorCollection(driver!!, searchContext, selector!!))
+            return ElementsCollection(BySelectorCollection(driver, searchContext, selector))
         } else if (ElementsContainer::class.java.isAssignableFrom(field.type)) {
             return createElementsContainer(driver, searchContext, field, selector)
         } else if (isDecoratableList(field, genericTypes, ElementsContainer::class.java)) {
@@ -187,12 +187,12 @@ open class SelenidePageFactory : PageObjectFactory {
 
     @CheckReturnValue
     protected fun createElementsContainerList(
-        driver: Driver?, searchContext: SearchContext?,
-        field: Field, genericTypes: Array<Type>, selector: By?
+        driver: Driver, searchContext: SearchContext,
+        field: Field, genericTypes: Array<Type>, selector: By
     ): List<ElementsContainer> {
         val listType = getListGenericType(field, genericTypes)
             ?: throw IllegalArgumentException("Cannot detect list type for $field")
-        return ElementsContainerCollection(this, driver!!, searchContext!!, field, listType, genericTypes, selector!!)
+        return ElementsContainerCollection(this, driver, searchContext, field, listType, genericTypes, selector)
     }
 
     @CheckReturnValue

@@ -28,11 +28,11 @@ abstract class AbstractDriverFactory : DriverFactory {
         return logFile
     }
 
-    protected fun <DS : DriverService?, B : DriverService.Builder<DS, *>?> withLog(config: Config, dsBuilder: B): DS {
+    protected fun <DS : DriverService?, B : DriverService.Builder<DS, *>> withLog(config: Config, dsBuilder: B): DS {
         if (config.webdriverLogsEnabled()) {
-            dsBuilder!!.withLogFile(webdriverLog(config))
+            dsBuilder.withLogFile(webdriverLog(config))
         }
-        return dsBuilder!!.build()
+        return dsBuilder.build()
     }
 
     @CheckReturnValue
@@ -41,7 +41,7 @@ abstract class AbstractDriverFactory : DriverFactory {
         if (proxy != null) {
             capabilities.setCapability(CapabilityType.PROXY, proxy)
         }
-        if (config.browserVersion() != null && !config.browserVersion()!!.isEmpty()) {
+        if (config.browserVersion() != null && config.browserVersion()?.isEmpty() != true) {
             capabilities.version = config.browserVersion()
         }
         capabilities.setCapability(CapabilityType.PAGE_LOAD_STRATEGY, config.pageLoadStrategy())
@@ -53,7 +53,7 @@ abstract class AbstractDriverFactory : DriverFactory {
         capabilities.setCapability(CapabilityType.TAKES_SCREENSHOT, true)
         capabilities.setCapability(CapabilityType.SUPPORTS_ALERTS, true)
         transferCapabilitiesFromSystemProperties(capabilities)
-        return MergeableCapabilities(capabilities, config.browserCapabilities()!!)
+        return MergeableCapabilities(capabilities, config.browserCapabilities())
     }
 
     protected fun transferCapabilitiesFromSystemProperties(currentBrowserCapabilities: DesiredCapabilities) {

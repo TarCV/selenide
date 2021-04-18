@@ -7,7 +7,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 interface Command<T> {
     @Throws(IOException::class)
-    fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): T?
+    fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): T?
 
     companion object {
         @JvmField

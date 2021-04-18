@@ -12,17 +12,16 @@ class FilteringCollection(private val originalCollection: CollectionSource, priv
 
     @get:CheckReturnValue
     override val elements: List<WebElement>
-        get() = originalCollection.elements.stream()
-            .filter { webElement: WebElement? -> filter.apply(originalCollection.driver(), webElement!!) }
-            .collect(Collectors.toList())
+        get() = originalCollection.elements
+            .filter { webElement -> filter.apply(originalCollection.driver(), webElement) }
 
     @CheckReturnValue
     override fun getElement(index: Int): WebElement {
-        return originalCollection.elements.stream()
-            .filter { webElement: WebElement? -> filter.apply(originalCollection.driver(), webElement!!) }
-            .skip(index.toLong())
-            .findFirst()
-            .orElseThrow { IndexOutOfBoundsException("Index: $index") }
+        return originalCollection.elements
+            .filter { webElement -> filter.apply(originalCollection.driver(), webElement) }
+            .drop(index)
+            .firstOrNull()
+            ?: throw IndexOutOfBoundsException("Index: $index")
     }
 
     @CheckReturnValue

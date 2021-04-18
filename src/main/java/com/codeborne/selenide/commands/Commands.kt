@@ -122,7 +122,7 @@ open class Commands protected constructor() {
     @Throws(IOException::class)
     fun <T> execute(
       proxy: Any, webElementSource: WebElementSource, methodName: String,
-      args: Array<out Any?>?
+      args: Array<out Any>?
     ): T? {
         val command: Command<T> = getCommand(methodName)
         return command.execute((proxy as SelenideElement), webElementSource, args)
@@ -137,16 +137,11 @@ open class Commands protected constructor() {
     companion object {
         @JvmStatic
         @get:Synchronized
-        var instance: Commands? = null
-            get() {
-                if (field == null) {
-                    field = Plugins.inject(
-                        Commands::class.java
-                    )
-                }
-                return field
-            }
-            private set
+        val instance: Commands by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            Plugins.inject(
+              Commands::class.java
+            )
+        }
     }
 
     init {

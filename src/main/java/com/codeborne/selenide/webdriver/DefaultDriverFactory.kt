@@ -15,16 +15,16 @@ import javax.annotation.CheckReturnValue
 class DefaultDriverFactory : AbstractDriverFactory() {
     override fun setupWebdriverBinary() {}
     @CheckReturnValue
-    override fun create(config: Config?, browser: Browser, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver {
-        return createInstanceOf(config!!.browser(), config, browser, proxy, browserDownloadsFolder)
+    override fun create(config: Config, browser: Browser, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver {
+        return createInstanceOf(config.browser(), config, browser, proxy, browserDownloadsFolder)
     }
 
     @CheckReturnValue
     private fun createInstanceOf(
-        className: String, config: Config?, browser: Browser,
+        className: String, config: Config, browser: Browser,
         proxy: Proxy?, browserDownloadsFolder: File?
     ): WebDriver {
-        val clazz = classOf(config!!.browser())
+        val clazz = classOf(config.browser())
         return if (WebDriverProvider::class.java.isAssignableFrom(clazz)) {
             val capabilities: Capabilities =
                 createCapabilities(config, browser, proxy, browserDownloadsFolder)
@@ -48,10 +48,10 @@ class DefaultDriverFactory : AbstractDriverFactory() {
 
     @CheckReturnValue
     override fun createCapabilities(
-      config: Config?, browser: Browser,
+      config: Config, browser: Browser,
       proxy: Proxy?, browserDownloadsFolder: File?
     ): MutableCapabilities {
-        val clazz = classOf(config!!.browser())
+        val clazz = classOf(config.browser())
         if (DriverFactory::class.java.isAssignableFrom(clazz)) {
             val factory = createInstanceOf(DriverFactory::class.java, clazz)
             return factory.createCapabilities(config, browser, proxy, browserDownloadsFolder)

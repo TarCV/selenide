@@ -27,9 +27,9 @@ import javax.annotation.ParametersAreNonnullByDefault
 internal open class SelenideElementProxy(private val webElementSource: WebElementSource) : InvocationHandler {
     private val exceptionWrapper = ExceptionWrapper()
     @Throws(Throwable::class)
-    override fun invoke(proxy: Any, method: Method, args: Array<out Any?>?): Any {
+    override fun invoke(proxy: Any, method: Method, args: Array<out Any>?): Any {
         val arguments = Arguments(args)
-        if (methodsToSkipLogging.contains(method.name)) return instance!!.execute<Any>(
+        if (methodsToSkipLogging.contains(method.name)) return instance.execute<Any>(
             proxy,
             webElementSource,
             method.name,
@@ -82,14 +82,14 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
     @Throws(Throwable::class)
     protected fun dispatchAndRetry(
       timeoutMs: Long, pollingIntervalMs: Long,
-      proxy: Any?, method: Method, args: Array<out Any?>?
+      proxy: Any, method: Method, args: Array<out Any>?
     ): Any? {
         val stopwatch = Stopwatch(timeoutMs)
         lateinit var lastError: Throwable
         do {
             lastError = try {
                 return if (isSelenideElementMethod(method)) {
-                    instance!!.execute<Any>(proxy!!, webElementSource, method.name, args)
+                    instance.execute<Any>(proxy, webElementSource, method.name, args)
                 } else {
                   method.invoke(webElementSource.webElement, *args ?: arrayOfNulls(1))
                 }

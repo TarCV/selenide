@@ -29,6 +29,6 @@ internal class ExceptionWrapper {
 
     @CheckReturnValue
     private fun isElementNotClickableException(e: Throwable): Boolean {
-        return e is WebDriverException && e.message!!.contains("is not clickable")
+        return e is WebDriverException && e.message?.contains("is not clickable") == true
     }
 }

@@ -7,5 +7,5 @@ import javax.annotation.CheckReturnValue
 
 interface PageSourceExtractor {
     @CheckReturnValue
-    fun extract(config: Config?, driver: WebDriver?, fileName: String?): File
+    fun extract(config: Config, driver: WebDriver, fileName: String): File
 }

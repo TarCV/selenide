@@ -8,15 +8,15 @@ import org.slf4j.LoggerFactory
 
 internal class BrowserResizer {
     fun adjustBrowserPosition(config: Config, driver: WebDriver) {
-        if (config.browserPosition() != null) {
-            log.info("Set browser position to {}", config.browserPosition())
-            val coordinates = config.browserPosition()!!.split("x").toTypedArray()
+        config.browserPosition()?.let {
+            log.info("Set browser position to {}", it)
+            val coordinates = it.split("x").toTypedArray()
             val x = coordinates[0].toInt()
             val y = coordinates[1].toInt()
             val target = Point(x, y)
             val current = driver.manage().window().position
             if (current != target) {
-                driver.manage().window().position = target
+              driver.manage().window().position = target
             }
         }
     }

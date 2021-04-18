@@ -8,8 +8,8 @@ import javax.annotation.CheckReturnValue
 import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
-class And(name: String?, private val conditions: List<Condition>) : Condition(
-    name!!
+class And(name: String, private val conditions: List<Condition>) : Condition(
+  name
 ) {
     private var lastFailedCondition: Condition? = null
     override fun negate(): Condition {
@@ -30,7 +30,7 @@ class And(name: String?, private val conditions: List<Condition>) : Condition(
 
     @CheckReturnValue
     override fun actualValue(driver: Driver, element: WebElement): String? {
-        return if (lastFailedCondition == null) null else lastFailedCondition!!.actualValue(driver, element)
+        return lastFailedCondition?.actualValue(driver, element)
     }
 
     @CheckReturnValue

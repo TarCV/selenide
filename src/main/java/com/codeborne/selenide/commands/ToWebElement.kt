@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class ToWebElement : Command<WebElement> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): WebElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): WebElement {
         return locator.webElement
     }
 }

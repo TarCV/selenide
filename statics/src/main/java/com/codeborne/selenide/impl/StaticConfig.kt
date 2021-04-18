@@ -131,8 +131,8 @@ class StaticConfig : Config {
         return headless
     }
 
-    override fun remote(): String {
-        return remote!!
+    override fun remote(): String? {
+        return remote
     }
 
     override fun browserSize(): String? {
@@ -143,8 +143,8 @@ class StaticConfig : Config {
         return browserVersion
     }
 
-    override fun browserPosition(): String {
-        return browserPosition!!
+    override fun browserPosition(): String? {
+        return browserPosition
     }
 
     override fun startMaximized(): Boolean {

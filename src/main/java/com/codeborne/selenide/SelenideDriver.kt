@@ -374,7 +374,7 @@ open class SelenideDriver {
 
     @Throws(IOException::class)
     fun download(url: URI, timeoutMs: Long): File {
-        return downloadFileWithHttpRequest()!!.download(driver(), url, timeoutMs, FileFilters.none())
+        return downloadFileWithHttpRequest.download(driver(), url, timeoutMs, FileFilters.none())
     }
 
     @get:CheckReturnValue
@@ -395,11 +395,8 @@ open class SelenideDriver {
         private val pageFactory = Plugins.inject(
             PageObjectFactory::class.java
         )
-        private var downloadFileWithHttpRequest: DownloadFileWithHttpRequest? = null
-        @Synchronized
-        private fun downloadFileWithHttpRequest(): DownloadFileWithHttpRequest? {
-            if (downloadFileWithHttpRequest == null) downloadFileWithHttpRequest = DownloadFileWithHttpRequest()
-            return downloadFileWithHttpRequest
+        val downloadFileWithHttpRequest: DownloadFileWithHttpRequest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+            DownloadFileWithHttpRequest()
         }
     }
 }

@@ -128,7 +128,7 @@ class SelenideProxyServer
      * Get request filter by name
      */
     @CheckReturnValue
-    fun <T : RequestFilter?> requestFilter(name: String): T? {
+    fun <T : RequestFilter> requestFilter(name: String): T? {
         return requestFilters[name] as T?
     }
 

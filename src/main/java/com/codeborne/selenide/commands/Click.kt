@@ -13,7 +13,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 open class Click : Command<Void?> {
     private val jsSource = FileContent("click.js")
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): Void? {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): Void? {
         val driver = locator.driver()
         val webElement = locator.findAndAssertElementIsInteractable()
         if (args == null || args.isEmpty()) {

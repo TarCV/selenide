@@ -17,7 +17,9 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 object SelenideLogger {
     private val LOG = LoggerFactory.getLogger(SelenideLogger::class.java)
-    internal val listeners = ThreadLocal<MutableMap<String, LogEventListener>?>()
+    internal val listeners = ThreadLocal.withInitial {
+      HashMap<String, LogEventListener>()
+    }
     private val df = DurationFormat()
     private val methodNameRegex = "([A-Z])".toRegex()
 
@@ -78,7 +80,7 @@ object SelenideLogger {
           }
         }
         return if (args[0] is IntArray) {
-            arrayToString(args[0] as IntArray?)
+            arrayToString(args[0] as IntArray)
         } else arrayToString(args)
     }
 
@@ -95,8 +97,8 @@ object SelenideLogger {
     }
 
     @CheckReturnValue
-    private fun arrayToString(args: IntArray?): String {
-        return if (args!!.size == 1) args[0].toString() else Arrays.toString(args)
+    private fun arrayToString(args: IntArray): String {
+        return if (args.size == 1) args[0].toString() else args.contentToString()
     }
 
     @JvmStatic
@@ -164,10 +166,7 @@ object SelenideLogger {
     @get:CheckReturnValue
     private val eventLoggerListeners: Collection<LogEventListener>
         get() {
-            if (listeners.get() == null) {
-                listeners.set(HashMap())
-            }
-            return listeners.get()!!.values
+            return listeners.get().values
         }
 
     /**

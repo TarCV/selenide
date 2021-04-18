@@ -18,7 +18,7 @@ class ToString : Command<String> {
     )
 
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): String {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): String {
         return try {
             describe.fully(locator.driver(), locator.webElement)
         } catch (elementDoesNotExist: WebDriverException) {

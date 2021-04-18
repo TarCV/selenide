@@ -8,7 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class PressEscape : Command<SelenideElement> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): SelenideElement {
         locator.findAndAssertElementIsInteractable().sendKeys(Keys.ESCAPE)
         return proxy
     }

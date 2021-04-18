@@ -62,8 +62,8 @@ abstract class WebElementSource {
         return ElementNotFound(driver(), description(), condition, lastError)
     }
 
-    fun checkCondition(prefix: String, condition: Condition?, invert: Boolean): WebElement? {
-        val check = if (invert) not(condition!!) else condition!!
+    fun checkCondition(prefix: String, condition: Condition, invert: Boolean): WebElement? {
+        val check = if (invert) not(condition) else condition
         var lastError: Throwable? = null
         var element: WebElement? = null
         try {
@@ -104,13 +104,13 @@ abstract class WebElementSource {
      */
     @CheckReturnValue
     fun findAndAssertElementIsInteractable(): WebElement {
-        return Objects.requireNonNull(
-            checkCondition(
-                "be ",
-                or("visible or transparent", Condition.visible, have(cssValue("opacity", "0"))),
-                false
-            )
-        )!!
+        return checkNotNull(
+          checkCondition(
+            "be ",
+            or("visible or transparent", Condition.visible, have(cssValue("opacity", "0"))),
+            false
+          )
+        )
     }
 
     companion object {

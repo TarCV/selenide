@@ -8,7 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class Execute<ReturnType> : Command<ReturnType?> {
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): ReturnType? {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): ReturnType? {
         val command: Command<ReturnType> = Util.firstOf(args)
         return try {
             command.execute(proxy, locator, args)

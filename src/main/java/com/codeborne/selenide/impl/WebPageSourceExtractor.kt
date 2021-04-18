@@ -16,14 +16,14 @@ import javax.annotation.CheckReturnValue
 open class WebPageSourceExtractor : PageSourceExtractor {
     private val printedErrors: MutableSet<String> = ConcurrentSkipListSet()
     @CheckReturnValue
-    override fun extract(config: Config?, driver: WebDriver?, fileName: String?): File {
+    override fun extract(config: Config, driver: WebDriver, fileName: String): File {
         return extract(config, driver, fileName, true)
     }
 
-    private fun extract(config: Config?, driver: WebDriver?, fileName: String?, retryIfAlert: Boolean): File {
+    private fun extract(config: Config, driver: WebDriver, fileName: String, retryIfAlert: Boolean): File {
         val pageSource = createFile(config, fileName)
         try {
-            writeToFile(driver!!.pageSource, pageSource)
+            writeToFile(driver.pageSource, pageSource)
         } catch (e: UnhandledAlertException) {
             if (retryIfAlert) {
                 retryingExtractionOnAlert(config, driver, fileName, e)
@@ -41,8 +41,8 @@ open class WebPageSourceExtractor : PageSourceExtractor {
         return pageSource
     }
 
-    protected fun createFile(config: Config?, fileName: String?): File {
-        return File(config!!.reportsFolder(), "$fileName.html").absoluteFile
+    protected fun createFile(config: Config, fileName: String): File {
+        return File(config.reportsFolder(), "$fileName.html").absoluteFile
     }
 
     protected fun writeToFile(content: String, targetFile: File) {
@@ -63,9 +63,9 @@ open class WebPageSourceExtractor : PageSourceExtractor {
         }
     }
 
-    private fun retryingExtractionOnAlert(config: Config?, driver: WebDriver?, fileName: String?, e: Exception) {
+    private fun retryingExtractionOnAlert(config: Config, driver: WebDriver, fileName: String, e: Exception) {
         try {
-            val alert = driver!!.switchTo().alert()
+            val alert = driver.switchTo().alert()
             log.error("{}: {}", e, alert.text)
             alert.accept()
             extract(config, driver, fileName, false)

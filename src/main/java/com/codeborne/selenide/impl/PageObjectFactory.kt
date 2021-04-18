@@ -14,17 +14,17 @@ interface PageObjectFactory {
     fun <PageObjectClass : Any> page(driver: Driver, pageObjectClass: Class<PageObjectClass>): PageObjectClass
     fun <PageObjectClass : Any, T : PageObjectClass> page(driver: Driver, pageObject: T): PageObjectClass
     fun createElementsContainer(
-        driver: Driver?,
+        driver: Driver,
         searchContext: SearchContext?,
-        field: Field?,
-        selector: By?
+        field: Field,
+        selector: By
     ): ElementsContainer
 
     @Throws(ReflectiveOperationException::class)
     fun initElementsContainer(
-        driver: Driver?,
+        driver: Driver,
         field: Field?,
-        self: SelenideElement?,
+        self: SelenideElement,
         type: Class<*>,
         genericTypes: Array<Type>
     ): ElementsContainer

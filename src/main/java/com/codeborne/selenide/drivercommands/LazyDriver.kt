@@ -21,7 +21,7 @@ import javax.annotation.concurrent.GuardedBy
  */
 @ParametersAreNonnullByDefault
 class LazyDriver internal constructor(
-  private val config: Config, private val userProvidedProxy: Proxy?, listeners: List<WebDriverEventListener>?,
+  private val config: Config, private val userProvidedProxy: Proxy?, listeners: List<WebDriverEventListener>,
   factory: WebDriverFactory, browserHealthChecker: BrowserHealthChecker,
   createDriverCommand: CreateDriverCommand, closeDriverCommand: CloseDriverCommand
 ) : Driver {
@@ -45,13 +45,12 @@ class LazyDriver internal constructor(
           field = value
         }
 
-    constructor(config: Config, userProvidedProxy: Proxy?, listeners: List<WebDriverEventListener>?) : this(
+    constructor(config: Config, userProvidedProxy: Proxy?, listeners: List<WebDriverEventListener>) : this(
         config, userProvidedProxy, listeners, WebDriverFactory(), BrowserHealthChecker(),
         CreateDriverCommand(), CloseDriverCommand()
-    ) {
-    }
+    )
 
-    override fun config(): Config {
+  override fun config(): Config {
         return config
     }
 
@@ -123,7 +122,7 @@ class LazyDriver internal constructor(
     }
 
     init {
-      this.listeners.addAll(listeners!!)
+      this.listeners.addAll(listeners)
         this.factory = factory
         this.browserHealthChecker = browserHealthChecker
         this.closeDriverCommand = closeDriverCommand

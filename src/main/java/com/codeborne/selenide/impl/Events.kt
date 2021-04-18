@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 
 @ParametersAreNonnullByDefault
 class Events internal constructor(private val log: Logger) {
-    fun fireEvent(driver: Driver, element: WebElement?, vararg event: String?) {
+    fun fireEvent(driver: Driver, element: WebElement, vararg event: String?) {
         try {
             executeJavaScript(driver, element, *event)
         } catch (ignore: StaleElementReferenceException) {
@@ -19,8 +19,8 @@ class Events internal constructor(private val log: Logger) {
         }
     }
 
-    fun executeJavaScript(driver: Driver, element: WebElement?, vararg event: String?) {
-        driver.executeJavaScript<Any>(JS_CODE_TO_TRIGGER_EVENT, element!!, event)
+    fun executeJavaScript(driver: Driver, element: WebElement, vararg event: String?) {
+        driver.executeJavaScript<Any>(JS_CODE_TO_TRIGGER_EVENT, element, event)
     }
 
     companion object {

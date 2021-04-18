@@ -9,7 +9,8 @@ import javax.annotation.ParametersAreNonnullByDefault
 class WindowByIndex(private val index: Int) : ExpectedCondition<WebDriver> {
     override fun apply(driver: WebDriver?): WebDriver? {
         return try {
-            val windowHandles: List<String> = ArrayList(driver!!.windowHandles)
+            checkNotNull(driver)
+            val windowHandles: List<String> = ArrayList(driver.windowHandles)
             driver.switchTo().window(windowHandles[index])
         } catch (windowWithIndexNotFound: IndexOutOfBoundsException) {
             null

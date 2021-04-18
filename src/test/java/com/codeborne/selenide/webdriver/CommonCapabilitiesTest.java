@@ -60,15 +60,15 @@ final class CommonCapabilitiesTest implements WithAssertions {
     @Override
     @CheckReturnValue
     @Nonnull
-    public MutableCapabilities createCapabilities(@org.jetbrains.annotations.Nullable Config config, @NotNull Browser browser,
-                                                  @org.jetbrains.annotations.Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
+    public MutableCapabilities createCapabilities(@NotNull Config config, @NotNull Browser browser,
+                                                  @Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
       return new DesiredCapabilities();
     }
 
     @Override
     @CheckReturnValue
     @Nonnull
-    public WebDriver create(@Nullable Config config, @NotNull Browser browser, @Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
+    public WebDriver create(@NotNull Config config, @NotNull Browser browser, @Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
       return mock(WebDriver.class);
     }
   }

@@ -27,26 +27,26 @@ open class ChromeDriverFactory : AbstractDriverFactory() {
     }
 
     @CheckReturnValue
-    override fun create(config: Config?, browser: Browser, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver {
+    override fun create(config: Config, browser: Browser, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver {
         val chromeOptions = createCapabilities(config, browser, proxy, browserDownloadsFolder)
         log.debug("Chrome options: {}", chromeOptions)
         return ChromeDriver(buildService(config), chromeOptions)
     }
 
     @CheckReturnValue
-    protected open fun buildService(config: Config?): ChromeDriverService {
-        return withLog(config!!, ChromeDriverService.Builder())
+    protected open fun buildService(config: Config): ChromeDriverService {
+        return withLog(config, ChromeDriverService.Builder())
     }
 
     @CheckReturnValue
     override fun createCapabilities(
-        config: Config?, browser: Browser,
-        proxy: Proxy?, browserDownloadsFolder: File?
+      config: Config, browser: Browser,
+      proxy: Proxy?, browserDownloadsFolder: File?
     ): MutableCapabilities {
-        val commonCapabilities: Capabilities = createCommonCapabilities(config!!, browser, proxy)
+        val commonCapabilities: Capabilities = createCommonCapabilities(config, browser, proxy)
         val options = ChromeOptions()
         options.setHeadless(config.headless())
-        if (!config.browserBinary()!!.isEmpty()) {
+        if (config.browserBinary().isNotEmpty()) {
             log.info("Using browser binary: {}", config.browserBinary())
             options.setBinary(config.browserBinary())
         }

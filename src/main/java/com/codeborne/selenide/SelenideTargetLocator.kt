@@ -70,11 +70,11 @@ class SelenideTargetLocator(private val driver: Driver) : TargetLocator {
     }
 
     private fun isFirefox62Bug(e: InvalidArgumentException): Boolean {
-        return e.message!!.contains("untagged enum FrameId")
+        return e.message?.contains("untagged enum FrameId") == true
     }
 
     private fun isChrome75Error(e: InvalidArgumentException): Boolean {
-        return e.message!!.contains("invalid argument: 'id' out of range")
+        return e.message?.contains("invalid argument: 'id' out of range") == true
     }
 
     override fun parentFrame(): WebDriver {

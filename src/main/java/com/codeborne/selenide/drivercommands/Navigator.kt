@@ -41,7 +41,7 @@ class Navigator {
     }
 
     private fun basicAuthRequestFilter(selenideProxy: SelenideProxyServer): AuthenticationFilter? {
-        return selenideProxy!!.requestFilter("authentication")
+        return selenideProxy.requestFilter("authentication")
     }
 
     fun absoluteUrl(config: Config, relativeOrAbsoluteUrl: String): String {

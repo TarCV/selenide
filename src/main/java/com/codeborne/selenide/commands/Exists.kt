@@ -12,7 +12,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class Exists : Command<Boolean> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): Boolean {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): Boolean {
         return try {
             locator.webElement
             true

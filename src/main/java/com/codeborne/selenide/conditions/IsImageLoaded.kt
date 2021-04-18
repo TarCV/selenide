@@ -12,12 +12,12 @@ class IsImageLoaded : Condition("is image") {
     }
 
     companion object {
-        fun isImage(driver: Driver, webElement: WebElement?): Boolean {
+        fun isImage(driver: Driver, webElement: WebElement): Boolean {
             return driver.executeJavaScript(
                 "return arguments[0].tagName.toLowerCase() === 'img' && " +
                         "arguments[0].complete && " +
                         "typeof arguments[0].naturalWidth != 'undefined' && " +
-                        "arguments[0].naturalWidth > 0", webElement!!
+                        "arguments[0].naturalWidth > 0", webElement
             )
         }
     }

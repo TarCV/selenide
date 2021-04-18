@@ -10,7 +10,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class FindByXpath : Command<SelenideElement> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): SelenideElement {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): SelenideElement {
         checkNotNull(args)
 
         val xpath = Util.firstOf<String>(args)
@@ -18,7 +18,7 @@ class FindByXpath : Command<SelenideElement> {
         return if (args.size == 1) locator.find(proxy, byXpath, 0) else locator.find(
             proxy,
             byXpath,
-            (args[1] as Int?)!!
+            args[1] as Int
         )
     }
 }

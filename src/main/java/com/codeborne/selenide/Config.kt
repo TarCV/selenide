@@ -12,11 +12,11 @@ interface Config {
     fun startMaximized(): Boolean
     fun driverManagerEnabled(): Boolean
     fun webdriverLogsEnabled(): Boolean
-    fun browserBinary(): String?
-    fun pageLoadStrategy(): String?
+    fun browserBinary(): String
+  fun pageLoadStrategy(): String?
     fun pageLoadTimeout(): Long
-    fun browserCapabilities(): MutableCapabilities?
-    fun baseUrl(): String?
+    fun browserCapabilities(): MutableCapabilities
+  fun baseUrl(): String?
     fun timeout(): Long
     fun pollingInterval(): Long
     fun holdBrowserOpen(): Boolean

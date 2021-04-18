@@ -13,10 +13,10 @@ interface DriverFactory {
 
     @CheckReturnValue
     fun createCapabilities(
-        config: Config?, browser: Browser,
+        config: Config, browser: Browser,
         proxy: Proxy?, browserDownloadsFolder: File?
     ): MutableCapabilities
 
     @CheckReturnValue
-    fun create(config: Config?, browser: Browser, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver
+    fun create(config: Config, browser: Browser, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver
 }

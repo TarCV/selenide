@@ -291,9 +291,8 @@ open class ScreenShotLaboratory @JvmOverloads constructor(
     }
 
     protected fun addToHistory(screenshot: File): File {
-        if (currentContextScreenshots.get() != null) {
-            currentContextScreenshots.get()!!.add(screenshot)
-        }
+
+        currentContextScreenshots.get()?.add(screenshot)
         synchronized(allScreenshots) { allScreenshots.add(screenshot) }
         _threadScreenshots.get().add(screenshot)
         return screenshot
@@ -321,7 +320,7 @@ open class ScreenShotLaboratory @JvmOverloads constructor(
     }
 
     @CheckReturnValue
-    protected fun savePageSourceToFile(config: Config?, fileName: String?, driver: Driver): File {
+    protected fun savePageSourceToFile(config: Config, fileName: String, driver: Driver): File {
         return extractor.extract(config, driver.webDriver, fileName)
     }
 

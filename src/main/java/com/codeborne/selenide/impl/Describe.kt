@@ -27,8 +27,8 @@ class Describe(private val driver: Driver, private val element: WebElement) {
         } catch (browserDoesNotSupportJavaScript: UnsupportedCommandException) {
         } catch (browserDoesNotSupportJavaScript: StaleElementReferenceException) {
         } catch (probablyBrowserDoesNotSupportJavaScript: WebDriverException) {
-            if (!probablyBrowserDoesNotSupportJavaScript.message!!.toLowerCase()
-                    .contains("method is not implemented")
+            if (probablyBrowserDoesNotSupportJavaScript.message?.toLowerCase()
+                    ?.contains("method is not implemented") != true
             ) {
                 log.warn("Failed to get attributes via JS: {}", probablyBrowserDoesNotSupportJavaScript.toString())
             }
@@ -85,8 +85,8 @@ class Describe(private val driver: Driver, private val element: WebElement) {
         } catch (browserDoesNotSupportJavaScript: StaleElementReferenceException) {
             this
         } catch (probablyBrowserDoesNotSupportJavaScript: WebDriverException) {
-            if (!probablyBrowserDoesNotSupportJavaScript.message!!.toLowerCase()
-                    .contains("method is not implemented")
+            if (probablyBrowserDoesNotSupportJavaScript.message?.toLowerCase()
+                    ?.contains("method is not implemented") != true
             ) {
                 log.warn(
                     "Failed to get attribute {}: {}",

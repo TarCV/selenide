@@ -14,7 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault
 @ParametersAreNonnullByDefault
 class Matches : Command<Boolean> {
     @CheckReturnValue
-    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>?): Boolean {
+    override fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>?): Boolean {
         val condition = Util.firstOf<Condition>(args)
         val element = getElementOrNull(locator)
         return if (element != null) {
