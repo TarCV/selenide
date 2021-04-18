@@ -1,7 +1,6 @@
 package integration.proxy;
 
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.proxy.SelenideProxyServer;
 import integration.IntegrationTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

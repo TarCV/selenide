@@ -7,7 +7,7 @@ allprojects {
     options.encoding = encoding
     options.debug = true
   }
-  compileJava.options.debugOptions.debugLevel = "source,lines,vars"
+// TODO:  compileJava.options.debugOptions.debugLevel = "source,lines,vars"
 
   sourceCompatibility = '1.8'
 }

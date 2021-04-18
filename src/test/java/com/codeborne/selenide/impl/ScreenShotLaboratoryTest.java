@@ -41,7 +41,7 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
 
   @BeforeEach
   void setUp() {
-    when(photographer.takeScreenshot(any(), eq(BYTES))).thenReturn(Optional.of("siski".getBytes(UTF_8)));
+    when(photographer.takeScreenshot(any(), eq(BYTES))).thenReturn(("siski".getBytes(UTF_8)));
   }
 
   @Test

@@ -31,7 +31,7 @@ final class TimeoutTest extends ITest {
   }
 
   @Test
-  void timeoutShouldBeInMilliseconds() {
+  void timeoutShouldBetoLongMilliseconds()() {
     try {
       $(By.xpath("//h16")).waitUntil(visible, 15);
     } catch (ElementNotFound expectedException) {

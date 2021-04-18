@@ -43,7 +43,7 @@ final class GetSelectedOptionsCommandTest implements WithAssertions {
   @Test
   void testExecuteMethod() {
     ElementsCollection elementsCollection = getSelectedOptionsCommand.execute(proxy, locator, new Object[]{"something more"});
-    final List<String> foundTexts = elementsCollection.stream().map(SelenideElement::getText).collect(Collectors.toList());
+    final List<String> foundTexts = elementsCollection.map(SelenideElement::getText).collect(Collectors.toList());
 
     assertThat(mMockedElementsList)
       .extracting(WebElement::getText)

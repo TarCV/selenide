@@ -4,7 +4,6 @@ import com.codeborne.selenide.AuthenticationType;
 import com.codeborne.selenide.Credentials;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.impl.StaticConfig;
-import com.codeborne.selenide.proxy.SelenideProxyServer;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -65,7 +65,7 @@ final class ReadonlyElementsTest extends IntegrationTest {
 
   private Condition<String> getExceptionMessagesCondition(final List<String> exceptionMessages) {
     return new Condition<>(exception ->
-      exceptionMessages.stream().anyMatch(exception::contains),
+      exceptionMessages.anyMatch(exception::contains),
       "exceptionMessages");
   }
 

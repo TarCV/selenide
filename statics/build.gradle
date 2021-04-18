@@ -1,26 +1,62 @@
 plugins {
-  id 'org.jetbrains.kotlin.jvm'
+  id 'org.jetbrains.kotlin.multiplatform'
   id "org.jetbrains.kotlin.plugin.allopen"
 }
-dependencies {
-  compileOnly("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-  testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-  testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
-  testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
-repositories {
-  mavenCentral()
-}
-compileKotlin {
-  kotlinOptions {
-    jvmTarget = "1.8"
-    freeCompilerArgs += '-Xjvm-default=enable'
-  }
-}
-compileTestKotlin {
-  kotlinOptions {
-    jvmTarget = "1.8"
-    freeCompilerArgs += '-Xjvm-default=enable'
-  }
+def junitVersion = '5.7.1'
+kotlin {
+    jvm {
+        withJava()
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "1.8"
+                freeCompilerArgs += '-Xjvm-default=enable'
+            }
+        }
+    }
+    js {
+        nodejs()
+
+        compilations.all {
+            kotlinOptions {
+                sourceMap = true
+                metaInfo = true
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("com.benasher44:uuid:0.2.4")
+                implementation 'co.touchlab:stately-isolate:1.1.4-a1'
+                implementation 'co.touchlab:stately-iso-collections:1.1.4-a1'
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation project(':')
+// TODO:               implementation project(':').sourceSets.test.output
+
+                // Version should match the version in 'appium-base-driver'
+                implementation(npm('webdriverio', '6.0.2', false))
+                implementation('org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.4.3')
+                implementation("com.squareup.okio:okio-js:3.0.0-alpha.4")
+                implementation("org.lighthousegames:logging-js:1.0.0")
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation project(':')
+                implementation project(':').sourceSets.test.output
+
+                apply from: rootProject.file('gradle/dependencies.gradle')
+
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+                compileOnly("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+                implementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+                implementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+                implementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+            }
+        }
+    }
 }
