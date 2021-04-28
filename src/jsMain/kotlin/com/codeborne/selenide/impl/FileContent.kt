@@ -1,6 +1,6 @@
 package com.codeborne.selenide.impl
 
-import okio.okio.IOException
+import okio.IOException
 import java.nio.charset.StandardCharsets
 
 /**

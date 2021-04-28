@@ -13,7 +13,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.io.File;
+import java.io.Path;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.stream.Stream;
@@ -40,7 +40,7 @@ final class DownloadFileWithProxyServerTest implements WithAssertions {
   private final WebElementSource linkWithHref = mock(WebElementSource.class);
   private final WebElement link = mock(WebElement.class);
   private final FileDownloadFilter filter = spy(new FileDownloadFilter(config));
-  @TempDir File tempDir;
+  @TempDir Path tempDir;
 
   @BeforeEach
   void setUp() {
@@ -54,9 +54,9 @@ final class DownloadFileWithProxyServerTest implements WithAssertions {
 
   @Test
   void canInterceptFileViaProxyServer() throws IOException {
-    emulateServerResponseWithFiles(new File("report.pdf"));
+    emulateServerResponseWithFiles(new Path("report.pdf"));
 
-    File file = command.download(linkWithHref, link, 3000, none());
+    Path file = command.download(linkWithHref, link, 3000, none());
 
     assertThat(file.getName()).isEqualTo("report.pdf");
     verify(filter).activate();
@@ -66,9 +66,9 @@ final class DownloadFileWithProxyServerTest implements WithAssertions {
 
   @Test
   void closesNewWindowIfFileWasOpenedInSeparateWindow() throws IOException {
-    emulateServerResponseWithFiles(new File("report.pdf"));
+    emulateServerResponseWithFiles(new Path("report.pdf"));
 
-    File file = command.download(linkWithHref, link, 3000, none());
+    Path file = command.download(linkWithHref, link, 3000, none());
 
     assertThat(file.getName()).isEqualTo("report.pdf");
     verify(windowsCloser).runAndCloseArisedWindows(same(webdriver), any());
@@ -103,7 +103,7 @@ final class DownloadFileWithProxyServerTest implements WithAssertions {
       .hasMessageContaining("Cannot download file: proxy server is not started");
   }
 
-  private void emulateServerResponseWithFiles(final File... files) {
+  private void emulateServerResponseWithFiles(final Path... files) {
     doAnswer(invocation -> {
       filter.downloads().files().addAll(Stream.of(files).map(file -> new DownloadedFile(file, emptyMap())).collect(toList()));
       return null;

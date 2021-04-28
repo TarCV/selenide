@@ -1,5 +1,6 @@
 package com.codeborne.selenide
 
+import okio.ExperimentalFileSystem
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.interactions.Actions
@@ -11,7 +12,10 @@ interface Driver {
     val webDriver: WebDriver
 // TODO:   val proxy: SelenideProxyServer?
     val getAndCheckWebDriver: WebDriver
+
+    @ExperimentalFileSystem
     fun browserDownloadsFolder(): DownloadsFolder?
+
     fun close()
     fun supportsJavascript(): Boolean {
         return hasWebDriverStarted() && webDriver is JavascriptExecutor

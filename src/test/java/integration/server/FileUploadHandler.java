@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import java.io.Path;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -27,7 +27,7 @@ class FileUploadHandler extends BaseHandler {
   @Override
   public Result post(HttpServletRequest request, HttpServletResponse response) {
     DiskFileItemFactory factory = new DiskFileItemFactory();
-    factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
+    factory.setRepository(new Path(System.getProperty("java.io.tmpdir")));
     ServletFileUpload upload = new ServletFileUpload(factory);
     upload.setHeaderEncoding(UTF_8.name());
     try {

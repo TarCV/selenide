@@ -7,7 +7,7 @@
  * <pre>
  * Screenshots.screenshots = new ScreenShotLaboratory() {
  * `@Override`
- * protected File savePageImageToFile(String fileName, WebDriver webdriver) {
+ * protected Path savePageImageToFile(String fileName, WebDriver webdriver) {
  * // your custom logic
  * }
  * };

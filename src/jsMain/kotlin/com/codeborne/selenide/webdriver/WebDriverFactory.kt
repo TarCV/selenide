@@ -2,14 +2,16 @@ package com.codeborne.selenide.webdriver
 
 import com.codeborne.selenide.Browser
 import com.codeborne.selenide.Config
-import com.codeborne.selenide.SelenideDriver
-import org.openqa.selenium.BuildInfo
 import org.openqa.selenium.HasCapabilities
 import org.openqa.selenium.Proxy
 import org.openqa.selenium.UnsupportedCommandException
 import org.openqa.selenium.WebDriver
 import org.slf4j.LoggerFactory
-import java.io.File
+import support.reflect.IllegalAccessException
+import support.reflect.InstantiationException
+import support.reflect.InvocationTargetException
+import support.reflect.NoSuchMethodException
+import support.reflect.newInstance
 import kotlin.time.milliseconds
 
 class WebDriverFactory {
@@ -22,7 +24,7 @@ class WebDriverFactory {
         return result
     }
     @kotlin.time.ExperimentalTime
-    fun createWebDriver(config: Config, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver {
+    fun createWebDriver(config: Config, proxy: Proxy?, browserDownloadsFolder: Path?): WebDriver {
         log.debug("browser={}", config.browser())
         log.debug("browser.version={}", config.browserVersion())
         log.debug("remote={}", config.remote())
@@ -39,8 +41,8 @@ TODO:        browserResizer.adjustBrowserSize(config, webdriver)
 */
         setLoadTimeout(config, webdriver)
         logBrowserVersion(webdriver)
-// TODO:        log.info("Selenide v. {}", SelenideDriver::class.getPackage().implementationVersion)
-        logSeleniumInfo()
+// TODO:       log.info("Selenide v. {}", SelenideDriver::class.getPackage().implementationVersion)
+// TODO:       logSeleniumInfo()
         return webdriver
     }
 
@@ -57,7 +59,7 @@ TODO:        browserResizer.adjustBrowserSize(config, webdriver)
     private fun createWebDriverInstance(
         config: Config, browser: Browser,
         proxy: Proxy?,
-        browserDownloadsFolder: File?
+        browserDownloadsFolder: Path?
     ): WebDriver {
         val webdriverFactory = findFactory(browser)
         return if (config.remote() != null) {
@@ -73,7 +75,7 @@ TODO:        browserResizer.adjustBrowserSize(config, webdriver)
     private fun findFactory(browser: Browser): DriverFactory {
         val factoryClass = factories[browser.name.toLowerCase()] ?: DefaultDriverFactory::class
         return try {
-            factoryClass.getConstructor().newInstance()
+            factoryClass.newInstance()
         } catch (e: InstantiationException) {
             throw RuntimeException("Failed to initialize " + factoryClass.simpleName, e)
         } catch (e: IllegalAccessException) {
@@ -85,10 +87,12 @@ TODO:        browserResizer.adjustBrowserSize(config, webdriver)
         }
     }
 
-    private fun logSeleniumInfo() {
+/*
+TODO:    private fun logSeleniumInfo() {
         val seleniumInfo = BuildInfo()
         log.info("Selenium WebDriver v. {} build time: {}", seleniumInfo.releaseLabel, seleniumInfo.buildTime)
     }
+*/
 
     private fun logBrowserVersion(webdriver: WebDriver) {
         if (webdriver is HasCapabilities) {
@@ -106,3 +110,4 @@ TODO:        browserResizer.adjustBrowserSize(config, webdriver)
         private val log = LoggerFactory.getLogger(WebDriverFactory::class)
     }
 }
+

@@ -13,7 +13,7 @@ import org.assertj.core.api.WithAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.Path;
 import java.io.IOException;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -46,7 +46,7 @@ final class FileDownloadFilterTest implements WithAssertions {
 
     when(contents.getContentType()).thenReturn("app/json");
     when(contents.getTextContents()).thenReturn("my-text");
-    deleteDirectory(new File("build/downloads/random-text"));
+    deleteDirectory(new Path("build/downloads/random-text"));
   }
 
   private HttpHeaders mockHeaders() {
@@ -106,8 +106,8 @@ final class FileDownloadFilterTest implements WithAssertions {
     filter.filterResponse(response, contents, messageInfo);
     assertThat(filter.downloads().size()).isEqualTo(1);
 
-    File file = filter.downloads().files().get(0).getFile();
-    File expectedFile = new File("build/downloads/" + dummyRandomizer.text() + "/report.pdf");
+    Path file = filter.downloads().files().get(0).getFile();
+    Path expectedFile = new Path("build/downloads/" + dummyRandomizer.text() + "/report.pdf");
     assertThat(file.getName()).isEqualTo("report.pdf");
     assertThat(file.getPath()).endsWith(expectedFile.getPath());
     assertThat(readFileToByteArray(file)).isEqualTo(new byte[]{1, 2, 3, 4, 5});
@@ -125,8 +125,8 @@ final class FileDownloadFilterTest implements WithAssertions {
 
     assertThat(filter.responsesAsString())
       .isEqualTo("Intercepted 1 responses:\n  #1  /foo/bar/cv.pdf?42 -> 200 \"200=success\" {} app/json  (7 bytes)\n");
-    File file = filter.downloads().files().get(0).getFile();
-    File expectedFile = new File("build/downloads/" + dummyRandomizer.text() + "/cv.pdf");
+    Path file = filter.downloads().files().get(0).getFile();
+    Path expectedFile = new Path("build/downloads/" + dummyRandomizer.text() + "/cv.pdf");
     assertThat(file.getName()).isEqualTo("cv.pdf");
     assertThat(file.getPath()).endsWith(expectedFile.getPath());
     assertThat(readFileToString(file, UTF_8)).isEqualTo("HELLO");

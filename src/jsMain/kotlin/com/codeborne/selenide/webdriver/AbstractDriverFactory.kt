@@ -1,24 +1,21 @@
 package com.codeborne.selenide.webdriver
 
-import com.codeborne.selenide.Browser
 import com.codeborne.selenide.Config
 import com.codeborne.selenide.impl.FileHelper
 import com.codeborne.selenide.impl.FileNamer
-import org.openqa.selenium.MutableCapabilities
-import org.openqa.selenium.Proxy
-import org.openqa.selenium.remote.CapabilityType
-import org.openqa.selenium.remote.DesiredCapabilities
-import org.openqa.selenium.remote.service.DriverService
+import okio.ExperimentalFileSystem
+import okio.Path
+import okio.Path.Companion.toPath
 import org.slf4j.LoggerFactory
-import java.io.File
 import support.System
 
 abstract class AbstractDriverFactory : DriverFactory {
     private val fileNamer = FileNamer()
-    protected fun webdriverLog(config: Config): File {
-        val logFolder = FileHelper.ensureFolderExists(File(config.reportsFolder()).absoluteFile)
+    @ExperimentalFileSystem
+    protected fun webdriverLog(config: Config): Path {
+        val logFolder = FileHelper.ensureFolderExists(FileHelper.canonicalPath(config.reportsFolder().toPath()))
         val logFileName = "webdriver.${fileNamer.generateFileName()}.log"
-        val logFile = File(logFolder, logFileName).absoluteFile
+        val logFile = FileHelper.canonicalPath(logFolder / logFileName)
         log.info("Write webdriver logs to: {}", logFile)
         return logFile
     }

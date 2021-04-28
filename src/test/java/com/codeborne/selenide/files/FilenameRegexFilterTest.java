@@ -2,7 +2,7 @@ package com.codeborne.selenide.files;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.Path;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,10 +13,10 @@ final class FilenameRegexFilterTest {
 
   @Test
   void matchesFileByNameUsingGivenRegularExpression() {
-    assertThat(filter.match(new DownloadedFile(new File("cv-100.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File("cv100.pdf"), emptyMap()))).isFalse();
-    assertThat(filter.match(new DownloadedFile(new File("cv.pdf"), emptyMap()))).isFalse();
-    assertThat(filter.match(new DownloadedFile(new File("cv-ten.pdf"), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(new Path("cv-100.pdf"), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(new Path("cv100.pdf"), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(new Path("cv.pdf"), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(new Path("cv-ten.pdf"), emptyMap()))).isFalse();
   }
 
   @Test

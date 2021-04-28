@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.support.FindBy;
 
-import java.io.File;
+import java.io.Path;
 import java.io.FileNotFoundException;
 
 import static com.codeborne.selenide.Condition.visible;
@@ -48,8 +48,8 @@ final class SelenideDriverITest extends ITest {
     browser1.open("/page_with_uploads.html?browser=" + browser1.config().browser());
     browser2.open("/page_with_uploads.html?browser=" + browser2.config().browser());
 
-    File file1 = browser1.$(byText("Download me")).download();
-    File file2 = browser2.$(byText("Download file with cyrillic name")).download();
+    Path file1 = browser1.$(byText("Download me")).download();
+    Path file2 = browser2.$(byText("Download file with cyrillic name")).download();
 
     assertThat(file1.getName()).isEqualTo("hello_world.txt");
     assertThat(file2.getName()).isEqualTo("файл-с-русским-названием.txt");

@@ -3,7 +3,7 @@ package integration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.Path;
 
 import static com.codeborne.selenide.Condition.text;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,8 +21,8 @@ final class FileUploadTest extends ITest {
 
   @Test
   void userCanUploadFileFromClasspath() {
-    File f1 = $("#cv").uploadFromClasspath("hello_world.txt");
-    File f2 = $("#avatar").uploadFromClasspath("firebug-1.11.4.xpi");
+    Path f1 = $("#cv").uploadFromClasspath("hello_world.txt");
+    Path f2 = $("#avatar").uploadFromClasspath("firebug-1.11.4.xpi");
     $("#submit").click();
     $("h3").shouldHave(text("Uploaded 2 files").because("Actual files: " + server.getUploadedFiles()));
 
@@ -39,11 +39,11 @@ final class FileUploadTest extends ITest {
 
   @Test
   void userCanUploadFile() {
-    File file = $("#cv").uploadFile(new File("src/test/java/../resources/hello_world.txt"));
+    Path file = $("#cv").uploadFile(new Path("src/test/java/../resources/hello_world.txt"));
     $("#submit").click();
     $("h3").shouldHave(text("Uploaded 1 files"));
     assertThat(file).exists();
-    assertThat(file.getPath().replace(File.separatorChar, '/')).endsWith("src/test/resources/hello_world.txt");
+    assertThat(file.getPath().replace(Path.separatorChar, '/')).endsWith("src/test/resources/hello_world.txt");
     assertThat(server.getUploadedFiles().get(0).getName()).endsWith("hello_world.txt");
   }
 
@@ -77,15 +77,15 @@ final class FileUploadTest extends ITest {
 
   @Test
   void userCanUploadMultipleFiles() {
-    File file = $("#multi-file-upload-form .file").uploadFile(
-      new File("src/test/java/../resources/hello_world.txt"),
-      new File("src/test/resources/jquery.min.js"));
+    Path file = $("#multi-file-upload-form .file").uploadFile(
+      new Path("src/test/java/../resources/hello_world.txt"),
+      new Path("src/test/resources/jquery.min.js"));
 
     $("#multi-file-upload-form .submit").click();
     $("h3").shouldHave(text("Uploaded 2 files"));
 
     assertThat(file).exists();
-    assertThat(file.getPath().replace(File.separatorChar, '/')).endsWith("src/test/resources/hello_world.txt");
+    assertThat(file.getPath().replace(Path.separatorChar, '/')).endsWith("src/test/resources/hello_world.txt");
 
     assertThat(server.getUploadedFiles()).hasSize(2);
 
@@ -100,9 +100,9 @@ final class FileUploadTest extends ITest {
   void userCanUploadMultipleFiles_withoutForm() {
     openFile("file_upload_without_form.html");
     $("#fileInput").uploadFile(
-      new File("src/test/java/../resources/файл-с-русским-названием.txt"),
-      new File("src/test/java/../resources/hello_world.txt"),
-      new File("src/test/resources/child_frame.txt"));
+      new Path("src/test/java/../resources/файл-с-русским-названием.txt"),
+      new Path("src/test/java/../resources/hello_world.txt"),
+      new Path("src/test/resources/child_frame.txt"));
 
     $("#uploadButton").click();
     $("h3").shouldHave(text("Uploaded 3 files").because("Actual files: " + server.getUploadedFiles()));
@@ -119,10 +119,10 @@ final class FileUploadTest extends ITest {
   @Test
   void uploadUnexistingFile() {
     assertThatThrownBy(() ->
-      $("input[type='file'][id='cv']").uploadFile(new File("src/goodbye_world.txt"))
+      $("input[type='file'][id='cv']").uploadFile(new Path("src/goodbye_world.txt"))
     )
       .isInstanceOf(IllegalArgumentException.class)
-      .hasMessageMatching("File not found:.*goodbye_world.txt");
+      .hasMessageMatching("Path not found:.*goodbye_world.txt");
   }
 
   @Test
@@ -131,6 +131,6 @@ final class FileUploadTest extends ITest {
       $("input[type='file'][id='cv']").uploadFromClasspath("goodbye_world.txt")
     )
       .isInstanceOf(IllegalArgumentException.class)
-      .hasMessageMatching("File not found in classpath:.*goodbye_world.txt");
+      .hasMessageMatching("Path not found in classpath:.*goodbye_world.txt");
   }
 }

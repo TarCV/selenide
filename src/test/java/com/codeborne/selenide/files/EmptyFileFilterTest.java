@@ -2,7 +2,7 @@ package com.codeborne.selenide.files;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.Path;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,11 +13,11 @@ final class EmptyFileFilterTest {
 
   @Test
   void matchesAnyFile() {
-    assertThat(filter.match(new DownloadedFile(new File(""), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File("cv.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File("cv1.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File(" cv.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File("cv.pdf "), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(new Path(""), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(new Path("cv.pdf"), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(new Path("cv1.pdf"), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(new Path(" cv.pdf"), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(new Path("cv.pdf "), emptyMap()))).isTrue();
   }
 
   @Test

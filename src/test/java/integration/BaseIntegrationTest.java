@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.io.File;
+import java.io.Path;
 import java.util.Locale;
 
 import static com.automation.remarks.video.enums.RecordingMode.ANNOTATED;
@@ -49,7 +49,7 @@ public abstract class BaseIntegrationTest {
   }
 
   private static void setUpVideoRecorder() {
-    File videoFolder = new File(System.getProperty("selenide.reportsFolder", "build/reports/tests"));
+    Path videoFolder = new Path(System.getProperty("selenide.reportsFolder", "build/reports/tests"));
     ensureFolderExists(videoFolder);
     System.setProperty("video.folder", videoFolder.getAbsolutePath());
     System.setProperty("video.enabled", String.valueOf(!browser().isHeadless()));

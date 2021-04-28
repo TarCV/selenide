@@ -1,5 +1,8 @@
 package org.openqa.selenium
 
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+
 interface WebDriver: SearchContext {
     val currentUrl: String
     val pageSource: String
@@ -13,7 +16,16 @@ interface WebDriver: SearchContext {
 
     interface Manager {
         suspend fun deleteAllCookies()
+        @ExperimentalTime
+        fun timeouts(): Timeouts
     }
+
+    @ExperimentalTime
+    interface Timeouts {
+        fun pageLoadTimeout(duration: Duration)
+
+    }
+
     interface Navigator {
         suspend fun to(url: String)
     }

@@ -6,19 +6,22 @@ import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.Stopwatch
 import com.codeborne.selenide.impl.ElementDescriber
+import com.codeborne.selenide.impl.FileHelper
 import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementSource
+import okio.ExperimentalFileSystem
 import org.openqa.selenium.ElementNotInteractableException
 import org.openqa.selenium.WebElement
-import java.io.File
-import okio.okio.IOException
+import okio.IOException
+import okio.Path
 
-class UploadFile : Command<File> {
+@ExperimentalFileSystem
+class UploadFile : Command<Path> {
     private val describe = Plugins.inject(
         ElementDescriber::class
     )
     @kotlin.time.ExperimentalTime
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): File {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Path {
         checkNotNull(args)
         val file = getFiles(args)
         checkFilesGiven(file)
@@ -26,34 +29,32 @@ class UploadFile : Command<File> {
         val inputField = locator.getWebElement()
         val driver = locator.driver()
         checkValidInputField(driver, inputField)
-        val fileNames = listOf(*file)
-            .map { file: File -> canonicalPath(file) }
-            .joinToString("\n")
+        val fileNames = listOf(*file).joinToString("\n") { canonicalPath(it) }
         uploadFiles(driver.config(), inputField, fileNames)
-        return file[0].canonicalFile
+        return FileHelper.canonicalPath(file[0])
     }
 
-    private fun checkFilesGiven(file: Array<File>) {
+    private fun checkFilesGiven(file: Array<Path>) {
         require(file.isNotEmpty()) { "No files to upload" }
     }
 
-    private fun checkFilesExist(file: Array<File>) {
+    private fun checkFilesExist(file: Array<Path>) {
         for (f in file) {
-            require(f.exists()) { "File not found: " + f.absolutePath }
+            require(FileHelper.exists(f)) { "Path not found: " + FileHelper.canonicalPath(f) }
         }
     }
-    private fun getFiles(args: Array<out Any?>?): Array<File> {
+    private fun getFiles(args: Array<out Any?>?): Array<Path> {
         val firstOf = Util.firstOf<Any>(args)
         return if (firstOf is Array<*>) {
-          firstOf as Array<File>
+          firstOf as Array<Path>
         } else {
-          args as Array<File>
+          args as Array<Path>
         }
     }
 
-    private fun canonicalPath(file: File): String {
+    private fun canonicalPath(file: Path): String {
         return try {
-            file.canonicalPath
+            FileHelper.canonicalPath(file).toString()
         } catch (e: IOException) {
             throw IllegalArgumentException("Cannot get canonical path of file $file", e)
         }

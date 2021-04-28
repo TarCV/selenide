@@ -2,21 +2,15 @@ package com.codeborne.selenide
 
 import com.codeborne.selenide.drivercommands.LazyDriver
 import com.codeborne.selenide.drivercommands.Navigator
-import com.codeborne.selenide.drivercommands.WebDriverWrapper
-import com.codeborne.selenide.files.FileFilters
 import com.codeborne.selenide.impl.ElementFinder
 import com.codeborne.selenide.impl.PageObjectFactory
 import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementWrapper
 import com.codeborne.selenide.logevents.SelenideLogger
 import org.openqa.selenium.By
-import org.openqa.selenium.OutputType
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.events.WebDriverEventListener
-import java.io.File
-import support.URI
-import support.URISyntaxException
 import support.URL
 
 /**
@@ -284,20 +278,20 @@ TODO:    constructor(
         return screenshots.takeScreenShot(driver(), outputType)
     }*/
 
-/* TODO:    fun download(url: String): File {
+/* TODO:    fun download(url: String): Path {
         return download(URI(url), config.timeout())
     }
 
-    fun download(url: String, timeoutMs: Long): File {
+    fun download(url: String, timeoutMs: Long): Path {
         return download(URI(url), timeoutMs)
     }
 
-    fun download(url: URI): File {
+    fun download(url: URI): Path {
         return download(url, config.timeout())
     }
 
 
-    fun download(url: URI, timeoutMs: Long): File {
+    fun download(url: URI, timeoutMs: Long): Path {
         return downloadFileWithHttpRequest.download(driver(), url, timeoutMs, FileFilters.none())
     }
 */

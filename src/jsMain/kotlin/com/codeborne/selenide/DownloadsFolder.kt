@@ -1,22 +1,24 @@
 package com.codeborne.selenide
 
-import java.io.File
+import com.codeborne.selenide.impl.FileHelper
+import okio.ExperimentalFileSystem
+import okio.Path
 
-abstract class DownloadsFolder protected constructor(protected val folder: File) {
-    fun toFile(): File {
+@ExperimentalFileSystem
+abstract class DownloadsFolder protected constructor(protected val folder: Path) {
+    fun toFile(): Path {
         return folder
     }
-    fun files(): List<File> {
-        val files = folder.listFiles()
-        return if (files == null) emptyList() else listOf(*files)
+    fun files(): List<Path> {
+        return FileHelper.listFiles(folder)
     }
 
     abstract fun cleanupBeforeDownload()
-    fun file(fileName: String): File {
-        return File(folder, fileName).absoluteFile
+    fun file(fileName: String): Path {
+        return FileHelper.canonicalPath(folder / fileName)
     }
 
     override fun toString(): String {
-        return folder.absolutePath
+        return folder.toString()
     }
 }

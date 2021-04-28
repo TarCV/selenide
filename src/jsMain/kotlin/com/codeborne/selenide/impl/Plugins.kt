@@ -1,7 +1,7 @@
 package com.codeborne.selenide.impl
 
 import org.slf4j.LoggerFactory
-import okio.okio.IOException
+import okio.IOException
 import support.URL
 import java.util.ServiceLoader
 

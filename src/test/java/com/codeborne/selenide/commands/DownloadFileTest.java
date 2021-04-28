@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.openqa.selenium.WebElement;
 
-import java.io.File;
+import java.io.Path;
 import java.io.IOException;
 
 import static com.codeborne.selenide.FileDownloadMode.HTTPGET;
@@ -40,8 +40,8 @@ final class DownloadFileTest implements WithAssertions {
   private final SelenideElement seLink = mock(SelenideElement.class);
   private final WebElementSource linkWithHref = mock(WebElementSource.class);
   private final WebElement link = mock(WebElement.class);
-  private final File file = new File("some-file.yxy");
-  @TempDir File tempDir;
+  private final Path file = new Path("some-file.yxy");
+  @TempDir Path tempDir;
 
   @BeforeEach
   void setUp() {
@@ -56,7 +56,7 @@ final class DownloadFileTest implements WithAssertions {
 
     when(httpget.download(any(), any(WebElement.class), anyLong(), any())).thenReturn(file);
 
-    File f = command.execute(seLink, linkWithHref, new Object[]{8000L});
+    Path f = command.execute(seLink, linkWithHref, new Object[]{8000L});
 
     assertThat(f).isSameAs(file);
     verify(httpget).download(driver, link, 8000L, none());
@@ -70,7 +70,7 @@ final class DownloadFileTest implements WithAssertions {
     when(linkWithHref.driver()).thenReturn(new DriverStub(() -> tempDir, config, null, null, selenideProxy));
     when(proxy.download(any(), any(), anyLong(), any())).thenReturn(file);
 
-    File f = command.execute(seLink, linkWithHref, new Object[]{9000L});
+    Path f = command.execute(seLink, linkWithHref, new Object[]{9000L});
 
     assertThat(f).isSameAs(file);
     verify(proxy).download(linkWithHref, link, 9000L, none());

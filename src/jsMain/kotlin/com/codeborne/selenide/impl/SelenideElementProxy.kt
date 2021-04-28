@@ -13,8 +13,8 @@ import com.codeborne.selenide.logevents.SelenideLogger.beginStep
 import com.codeborne.selenide.logevents.SelenideLogger.commitStep
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.WebDriverException
-import okio.okio.FileNotFoundException
-import okio.okio.IOException
+import okio.FileNotFoundException
+import okio.IOException
 import support.InvocationHandler
 import kotlin.reflect.KFunction
 import kotlin.time.Duration

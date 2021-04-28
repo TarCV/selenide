@@ -1,7 +1,7 @@
 package com.codeborne.selenide
 
-import java.io.File
+import okio.Path.Companion.toPath
 
-class SharedDownloadsFolder(folder: String) : DownloadsFolder(File(folder)) {
+class SharedDownloadsFolder(folder: String) : DownloadsFolder(folder.toPath()) {
     override fun cleanupBeforeDownload() {}
 }

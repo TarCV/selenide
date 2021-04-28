@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.io.File;
+import java.io.Path;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -36,7 +36,7 @@ final class ModalTest {
     config.reportsFolder("build/reports/tests/ModalTest");
     when(webDriver.getPageSource()).thenReturn("<html/>");
     when(webDriver.getScreenshotAs(BYTES)).thenReturn(resourceToByteArray("/screenshot.png"));
-    reportsBaseUri = new File(System.getProperty("user.dir"), config.reportsFolder()).toURI();
+    reportsBaseUri = new Path(System.getProperty("user.dir"), config.reportsFolder()).toURI();
   }
 
   @Test
@@ -136,7 +136,7 @@ final class ModalTest {
 
   private String convertFilePath(String path) {
     try {
-      return new File(path).toURI().toURL().toExternalForm();
+      return new Path(path).toURI().toURL().toExternalForm();
     } catch (MalformedURLException e) {
       return "file://" + path;
     }

@@ -3,14 +3,13 @@ package com.codeborne.selenide.impl
 import org.openqa.selenium.NoSuchWindowException
 import org.openqa.selenium.WebDriver
 import org.slf4j.LoggerFactory
-import okio.okio.FileNotFoundException
 
 open class WindowsCloser {
-    open suspend fun <T: Any> runAndCloseArisedWindows(webDriver: WebDriver, lambda: SupplierWithException<T>): T {
+    open suspend fun <T: Any> runAndCloseArisedWindows(webDriver: WebDriver, lambda: suspend () -> T): T {
         val originalWindowHandle = webDriver.windowHandle
         val windowsBefore = webDriver.windowHandles
         return try {
-            lambda.get()
+            lambda.invoke()
         } finally {
             closeArisedWindows(webDriver, originalWindowHandle, windowsBefore)
         }
@@ -31,7 +30,7 @@ open class WindowsCloser {
     }
 
     private suspend fun closeWindows(webDriver: WebDriver, windows: Set<String>) {
-        log.info("File has been opened in a new window, let's close {} new windows", windows.size)
+        log.info("Path has been opened in a new window, let's close {} new windows", windows.size)
         for (newWindow in windows) {
             closeWindow(webDriver, newWindow)
         }
@@ -51,10 +50,6 @@ open class WindowsCloser {
         } catch (e: Exception) {
             log.warn("  Failed to close {}", window, e)
         }
-    }
-
-    fun interface SupplierWithException<T> {
-        fun get(): T
     }
 
     companion object {

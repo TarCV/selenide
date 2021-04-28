@@ -4,7 +4,6 @@ import com.codeborne.selenide.impl.ScreenShotLaboratory
 import com.codeborne.selenide.impl.Screenshot
 import org.openqa.selenium.WebElement
 import java.awt.image.BufferedImage
-import java.io.File
 import java.util.Optional
 import javax.annotation.CheckReturnValue
 import javax.annotation.ParametersAreNonnullByDefault
@@ -35,7 +34,7 @@ object Screenshots {
      * @return a temporary file, not guaranteed to be stored after tests complete.
      */
     @CheckReturnValue
-    fun takeScreenShotAsFile(): File? {
+    fun takeScreenShotAsFile(): Path? {
         return screenshots.takeScreenShotAsFile(WebDriverRunner.driver())
     }
 
@@ -44,7 +43,7 @@ object Screenshots {
      * @return a temporary file, not guaranteed to be stored after tests complete.
      */
     @CheckReturnValue
-    fun takeScreenShot(element: WebElement): File? {
+    fun takeScreenShot(element: WebElement): Path? {
         return screenshots.takeScreenshot(WebDriverRunner.driver(), element)
     }
 
@@ -55,7 +54,7 @@ object Screenshots {
      */
     @CheckReturnValue
     @JvmStatic
-    fun takeScreenShot(iframe: WebElement, element: WebElement): File? {
+    fun takeScreenShot(iframe: WebElement, element: WebElement): Path? {
         return screenshots.takeScreenshot(WebDriverRunner.driver(), iframe, element)
     }
 
@@ -83,7 +82,7 @@ object Screenshots {
         screenshots.startContext(className, methodName)
     }
 
-    fun finishContext(): List<File> {
+    fun finishContext(): List<Path> {
         return screenshots.finishContext()
     }
 
@@ -93,7 +92,7 @@ object Screenshots {
      * @return null if there were no any screenshots taken
      */
     @get:CheckReturnValue
-    val lastScreenshot: File?
+    val lastScreenshot: Path?
         get() = screenshots.lastScreenshot
 
     /**
@@ -103,7 +102,7 @@ object Screenshots {
      * or an empty Optional if there were no any screenshots taken.
      */
     @get:CheckReturnValue
-    val lastThreadScreenshot: File?
+    val lastThreadScreenshot: Path?
         get() = screenshots.lastThreadScreenshot
 
     /**
@@ -113,6 +112,6 @@ object Screenshots {
      * or an empty Optional if there were no any screenshots taken.
      */
     @get:CheckReturnValue
-    val lastContextScreenshot: File?
+    val lastContextScreenshot: Path?
         get() = screenshots.lastContextScreenshot
 }

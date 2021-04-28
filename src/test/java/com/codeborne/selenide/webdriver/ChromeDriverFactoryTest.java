@@ -11,7 +11,7 @@ import org.openqa.selenium.Proxy;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.io.File;
+import java.io.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ final class ChromeDriverFactoryTest implements WithAssertions {
 
   private final Proxy proxy = mock(Proxy.class);
   private final SelenideConfig config = new SelenideConfig().downloadsFolder("build/should-not-be-used");
-  private final File browserDownloadsFolder = new File(DOWNLOADS_FOLDER);
+  private final Path browserDownloadsFolder = new Path(DOWNLOADS_FOLDER);
   private final Browser browser = new Browser(config.browser(), config.headless());
   private final ChromeDriverFactory factory = new ChromeDriverFactory();
 
@@ -51,7 +51,7 @@ final class ChromeDriverFactoryTest implements WithAssertions {
     assertThat(prefsMap).containsEntry("plugins.always_open_pdf_externally", true);
     assertThat(prefsMap).containsEntry("profile.default_content_setting_values.automatic_downloads", 1);
     assertThat(prefsMap).containsEntry("download.default_directory",
-      new File(DOWNLOADS_FOLDER).getAbsolutePath());
+      new Path(DOWNLOADS_FOLDER).getAbsolutePath());
   }
 
   @Test
@@ -65,7 +65,7 @@ final class ChromeDriverFactoryTest implements WithAssertions {
   @Test
   void shouldNotExcludeExtensionsSwitch_ifChromeIsOpenedWithExtensions() {
     ChromeOptions options = new ChromeOptions();
-    options.addExtensions(new File("build.gradle"), new File("settings.gradle"));
+    options.addExtensions(new Path("build.gradle"), new Path("settings.gradle"));
     config.browserCapabilities(new DesiredCapabilities(options));
 
     Capabilities chromeOptions = factory.createCapabilities(config, browser, proxy, browserDownloadsFolder);

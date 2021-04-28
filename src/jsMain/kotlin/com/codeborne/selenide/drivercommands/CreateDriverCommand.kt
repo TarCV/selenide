@@ -5,16 +5,18 @@ import com.codeborne.selenide.DownloadsFolder
 import com.codeborne.selenide.impl.FileHelper
 import com.codeborne.selenide.impl.FileNamer
 import com.codeborne.selenide.webdriver.WebDriverFactory
+import okio.ExperimentalFileSystem
+import okio.Path.Companion.toPath
 import org.openqa.selenium.Proxy
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.events.EventFiringWebDriver
 import org.openqa.selenium.support.events.WebDriverEventListener
 import org.slf4j.LoggerFactory
-import java.io.File
 
 class CreateDriverCommand internal constructor(private val fileNamer: FileNamer) {
     constructor() : this(FileNamer()) {}
 
+    @ExperimentalFileSystem
     @kotlin.time.ExperimentalTime
     fun createDriver(
         config: Config,
@@ -40,11 +42,9 @@ class CreateDriverCommand internal constructor(private val fileNamer: FileNamer)
                 )
             }
         }*/
-        val browserDownloadsFolder = if (config.remote() != null) null else FileHelper.ensureFolderExists(
-            File(
-                config.downloadsFolder(),
-                fileNamer.generateFileName()
-            ).absoluteFile
+        val browserDownloadsFolder = if (config.remote() != null) null else FileHelper.canonicalPath(FileHelper.ensureFolderExists(
+            (config.downloadsFolder().toPath() / fileNamer.generateFileName()
+                ))
         )
         val webdriver = factory.createWebDriver(config, browserProxy, browserDownloadsFolder)
         log.info(

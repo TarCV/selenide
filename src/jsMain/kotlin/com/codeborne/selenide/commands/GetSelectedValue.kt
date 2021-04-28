@@ -4,7 +4,7 @@ import com.codeborne.selenide.Command
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.impl.WebElementSource
 import org.openqa.selenium.WebElement
-import okio.okio.IOException
+import okio.IOException
 
 class GetSelectedValue : Command<String?> {
     private val getSelectedOption: Command<SelenideElement>

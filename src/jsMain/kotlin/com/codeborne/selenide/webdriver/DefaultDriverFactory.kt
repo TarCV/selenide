@@ -8,16 +8,16 @@ import org.openqa.selenium.MutableCapabilities
 import org.openqa.selenium.Proxy
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.remote.DesiredCapabilities
-import java.io.File
+import java.io.Path
 
 class DefaultDriverFactory : AbstractDriverFactory() {
     override fun setupWebdriverBinary() {}
-    override fun create(config: Config, browser: Browser, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver {
+    override fun create(config: Config, browser: Browser, proxy: Proxy?, browserDownloadsFolder: Path?): WebDriver {
         return createInstanceOf(config.browser(), config, browser, proxy, browserDownloadsFolder)
     }
     private fun createInstanceOf(
         className: String, config: Config, browser: Browser,
-        proxy: Proxy?, browserDownloadsFolder: File?
+        proxy: Proxy?, browserDownloadsFolder: Path?
     ): WebDriver {
         val clazz = config.browser()::class
         return if (WebDriverProvider::class.isInstance(clazz)) {
@@ -42,7 +42,7 @@ class DefaultDriverFactory : AbstractDriverFactory() {
     }
     override fun createCapabilities(
       config: Config, browser: Browser,
-      proxy: Proxy?, browserDownloadsFolder: File?
+      proxy: Proxy?, browserDownloadsFolder: Path?
     ): MutableCapabilities {
         val clazz = config.browser()::class
         if (DriverFactory::class.isInstance(clazz)) {

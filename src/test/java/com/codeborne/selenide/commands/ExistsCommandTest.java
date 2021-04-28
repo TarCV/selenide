@@ -13,7 +13,7 @@ import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 
-import java.io.File;
+import java.io.Path;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -24,7 +24,7 @@ final class ExistsCommandTest implements WithAssertions {
   private final WebElementSource locator = mock(WebElementSource.class);
   private final WebElement element = mock(WebElement.class);
   private final Exists existsCommand = new Exists();
-  @TempDir File tempDir;
+  @TempDir Path tempDir;
 
   @Test
   void testExistExecuteMethod() {

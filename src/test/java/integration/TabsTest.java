@@ -38,7 +38,7 @@ final class TabsTest extends ITest {
     String windowHandle = driver.getWindowHandle();
 
     driver.switchTo().window(nextWindowHandle(driver));
-    $("h1").shouldHave(text("File uploads"));
+    $("h1").shouldHave(text("Path uploads"));
 
     driver.switchTo().window(windowHandle);
     $("h1").shouldHave(text("Tabs"));
@@ -64,7 +64,7 @@ final class TabsTest extends ITest {
     switchTo().window("Test::jquery");
     $("h1").shouldHave(text("Page with JQuery"));
     switchTo().window("Test::uploads");
-    $("h1").shouldHave(text("File uploads"));
+    $("h1").shouldHave(text("Path uploads"));
     switchTo().window("Test::tabs");
     $("h1").shouldHave(text("Tabs"));
   }
@@ -81,7 +81,7 @@ final class TabsTest extends ITest {
     switchTo().window(1);
     $("h1").shouldHave(text("Page with JQuery"));
     switchTo().window(2);
-    $("h1").shouldHave(text("File uploads"));
+    $("h1").shouldHave(text("Path uploads"));
     switchTo().window(3);
     $("h1").shouldHave(text("Page with alerts"));
     switchTo().window(0);
@@ -96,7 +96,7 @@ final class TabsTest extends ITest {
     $(byText("Page3: jquery")).click();
 
     $("h1").shouldHave(text("Tabs"));
-    Condition oneOfTitles = or("one of titles", text("Tabs"), text("Page with alerts"), text("File uploads"), text("Page with JQuery"));
+    Condition oneOfTitles = or("one of titles", text("Tabs"), text("Page with alerts"), text("Path uploads"), text("Page with JQuery"));
 
     switchTo().window(1);
     $("h1").shouldHave(oneOfTitles);
@@ -115,7 +115,7 @@ final class TabsTest extends ITest {
     String title0 = $("h1").text();
 
     assertThat(asList(title0, title1, title2, title3))
-      .containsExactlyInAnyOrder("Tabs", "Page with alerts", "File uploads", "Page with JQuery");
+      .containsExactlyInAnyOrder("Tabs", "Page with alerts", "Path uploads", "Page with JQuery");
   }
 
   @Test

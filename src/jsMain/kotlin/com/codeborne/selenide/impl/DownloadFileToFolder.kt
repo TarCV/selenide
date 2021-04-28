@@ -4,10 +4,10 @@ import com.codeborne.selenide.Config
 import com.codeborne.selenide.DownloadsFolder
 import com.codeborne.selenide.files.DownloadedFile
 import com.codeborne.selenide.files.FileFilter
+import okio.ExperimentalFileSystem
+import okio.Path
 import org.openqa.selenium.WebElement
 import org.slf4j.LoggerFactory
-import java.io.File
-import okio.okio.FileNotFoundException
 import support.System
 
 class DownloadFileToFolder internal constructor(
@@ -15,23 +15,26 @@ class DownloadFileToFolder internal constructor(
     private val waiter: Waiter,
     private val windowsCloser: WindowsCloser
 ) {
-    constructor() : this(Downloader(), Waiter(), WindowsCloser()) {}
+    constructor() : this(Downloader(), Waiter(), WindowsCloser())
+
+    @ExperimentalFileSystem
     suspend fun download(
         anyClickableElement: WebElementSource,
         clickable: WebElement, timeout: Long,
         fileFilter: FileFilter
-    ): File {
+    ): Path {
         val webDriver = anyClickableElement.driver().webDriver
         return windowsCloser.runAndCloseArisedWindows(
             webDriver
         ) { clickAndWaitForNewFilesInDownloadsFolder(anyClickableElement, clickable, timeout, fileFilter) }
     }
+    @ExperimentalFileSystem
     private suspend fun clickAndWaitForNewFilesInDownloadsFolder(
         anyClickableElement: WebElementSource,
         clickable: WebElement,
         timeout: Long,
         fileFilter: FileFilter
-    ): File {
+    ): Path {
         val driver = anyClickableElement.driver()
         val config = driver.config()
         val folder =
@@ -44,12 +47,13 @@ class DownloadFileToFolder internal constructor(
         return archiveFile(config, downloadedFile)
     }
 
+    @ExperimentalFileSystem
     private suspend fun waitForNewFiles(
       timeout: Long, fileFilter: FileFilter, config: Config,
       folder: DownloadsFolder, clickMoment: Long
     ): Downloads {
         val hasDownloads = HasDownloads(fileFilter, clickMoment)
-        waiter.wait(folder, hasDownloads, timeout, config.pollingInterval())
+        waiter.wait(folder, { hasDownloads(it) }, timeout, config.pollingInterval())
         if (log.isInfoEnabled) {
           log.info(hasDownloads.downloads.filesAsString())
         }
@@ -59,27 +63,30 @@ class DownloadFileToFolder internal constructor(
         return hasDownloads.downloads
     }
 
-    private fun archiveFile(config: Config, downloadedFile: File): File {
+    @ExperimentalFileSystem
+    private fun archiveFile(config: Config, downloadedFile: Path): Path {
         val uniqueFolder = downloader.prepareTargetFolder(config)
-        val archivedFile = File(uniqueFolder, downloadedFile.name).absoluteFile
+        val archivedFile = FileHelper.canonicalPath(uniqueFolder / downloadedFile.name)
         FileHelper.moveFile(downloadedFile, archivedFile)
         return archivedFile
     }
 
-        private class HasDownloads(private val fileFilter: FileFilter, private val downloadStartedAt: Long) : (DownloadsFolder) -> Boolean {
+    @ExperimentalFileSystem
+    private class HasDownloads(private val fileFilter: FileFilter, private val downloadStartedAt: Long) {
         lateinit var downloads: Downloads
-        override operator fun invoke(folder: DownloadsFolder): Boolean {
+        operator fun invoke(folder: DownloadsFolder): Boolean {
             Downloads(newFiles(folder)).let {
               downloads = it
               return it.files(fileFilter).isNotEmpty()
             }
         }
 
+        @ExperimentalFileSystem
         private fun newFiles(folder: DownloadsFolder): List<DownloadedFile> {
             return folder.files()
-                .filter { obj: File -> obj.isFile }
-                .filter { file: File -> isFileModifiedLaterThan(file, downloadStartedAt) }
-                .map { file: File -> DownloadedFile(file, emptyMap()) }
+                .filter { obj: Path -> FileHelper.isFile(obj) }
+                .filter { file: Path -> isFileModifiedLaterThan(file, downloadStartedAt) }
+                .map { file: Path -> DownloadedFile(file, emptyMap()) }
 
         }
     }
@@ -91,8 +98,9 @@ class DownloadFileToFolder internal constructor(
          * Depending on OS, file modification time can have seconds precision, not milliseconds.
          * We have to ignore the difference in milliseconds.
          */
-        fun isFileModifiedLaterThan(file: File, timestamp: Long): Boolean {
-            return file.lastModified() >= timestamp / 1000L * 1000L
+        @ExperimentalFileSystem
+        fun isFileModifiedLaterThan(file: Path, timestamp: Long): Boolean {
+            return FileHelper.lastModified(file) >= timestamp / 1000L * 1000L
         }
     }
 }

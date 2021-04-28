@@ -8,16 +8,15 @@ import org.openqa.selenium.remote.RemoteWebDriver
 import org.openqa.selenium.remote.SessionId
 import org.openqa.selenium.remote.service.DriverService
 import org.slf4j.LoggerFactory
-import java.io.File
 import java.io.IOException
 import support.URL
 
 class CdpClient {
-    fun setDownloadsFolder(driverService: DriverService, driver: RemoteWebDriver, downloadsFolder: File) {
+    fun setDownloadsFolder(driverService: DriverService, driver: RemoteWebDriver, downloadsFolder: Path) {
         setDownloadsFolder(driverService.url, driver.sessionId, downloadsFolder)
     }
 
-    fun setDownloadsFolder(remoteDriverUrl: URL, driverSessionId: SessionId, downloadsFolder: File) {
+    fun setDownloadsFolder(remoteDriverUrl: URL, driverSessionId: SessionId, downloadsFolder: Path) {
         try {
             val command = command(downloadsFolder)
             post(remoteDriverUrl, driverSessionId, command)
@@ -27,7 +26,7 @@ class CdpClient {
             throw RuntimeException(message, e)
         }
     }
-    private fun command(downloadsFolder: File): String {
+    private fun command(downloadsFolder: Path): String {
         return """{  "cmd": "Page.setDownloadBehavior",
   "params": {
     "behavior": "allow",

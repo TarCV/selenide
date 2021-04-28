@@ -1,22 +1,26 @@
 package com.codeborne.selenide.impl
 
+import co.touchlab.stately.collections.IsoMutableSet
 import com.codeborne.selenide.Config
-import com.codeborne.selenide.impl.FileHelper.copyFile
+import okio.ExperimentalFileSystem
+import okio.Path.Companion.toPath
 import org.openqa.selenium.UnhandledAlertException
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebDriverException
 import org.slf4j.LoggerFactory
-import java.io.File
-import okio.okio.IOException
-import java.util.concurrent.ConcurrentSkipListSet
+import okio.IOException
+import okio.Path
 
 open class WebPageSourceExtractor : PageSourceExtractor {
-    private val printedErrors: MutableSet<String> = ConcurrentSkipListSet()
-    override suspend fun extract(config: Config, driver: WebDriver, fileName: String): File {
+    private val printedErrors: MutableSet<String> = IsoMutableSet()
+
+    @ExperimentalFileSystem
+    override suspend fun extract(config: Config, driver: WebDriver, fileName: String): Path {
         return extract(config, driver, fileName, true)
     }
 
-    private suspend fun extract(config: Config, driver: WebDriver, fileName: String, retryIfAlert: Boolean): File {
+    @ExperimentalFileSystem
+    private suspend fun extract(config: Config, driver: WebDriver, fileName: String, retryIfAlert: Boolean): Path {
         val pageSource = createFile(config, fileName)
         try {
             writeToFile(driver.pageSource, pageSource)
@@ -37,27 +41,30 @@ open class WebPageSourceExtractor : PageSourceExtractor {
         return pageSource
     }
 
-    protected fun createFile(config: Config, fileName: String): File {
-        return File(config.reportsFolder(), "$fileName.html").absoluteFile
+    @ExperimentalFileSystem
+    protected fun createFile(config: Config, fileName: String): Path {
+        return FileHelper.canonicalPath(config.reportsFolder().toPath() / "$fileName.html")
     }
 
-    protected fun writeToFile(content: String, targetFile: File) {
+    @ExperimentalFileSystem
+    protected fun writeToFile(content: String, targetFile: Path) {
         try {
-            FileHelper.writeToFile(content.toByteArray, targetFile)
+            FileHelper.writeToFile(content.encodeToByteArray(), targetFile)
         } catch (e: IOException) {
-            log.error("Failed to write file {}", targetFile.absolutePath, e)
+            log.error("Failed to write file {}", targetFile, e)
         }
     }
 
     protected fun printOnce(action: String, error: Throwable) = synchronized(this) {
         if (!printedErrors.contains(action)) {
-            log.error(error.message, error)
+            log.error("{}", error.message, error)
             printedErrors.add(action)
         } else {
             log.error("Failed to {}: {}", action, error)
         }
     }
 
+    @ExperimentalFileSystem
     private suspend fun retryingExtractionOnAlert(config: Config, driver: WebDriver, fileName: String, e: Exception) {
         try {
             val alert = driver.switchTo().alert()

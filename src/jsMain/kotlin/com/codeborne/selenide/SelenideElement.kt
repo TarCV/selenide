@@ -702,7 +702,7 @@ interface SelenideElement : WebElement, WrapsDriver, WrapsElement, Locatable, Ta
 
     /**
      *
-     * Upload file into file upload field. File is searched from classpath.
+     * Upload file into file upload field. Path is searched from classpath.
      *
      *
      * Multiple file upload is also supported. Just pass as many file names as you wish.
@@ -712,7 +712,7 @@ interface SelenideElement : WebElement, WrapsDriver, WrapsElement, Locatable, Ta
      * @throws IllegalArgumentException if any of the files is not found
      * @see com.codeborne.selenide.commands.UploadFileFromClasspath
      */
-//TODO:    fun uploadFromClasspath(vararg fileName: String): File
+//TODO:    fun uploadFromClasspath(vararg fileName: String): Path
 
     /**
      *
@@ -726,7 +726,7 @@ interface SelenideElement : WebElement, WrapsDriver, WrapsElement, Locatable, Ta
      * @throws IllegalArgumentException if any of the files is not found, or other errors
      * @see com.codeborne.selenide.commands.UploadFile
      */
-//TODO:    fun uploadFile(vararg file: File): File
+//TODO:    fun uploadFile(vararg file: Path): Path
 
     /**
      * Select an option from dropdown list (by index)
@@ -868,7 +868,7 @@ interface SelenideElement : WebElement, WrapsDriver, WrapsElement, Locatable, Ta
      *
      * @see com.codeborne.selenide.commands.DownloadFile
      */
-//TODO:    fun download(): File
+//TODO:    fun download(): Path
 
     /**
      * Download file by clicking this element. Algorithm depends on `@{ Config#fileDownload() }`.
@@ -878,7 +878,7 @@ interface SelenideElement : WebElement, WrapsDriver, WrapsElement, Locatable, Ta
      * @throws FileNotFoundException if 40x status code was returned from server
      * @see com.codeborne.selenide.commands.DownloadFile
      */
-//TODO:    fun download(timeout: Long): File
+//TODO:    fun download(timeout: Long): Path
 
     /**
      * Download file by clicking this element. Algorithm depends on `@{ Config#fileDownload() }`.
@@ -894,7 +894,7 @@ interface SelenideElement : WebElement, WrapsDriver, WrapsElement, Locatable, Ta
      *
      * @see com.codeborne.selenide.commands.DownloadFile
      */
-//TODO:    fun download(fileFilter: FileFilter): File
+//TODO:    fun download(fileFilter: FileFilter): Path
 
     /**
      * Download file by clicking this element. Algorithm depends on `@{ Config#fileDownload() }`.
@@ -911,8 +911,8 @@ interface SelenideElement : WebElement, WrapsDriver, WrapsElement, Locatable, Ta
      *
      * @see com.codeborne.selenide.commands.DownloadFile
      */
-//TODO:    fun download(timeout: Long, fileFilter: FileFilter): File
-//TODO:    fun download(options: DownloadOptions): File
+//TODO:    fun download(timeout: Long, fileFilter: FileFilter): Path
+//TODO:    fun download(options: DownloadOptions): Path
 
     /**
      * Return criteria by which this element is located

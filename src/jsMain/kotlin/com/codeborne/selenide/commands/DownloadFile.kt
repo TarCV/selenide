@@ -9,25 +9,23 @@ import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.files.FileFilter
 import com.codeborne.selenide.files.FileFilters
 import com.codeborne.selenide.impl.DownloadFileToFolder
-import com.codeborne.selenide.impl.DownloadFileWithHttpRequest
 import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementSource
 import org.slf4j.LoggerFactory
-import java.io.File
-import okio.okio.IOException
+import java.io.Path
 
 class DownloadFile internal constructor(
     private val downloadFileWithHttpRequest: /*DownloadFileWithHttpRequest*/Nothing?,
     private val downloadFileWithProxyServer: /*DownloadFileWithProxyServer*/Nothing?,
     private val downloadFileToFolder: DownloadFileToFolder
-) : Command<File?> {
+) : Command<Path?> {
     constructor() : this(
         null, null, Plugins.inject<DownloadFileToFolder>(
             DownloadFileToFolder::class
         )
     ) {
     }
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): File {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Path {
         val link = locator.findAndAssertElementIsInteractable()
         val config = locator.driver().config()
         val options = getDownloadOptions(config, args)

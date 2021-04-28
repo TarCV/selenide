@@ -1,7 +1,6 @@
 package com.codeborne.selenide
 
 import org.apache.commons.io.FileUtils
-import java.io.File
 import java.io.IOException
 import javax.annotation.ParametersAreNonnullByDefault
 
@@ -10,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault
  * It effectively means that Selenide can delete all files in this folder before starting every new download.
  */
 @ParametersAreNonnullByDefault
-class BrowserDownloadsFolder private constructor(folder: File) : DownloadsFolder(folder) {
+class BrowserDownloadsFolder private constructor(folder: Path) : DownloadsFolder(folder) {
     override fun cleanupBeforeDownload() {
         try {
             if (folder.exists()) {
@@ -23,7 +22,7 @@ class BrowserDownloadsFolder private constructor(folder: File) : DownloadsFolder
 
     companion object {
         @JvmStatic
-        fun from(folder: File?): BrowserDownloadsFolder? {
+        fun from(folder: Path?): BrowserDownloadsFolder? {
             return folder?.let { BrowserDownloadsFolder(it) }
         }
     }

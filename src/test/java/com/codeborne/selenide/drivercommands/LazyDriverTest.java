@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 
-import java.io.File;
+import java.io.Path;
 
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +51,7 @@ final class LazyDriverTest implements WithAssertions {
 
     driver.createDriver();
 
-    verify(factory).createWebDriver(config, null, new File("build/down/123_456_78").getAbsoluteFile());
+    verify(factory).createWebDriver(config, null, new Path("build/down/123_456_78").getAbsoluteFile());
   }
 
   @Test
@@ -62,7 +62,7 @@ final class LazyDriverTest implements WithAssertions {
 
     assertThat(driver.getProxy()).isNotNull();
     verify(factory).createWebDriver(config, driver.getProxy().createSeleniumProxy(),
-      new File("build/down/123_456_78").getAbsoluteFile());
+      new Path("build/down/123_456_78").getAbsoluteFile());
   }
 
   @Test

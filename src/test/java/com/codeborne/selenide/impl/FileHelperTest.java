@@ -3,7 +3,7 @@ package com.codeborne.selenide.impl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
+import java.io.Path;
 import java.io.IOException;
 
 import static com.codeborne.selenide.impl.FileHelper.deleteFolderIfEmpty;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 final class FileHelperTest {
   @Test
-  void deletesFolderIfItIsEmpty(@TempDir File folder) {
+  void deletesFolderIfItIsEmpty(@TempDir Path folder) {
     assertThat(folder).exists();
 
     deleteFolderIfEmpty(folder);
@@ -21,12 +21,12 @@ final class FileHelperTest {
   }
 
   @Test
-  void ignoresFolderWhichContainsFiles(@TempDir File folder) throws IOException {
-    touch(new File(folder, "file1"));
+  void ignoresFolderWhichContainsFiles(@TempDir Path folder) throws IOException {
+    touch(new Path(folder, "file1"));
 
     deleteFolderIfEmpty(folder);
 
     assertThat(folder).exists();
-    assertThat(new File(folder, "file1")).exists();
+    assertThat(new Path(folder, "file1")).exists();
   }
 }

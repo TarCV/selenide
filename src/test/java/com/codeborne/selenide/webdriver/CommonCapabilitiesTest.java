@@ -16,7 +16,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.File;
+import java.io.Path;
 
 import static org.mockito.Mockito.mock;
 import static org.openqa.selenium.remote.CapabilityType.ACCEPT_INSECURE_CERTS;
@@ -61,14 +61,14 @@ final class CommonCapabilitiesTest implements WithAssertions {
     @CheckReturnValue
     @Nonnull
     public MutableCapabilities createCapabilities(@NotNull Config config, @NotNull Browser browser,
-                                                  @Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
+                                                  @Nullable Proxy proxy, @Nullable Path browserDownloadsFolder) {
       return new DesiredCapabilities();
     }
 
     @Override
     @CheckReturnValue
     @Nonnull
-    public WebDriver create(@NotNull Config config, @NotNull Browser browser, @Nullable Proxy proxy, @Nullable File browserDownloadsFolder) {
+    public WebDriver create(@NotNull Config config, @NotNull Browser browser, @Nullable Proxy proxy, @Nullable Path browserDownloadsFolder) {
       return mock(WebDriver.class);
     }
   }

@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import java.io.File;
+import java.io.Path;
 import java.security.Provider;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -26,7 +26,7 @@ public class DriverStub implements Driver {
   private final Browser browser;
   private final WebDriver webDriver;
   private final SelenideProxyServer proxy;
-  @Nullable private final Supplier<File> tempDir;
+  @Nullable private final Supplier<Path> tempDir;
 
   public DriverStub() {
     this("zopera");
@@ -36,7 +36,7 @@ public class DriverStub implements Driver {
     this(null, new SelenideConfig(), new Browser(browser, false), mock(WebDriver.class), null);
   }
 
-  public DriverStub(@Nullable Supplier<File> tempDir, Config config, Browser browser,
+  public DriverStub(@Nullable Supplier<Path> tempDir, Config config, Browser browser,
                     WebDriver webDriver,
                     @Nullable SelenideProxyServer proxy) {
     this.config = config;

@@ -9,13 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.io.File;
+import java.io.Path;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
-import static java.io.File.separatorChar;
+import static java.io.Path.separatorChar;
 import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.IOUtils.resourceToByteArray;
@@ -30,7 +30,7 @@ import static org.openqa.selenium.OutputType.BYTES;
 
 final class ScreenShotLaboratoryTest implements WithAssertions {
   private final String dir = System.getProperty("user.dir");
-  private final String workingDirectory = new File(dir).toURI().toString().replaceAll("/$", "");
+  private final String workingDirectory = new Path(dir).toURI().toString().replaceAll("/$", "");
   private final ChromeDriver webDriver = mock(ChromeDriver.class);
   private final SelenideConfig config = new SelenideConfig().savePageSource(false).reportsFolder("build/reports/tests");
   private final Driver driver = new DriverStub(null, config, new Browser("chrome", false), webDriver, null);
@@ -79,7 +79,7 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
     assertThat(screenshots.takeScreenshot(driver).getImage())
       .isEqualTo(workingDirectory + "/build/reports/tests/ui/MyTest/test_some_method/12356789.2.png");
 
-    List<File> contextScreenshots = screenshots.finishContext();
+    List<Path> contextScreenshots = screenshots.finishContext();
     assertThat(contextScreenshots).hasSize(3);
     assertThat(contextScreenshots.get(0))
       .hasToString(dir + normalize("/build/reports/tests/ui/MyTest/test_some_method/12356789.0.png"));
@@ -101,7 +101,7 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
     screenshots.takeScreenShot(driver);
     screenshots.takeScreenShot(driver);
 
-    List<File> allScreenshots = screenshots.getScreenshots();
+    List<Path> allScreenshots = screenshots.getScreenshots();
     assertThat(allScreenshots).hasSize(5);
     assertThat(allScreenshots.get(0))
       .hasToString(dir + normalize("/build/reports/tests/ui/MyTest/test_some_method/12356789.0.png"));
@@ -127,7 +127,7 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
     screenshots.takeScreenShot(driver);
     screenshots.takeScreenShot(driver);
 
-    List<File> allThreadScreenshots = screenshots.getThreadScreenshots();
+    List<Path> allThreadScreenshots = screenshots.getThreadScreenshots();
     assertThat(allThreadScreenshots).hasSize(5);
     assertThat(allThreadScreenshots.get(0))
       .hasToString(dir + normalize("/build/reports/tests/ui/MyTest/test_some_method/12356789.0.png"));
@@ -148,7 +148,7 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
     screenshots.takeScreenShot(driver);
     screenshots.takeScreenShot(driver);
 
-    List<File> contextScreenshots = screenshots.getContextScreenshots();
+    List<Path> contextScreenshots = screenshots.getContextScreenshots();
     assertThat(contextScreenshots)
       .hasSize(3);
 
@@ -181,15 +181,15 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
 
     screenshots.takeScreenShot(driver);
     assertThat(screenshots.getLastThreadScreenshot())
-      .hasValue(new File("build/reports/tests/12356789.0.png").getAbsoluteFile());
+      .hasValue(new Path("build/reports/tests/12356789.0.png").getAbsoluteFile());
 
     screenshots.takeScreenShot(driver);
     assertThat(screenshots.getLastThreadScreenshot())
-      .hasValue(new File("build/reports/tests/12356789.1.png").getAbsoluteFile());
+      .hasValue(new Path("build/reports/tests/12356789.1.png").getAbsoluteFile());
 
     screenshots.takeScreenShot(driver);
     assertThat(screenshots.getLastThreadScreenshot())
-      .hasValue(new File("build/reports/tests/12356789.2.png").getAbsoluteFile());
+      .hasValue(new Path("build/reports/tests/12356789.2.png").getAbsoluteFile());
   }
 
   @Test
@@ -202,15 +202,15 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
       .isEmpty();
     screenshots.takeScreenShot(driver);
     assertThat(screenshots.getLastContextScreenshot())
-      .hasValue(new File("build/reports/tests/ui/MyTest/test_some_method/12356789.0.png").getAbsoluteFile());
+      .hasValue(new Path("build/reports/tests/ui/MyTest/test_some_method/12356789.0.png").getAbsoluteFile());
 
     screenshots.takeScreenShot(driver);
     assertThat(screenshots.getLastContextScreenshot())
-      .hasValue(new File("build/reports/tests/ui/MyTest/test_some_method/12356789.1.png").getAbsoluteFile());
+      .hasValue(new Path("build/reports/tests/ui/MyTest/test_some_method/12356789.1.png").getAbsoluteFile());
 
     screenshots.takeScreenShot(driver);
     assertThat(screenshots.getLastContextScreenshot())
-      .hasValue(new File("build/reports/tests/ui/MyTest/test_some_method/12356789.2.png").getAbsoluteFile());
+      .hasValue(new Path("build/reports/tests/ui/MyTest/test_some_method/12356789.2.png").getAbsoluteFile());
   }
 
   @Test
@@ -269,7 +269,7 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
     String screenshot = screenshots.takeScreenshot(driver).summary();
     assertThat(screenshot)
       .as("Concatenate reportUrl with screenshot file name if it saved outside of build/project home dir")
-      .startsWith(String.format("%nScreenshot: %s", reportsUrl + new File(screenshot).getName()));
+      .startsWith(String.format("%nScreenshot: %s", reportsUrl + new Path(screenshot).getName()));
   }
 
   @Test
@@ -303,7 +303,7 @@ final class ScreenShotLaboratoryTest implements WithAssertions {
   void printHtmlPath_if_savePageSourceIsEnabled() throws IOException {
     config.savePageSource(true);
     config.reportsUrl("http://ci.mycompany.com/job/666/artifact/");
-    doReturn(new File("build/reports/page123.html")).when(extractor).extract(eq(config), eq(webDriver), any());
+    doReturn(new Path("build/reports/page123.html")).when(extractor).extract(eq(config), eq(webDriver), any());
     doReturn(resourceToByteArray("/screenshot.png")).when(webDriver).getScreenshotAs(BYTES);
 
     Screenshot screenshot = screenshots.takeScreenshot(driver);

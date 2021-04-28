@@ -3,7 +3,6 @@ package com.codeborne.selenide.impl
 import com.codeborne.selenide.files.FileFilter
 import org.openqa.selenium.WebElement
 import org.slf4j.LoggerFactory
-import java.io.File
 import java.io.FileNotFoundException
 
 class DownloadFileWithProxyServer internal constructor(
@@ -15,7 +14,7 @@ class DownloadFileWithProxyServer internal constructor(
         anyClickableElement: WebElementSource,
         clickable: WebElement, timeout: Long,
         fileFilter: FileFilter
-    ): File {
+    ): Path {
         val webDriver = anyClickableElement.driver().webDriver
         return windowsCloser.runAndCloseArisedWindows(
             webDriver
@@ -25,7 +24,7 @@ class DownloadFileWithProxyServer internal constructor(
     private fun clickAndInterceptFileByProxyServer(
         anyClickableElement: WebElementSource, clickable: WebElement,
         timeout: Long, fileFilter: FileFilter
-    ): File {
+    ): Path {
         val config = anyClickableElement.driver().config()
         check(config.proxyEnabled()) { "Cannot download file: proxy server is not enabled. Setup proxyEnabled" }
         val proxyServer = anyClickableElement.driver().proxy

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.io.Path;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,8 +18,8 @@ final class DownloadDetectorTest {
 
   @Test
   void responseWithContentDispositionHeaderHasHighRank() {
-    DownloadedFile response1 = new DownloadedFile(new File("cv.pdf"), withContentDisposition("attachment; filename=cv.pdf"));
-    DownloadedFile response2 = new DownloadedFile(new File("script.js"), withContentType("application/javascript"));
+    DownloadedFile response1 = new DownloadedFile(new Path("cv.pdf"), withContentDisposition("attachment; filename=cv.pdf"));
+    DownloadedFile response2 = new DownloadedFile(new Path("script.js"), withContentType("application/javascript"));
 
     assertThat(detector.compare(response1, response2)).isEqualTo(-1);
     assertThat(detector.compare(response2, response1)).isEqualTo(1);
@@ -27,8 +27,8 @@ final class DownloadDetectorTest {
 
   @Test
   void htmlResponseHasLowRank() {
-    DownloadedFile response1 = new DownloadedFile(new File("some-file.txt"), withContentType("application/octet-stream"));
-    DownloadedFile response2 = new DownloadedFile(new File("event.json"), withContentType("application/json"));
+    DownloadedFile response1 = new DownloadedFile(new Path("some-file.txt"), withContentType("application/octet-stream"));
+    DownloadedFile response2 = new DownloadedFile(new Path("event.json"), withContentType("application/json"));
 
     assertThat(detector.compare(response1, response2)).isEqualTo(-1);
     assertThat(detector.compare(response2, response1)).isEqualTo(1);
@@ -64,8 +64,8 @@ final class DownloadDetectorTest {
     return map;
   }
 
-  private File fileCreatedSecondsAgo(String name, int secondsAgo) {
-    File file = mock(File.class);
+  private Path fileCreatedSecondsAgo(String name, int secondsAgo) {
+    Path file = mock(Path.class);
     when(file.getName()).thenReturn(name);
     when(file.lastModified()).thenReturn(now - 1000L * secondsAgo);
     return file;

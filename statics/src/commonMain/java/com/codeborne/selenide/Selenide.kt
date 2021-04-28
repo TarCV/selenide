@@ -5,7 +5,6 @@ import org.openqa.selenium.OutputType
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
-import java.io.File
 import java.io.IOException
 import java.net.URI
 import java.net.URISyntaxException
@@ -970,7 +969,7 @@ TODO:    @JvmStatic
     @CheckReturnValue
     @Throws(IOException::class, URISyntaxException::class)
     @JvmStatic
-    suspend fun download(url: String): File {
+    suspend fun download(url: String): Path {
         return WebDriverRunner.selenideDriver.download(url)
     }
 
@@ -980,7 +979,7 @@ TODO:    @JvmStatic
     @CheckReturnValue
     @Throws(IOException::class)
     @JvmStatic
-    suspend fun download(url: URI): File {
+    suspend fun download(url: URI): Path {
         return WebDriverRunner.selenideDriver.download(url)
     }
 
@@ -990,7 +989,7 @@ TODO:    @JvmStatic
     @CheckReturnValue
     @Throws(IOException::class)
     @JvmStatic
-    suspend fun download(url: URI, timeoutMs: Long): File {
+    suspend fun download(url: URI, timeoutMs: Long): Path {
         return WebDriverRunner.selenideDriver.download(url, timeoutMs)
     }
 
@@ -1005,14 +1004,14 @@ TODO:    @JvmStatic
      * NB! URL must be properly encoded.
      * E.g. instead of "/files/ж.txt", it should be "/files/%D0%B6.txt"
      * @param timeoutMs specific timeout in ms
-     * @return downloaded File in folder `Configuration.reportsFolder`
+     * @return downloaded Path in folder `Configuration.reportsFolder`
      * @throws IOException if failed to download file
      * @throws URISyntaxException if given url has invalid syntax
      */
     @CheckReturnValue
     @Throws(IOException::class, URISyntaxException::class)
     @JvmStatic
-    suspend fun download(url: String, timeoutMs: Long): File {
+    suspend fun download(url: String, timeoutMs: Long): Path {
         return WebDriverRunner.selenideDriver.download(URI(url), timeoutMs)
     }
 

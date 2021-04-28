@@ -2,8 +2,7 @@ package com.codeborne.selenide.impl
 
 import com.codeborne.selenide.files.DownloadedFile
 import com.codeborne.selenide.files.FileFilter
-import java.io.File
-import okio.okio.FileNotFoundException
+import okio.FileNotFoundException
 
 class Downloads {
     private val files: MutableList<DownloadedFile> = CopyOnWriteArrayList()
@@ -42,7 +41,7 @@ class Downloads {
     fun size(): Int {
         return files.size
     }
-    fun firstDownloadedFile(context: String, timeout: Long, fileFilter: FileFilter): File {
+    fun firstDownloadedFile(context: String, timeout: Long, fileFilter: FileFilter): Path {
         if (size() == 0) {
             throw FileNotFoundException("Failed to download file $context in $timeout ms.")
         }

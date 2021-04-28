@@ -13,11 +13,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.io.TemporaryFilesystem;
 
-import java.io.File;
+import java.io.Path;
 import java.io.IOException;
 
 import static com.codeborne.selenide.impl.DownloadFileToFolder.isFileModifiedLaterThan;
-import static java.io.File.createTempFile;
+import static java.io.Path.createTempFile;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.FileUtils.readFileToString;
 import static org.apache.commons.io.FileUtils.writeStringToFile;
@@ -37,7 +37,7 @@ final class DownloadFileToFolderTest {
   private final WebElementSource linkWithHref = mock(WebElementSource.class);
   private final WebElement link = mock(WebElement.class);
 
-  @TempDir File tempDir;
+  @TempDir Path tempDir;
   private final DriverStub driver = new DriverStub(() -> tempDir, config, new Browser("opera", false), webdriver, null);
 
   @BeforeEach
@@ -55,7 +55,7 @@ final class DownloadFileToFolderTest {
       return null;
     }).when(link).click();
 
-    File downloadedFile = command.download(linkWithHref, link, 3000, FileFilters.none());
+    Path downloadedFile = command.download(linkWithHref, link, 3000, FileFilters.none());
 
     assertThat(downloadedFile.getName()).isEqualTo(newFileName);
     assertThat(downloadedFile.getParentFile()).isNotEqualTo(driver.browserDownloadsFolder().toFile());
@@ -76,8 +76,8 @@ final class DownloadFileToFolderTest {
     assertThat(isFileModifiedLaterThan(file(1111111000L), 1111112000L)).isFalse();
   }
 
-  private File file(long modifiedAt) throws IOException {
-    File file = createTempFile("selenide-tests", "new-file");
+  private Path file(long modifiedAt) throws IOException {
+    Path file = createTempFile("selenide-tests", "new-file");
     FileUtils.touch(file);
     file.setLastModified(modifiedAt);
     return file;
