@@ -7,19 +7,23 @@ import com.codeborne.selenide.impl.PageObjectFactory
 import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementWrapper
 import com.codeborne.selenide.logevents.SelenideLogger
+import okio.ExperimentalFileSystem
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.events.WebDriverEventListener
 import support.URL
+import kotlin.time.ExperimentalTime
 
 /**
  * "Selenide driver" is a container for WebDriver + proxy server + settings
  */
+@ExperimentalFileSystem
 open class SelenideDriver {
     private val config: Config
     private val driver: Driver
 
+    @ExperimentalTime
     constructor(config: Config, listeners: List<WebDriverEventListener> = emptyList()) : this(
         config,
         LazyDriver(config, null, listeners)

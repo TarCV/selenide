@@ -1,6 +1,7 @@
 package com.codeborne.selenide
 
 import com.codeborne.selenide.impl.CiReportUrl
+import okio.ExperimentalFileSystem
 import org.openqa.selenium.MutableCapabilities
 import org.openqa.selenium.remote.DesiredCapabilities
 import support.System
@@ -32,7 +33,10 @@ class SelenideConfig : Config {
     private var savePageSource = (System.getProperty("selenide.savePageSource", "true")).toBoolean()
     private var reportsFolder = System.getProperty("selenide.reportsFolder", "build/reports/tests")
     private var downloadsFolder = System.getProperty("selenide.downloadsFolder", "build/downloads")
+
+    @ExperimentalFileSystem
     private var reportsUrl = CiReportUrl().getReportsUrl(System.getProperty("selenide.reportsUrl"))
+
     private var fastSetValue = (System.getProperty("selenide.fastSetValue", "false")).toBoolean()
     private var versatileSetValue =
         (System.getProperty("selenide.versatileSetValue", "false")).toBoolean()
@@ -134,10 +138,12 @@ class SelenideConfig : Config {
         return this
     }
 
+    @ExperimentalFileSystem
     override fun reportsUrl(): String? {
         return reportsUrl
     }
 
+    @ExperimentalFileSystem
     fun reportsUrl(reportsUrl: String?): SelenideConfig {
         this.reportsUrl = reportsUrl
         return this

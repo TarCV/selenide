@@ -11,16 +11,19 @@ import com.codeborne.selenide.logevents.ErrorsCollector.Companion.validateAssert
 import com.codeborne.selenide.logevents.LogEvent.EventStatus
 import com.codeborne.selenide.logevents.SelenideLogger.beginStep
 import com.codeborne.selenide.logevents.SelenideLogger.commitStep
-import org.openqa.selenium.JavascriptException
-import org.openqa.selenium.WebDriverException
+import okio.ExperimentalFileSystem
 import okio.FileNotFoundException
 import okio.IOException
+import org.openqa.selenium.JavascriptException
+import org.openqa.selenium.WebDriverException
 import support.InvocationHandler
 import kotlin.reflect.KFunction
 import kotlin.time.Duration
 
 internal open class SelenideElementProxy(private val webElementSource: WebElementSource) : InvocationHandler {
     private val exceptionWrapper = ExceptionWrapper()
+
+    @ExperimentalFileSystem
     @kotlin.time.ExperimentalTime
     override suspend fun invoke(proxy: Any, method: KFunction<*>, args: Array<out Any?>?): Any {
         val args = args as Array<out Any>?
@@ -74,6 +77,7 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
         return driver().config()
     }
 
+    @ExperimentalFileSystem
     @kotlin.time.ExperimentalTime
     protected suspend fun dispatchAndRetry(
       timeoutMs: Long, pollingIntervalMs: Long,

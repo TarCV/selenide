@@ -1,6 +1,9 @@
 package com.codeborne.selenide.files
 
+import okio.ExperimentalFileSystem
+
 internal class FilenameFilter(private val fileName: String) : FileFilter {
+    @ExperimentalFileSystem
     override fun match(file: DownloadedFile): Boolean {
         return file.file.name == fileName
     }

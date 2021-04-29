@@ -6,16 +6,18 @@ import com.codeborne.selenide.DownloadsFolder
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.drivercommands.LazyDriver
 import com.codeborne.selenide.webdriver.WebDriverFactory
+import okio.ExperimentalFileSystem
 import org.openqa.selenium.Proxy
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.events.WebDriverEventListener
 import org.slf4j.LoggerFactory
-import javax.annotation.concurrent.GuardedBy
 
 /**
  * A `Driver` implementation which opens browser on demand (on a first call).
  * May be created with its own config, proxy and listeners.
  */
+@ExperimentalFileSystem
+@kotlin.time.ExperimentalTime
 class LazyDriver internal constructor(
   private val config: Config, private val userProvidedProxy: Proxy?, listeners: List<WebDriverEventListener>,
   factory: WebDriverFactory, browserHealthChecker: BrowserHealthChecker,
@@ -64,7 +66,6 @@ class LazyDriver internal constructor(
           }
       }
     override val getAndCheckWebDriver: WebDriver
-        @kotlin.time.ExperimentalTime
         get() = synchronized(this) {
           _webDriver.let {
             if (it != null && config.reopenBrowserOnFail() && !browserHealthChecker.isBrowserStillOpen(it)) {
@@ -88,7 +89,6 @@ class LazyDriver internal constructor(
     }
 
     // TODO: why this is not sync in Java?
-    @kotlin.time.ExperimentalTime
     fun createDriver(): WebDriver = synchronized(this) {
         val result = createDriverCommand.createDriver(config, factory, userProvidedProxy, listeners)
         _webDriver = result.webDriver

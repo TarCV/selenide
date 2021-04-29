@@ -4,7 +4,6 @@ import com.codeborne.selenide.Config
 import okio.ExperimentalFileSystem
 import okio.Path
 import okio.Path.Companion.toPath
-import java.io.Path
 
 class Downloader constructor(private val random: Randomizer = Randomizer()) {
     fun randomFileName(): String {

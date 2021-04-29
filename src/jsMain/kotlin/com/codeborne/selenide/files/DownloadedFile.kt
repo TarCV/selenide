@@ -1,7 +1,9 @@
 package com.codeborne.selenide.files
 
-import java.io.Path
+import okio.ExperimentalFileSystem
+import okio.Path
 
+@ExperimentalFileSystem
 class DownloadedFile
 /**
  * @param file the downloaded file

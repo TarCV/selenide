@@ -77,7 +77,8 @@ class CreateDriverCommand internal constructor(private val fileNamer: FileNamer)
         return wrapper
     }
 
-        class Result(
+    @ExperimentalFileSystem
+    class Result(
         val webDriver: WebDriver,
         val selenideProxyServer: /*SelenideProxyServer*/Nothing?,
         val browserDownloadsFolder: DownloadsFolder?

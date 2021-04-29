@@ -1,11 +1,13 @@
 package com.codeborne.selenide.impl
 
+import okio.ExperimentalFileSystem
 import org.slf4j.LoggerFactory
-import support.URI
 import support.System
+import support.URI
 import java.nio.file.Paths
 
 class CiReportUrl {
+    @ExperimentalFileSystem
     fun getReportsUrl(reportsUrl: String?): String? {
         var reportsUrl: String? = reportsUrl
         if (!reportsUrl.isNullOrBlank()) {
@@ -37,6 +39,7 @@ class CiReportUrl {
         }
 
     // we have a workspace folder. Calculate the report relative path
+    @ExperimentalFileSystem
     private val jenkinsReportsUrl: String?
         get() {
             val build_url = System.getProperty("BUILD_URL")
@@ -44,8 +47,8 @@ class CiReportUrl {
               val workspace = System.getProperty("WORKSPACE", System.getenv("WORKSPACE"))
               var reportRelativePath = ""
               if (!workspace.isNullOrBlank()) { // we have a workspace folder. Calculate the report relative path
-                val pathAbsoluteReportsFolder = Paths.get("").normalize().toAbsolutePath()
-                val pathAbsoluteWorkSpace = Paths.get(workspace).normalize().toAbsolutePath()
+                val pathAbsoluteReportsFolder = FileHelper.canonicalPath(Paths.get(""))
+                val pathAbsoluteWorkSpace = FileHelper.canonicalPath(Paths.get(workspace))
                 val pathRelative = pathAbsoluteWorkSpace.relativize(pathAbsoluteReportsFolder)
                 reportRelativePath = pathRelative.toString().replace('\\', '/') + '/'
               }

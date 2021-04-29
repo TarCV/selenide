@@ -1,10 +1,7 @@
 package com.codeborne.selenide.impl
 
 import com.codeborne.selenide.files.DownloadedFile
-import Boolean
-import kotlin.Comparator
-import kotlin.Int
-import kotlin.String
+import okio.ExperimentalFileSystem
 
 /**
  * Sort all downloaded files by "likeness" to be the right download.
@@ -17,6 +14,7 @@ import kotlin.String
  * 4. The first file (alphabetically) wins
  *
  */
+@ExperimentalFileSystem
 class DownloadDetector : Comparator<DownloadedFile> {
     override fun compare(file1: DownloadedFile, file2: DownloadedFile): Int {
         var result = file2.hasContentDispositionHeader() == file1.hasContentDispositionHeader()

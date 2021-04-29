@@ -6,23 +6,28 @@ import com.codeborne.selenide.Driver
 import com.codeborne.selenide.FileDownloadMode
 import com.codeborne.selenide.SelenideDriver
 import com.codeborne.selenide.logevents.SelenideLogger
+import okio.ExperimentalFileSystem
 import org.openqa.selenium.WebDriverException
 import support.URL
 
 class Navigator {
     private val basicAuthUrl = BasicAuthUrl()
+    @ExperimentalFileSystem
     suspend fun open(driver: SelenideDriver, relativeOrAbsoluteUrl: String) {
         navigateTo(driver, relativeOrAbsoluteUrl, AuthenticationType.BASIC, "", "", "")
     }
 
+    @ExperimentalFileSystem
     suspend fun open(driver: SelenideDriver, url: URL) {
         navigateTo(driver, url.toExternalForm(), AuthenticationType.BASIC, "", "", "")
     }
 
+    @ExperimentalFileSystem
     suspend fun open(driver: SelenideDriver, relativeOrAbsoluteUrl: String, domain: String, login: String, password: String) {
         navigateTo(driver, relativeOrAbsoluteUrl, AuthenticationType.BASIC, domain, login, password)
     }
 
+    @ExperimentalFileSystem
     suspend fun open(driver: SelenideDriver, url: URL, domain: String, login: String, password: String) {
         navigateTo(driver, url.toExternalForm(), AuthenticationType.BASIC, domain, login, password)
     }
@@ -47,6 +52,7 @@ TODO:
         return if (isAbsoluteUrl(relativeOrAbsoluteUrl)) relativeOrAbsoluteUrl else config.baseUrl() + relativeOrAbsoluteUrl
     }
 
+    @ExperimentalFileSystem
     private suspend fun navigateTo(
         driver: SelenideDriver, relativeOrAbsoluteUrl: String,
         authenticationType: AuthenticationType, domain: String, login: String, password: String
@@ -71,6 +77,7 @@ TODO:
         }
     }
 
+    @ExperimentalFileSystem
     fun open(driver: SelenideDriver) {
         checkThatProxyIsEnabled(driver.config())
         SelenideLogger.run("open", "") { driver.andCheckWebDriver }

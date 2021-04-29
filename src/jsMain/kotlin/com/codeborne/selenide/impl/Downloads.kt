@@ -2,8 +2,10 @@ package com.codeborne.selenide.impl
 
 import com.codeborne.selenide.files.DownloadedFile
 import com.codeborne.selenide.files.FileFilter
+import okio.ExperimentalFileSystem
 import okio.FileNotFoundException
 
+@ExperimentalFileSystem
 class Downloads {
     private val files: MutableList<DownloadedFile> = CopyOnWriteArrayList()
 

@@ -5,6 +5,7 @@ import com.codeborne.selenide.Config
 import com.codeborne.selenide.DownloadsFolder
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.drivercommands.WebDriverWrapper
+import okio.ExperimentalFileSystem
 import org.openqa.selenium.WebDriver
 import org.slf4j.LoggerFactory
 
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory
  * It doesn't open a new browser.
  * It doesn't start a new proxy.
  */
+@ExperimentalFileSystem
 class WebDriverWrapper private constructor(
     config: Config, webDriver: WebDriver,
     selenideProxy: /*SelenideProxyServer*/Nothing?, browserDownloadsFolder: DownloadsFolder,
@@ -48,7 +50,7 @@ class WebDriverWrapper private constructor(
             }
             return webDriver
         }
-    override fun browserDownloadsFolder(): DownloadsFolder? {
+    override fun browserDownloadsFolder(): DownloadsFolder {
         return browserDownloadsFolder
     }
 

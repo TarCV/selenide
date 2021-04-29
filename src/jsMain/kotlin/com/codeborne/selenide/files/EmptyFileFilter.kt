@@ -1,6 +1,9 @@
 package com.codeborne.selenide.files
 
+import okio.ExperimentalFileSystem
+
 internal class EmptyFileFilter : FileFilter {
+    @ExperimentalFileSystem
     override fun match(file: DownloadedFile): Boolean {
         return true
     }

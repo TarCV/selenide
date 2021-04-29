@@ -11,14 +11,16 @@ import com.codeborne.selenide.files.FileFilters
 import com.codeborne.selenide.impl.DownloadFileToFolder
 import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementSource
+import okio.ExperimentalFileSystem
+import okio.Path
 import org.slf4j.LoggerFactory
-import java.io.Path
 
+@ExperimentalFileSystem
 class DownloadFile internal constructor(
     private val downloadFileWithHttpRequest: /*DownloadFileWithHttpRequest*/Nothing?,
     private val downloadFileWithProxyServer: /*DownloadFileWithProxyServer*/Nothing?,
     private val downloadFileToFolder: DownloadFileToFolder
-) : Command<Path?> {
+) : Command<Path> {
     constructor() : this(
         null, null, Plugins.inject<DownloadFileToFolder>(
             DownloadFileToFolder::class

@@ -4,8 +4,9 @@ import com.codeborne.selenide.Command
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementSource
-import okio.IOException
+import okio.ExperimentalFileSystem
 
+@ExperimentalFileSystem
 open class Commands protected constructor() {
     private val commands: MutableMap<String, Command<*>> = HashMap(128)
     private fun addTechnicalCommands() {
@@ -91,10 +92,11 @@ open class Commands protected constructor() {
         add("selectOptionByValue", SelectOptionByValue())
     }
 
+    @ExperimentalFileSystem
     private fun addFileCommands() {
         add("download", DownloadFile())
         add("uploadFile", UploadFile())
-        add("uploadFromClasspath", UploadFileFromClasspath())
+// TODO:        add("uploadFromClasspath", UploadFileFromClasspath())
     }
 
     private fun addShouldNotCommands() {

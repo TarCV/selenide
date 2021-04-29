@@ -1,7 +1,6 @@
 package com.codeborne.selenide.impl
 
 import okio.IOException
-import java.nio.charset.StandardCharsets
 
 /**
  * Read file content from classpath
