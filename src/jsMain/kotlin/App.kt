@@ -10,7 +10,7 @@ import kotlin.js.Promise
 
 /*@JsModule("webdriver")
 @JsNonModule
-external fun remote()*/
+external actual fun remote()*/
 
 suspend fun main(): Unit = coroutineScope  {
          val remote = awaitDynamic(js(

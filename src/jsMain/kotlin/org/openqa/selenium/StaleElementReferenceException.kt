@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class StaleElementReferenceException: Exception() {
+actual class StaleElementReferenceException: Exception() {
 }

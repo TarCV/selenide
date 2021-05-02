@@ -1,10 +1,10 @@
 package org.openqa.selenium
 
-class Alert {
-    val text: String
+actual class Alert {
+    actual val text: String
         get() = TODO()
 
-    fun accept(): Unit = TODO()
-    fun dismiss(): Unit = TODO()
-    fun sendKeys(keys: String): Unit = TODO()
+    actual fun accept(): Unit = TODO()
+    actual fun dismiss(): Unit = TODO()
+    actual fun sendKeys(keys: String): Unit = TODO()
 }

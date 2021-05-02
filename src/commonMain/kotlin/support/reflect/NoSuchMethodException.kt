@@ -1,0 +1,3 @@
+package support.reflect
+
+expect class NoSuchMethodException: ReflectiveOperationException

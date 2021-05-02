@@ -1,6 +1,5 @@
 import com.codeborne.selenide.impl.FileHelper
 import okio.ExperimentalFileSystem
-import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.asserter
 

@@ -63,12 +63,20 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api("org.seleniumhq.selenium:selenium-java:$seleniumVersion") {
+                    exclude group: 'net.bytebuddy', module: 'byte-buddy'
+                }
+
+                implementation('org.kodein.di:kodein-di:7.5.0')
+                implementation('org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3')
                 implementation("com.benasher44:uuid:0.2.4")
                 implementation 'co.touchlab:stately-isolate:1.1.4-a1'
                 implementation 'co.touchlab:stately-iso-collections:1.1.4-a1'
+                implementation("com.squareup.okio:okio-multiplatform:3.0.0-alpha.4")
+//                implementation("org.lighthousegames:logging:1.0.0")
             }
         }
-        jsMain {
+/*        jsMain {
             dependencies {
                 // Version should match the version in 'appium-base-driver'
                 implementation(npm('webdriverio', '6.0.2', false))
@@ -90,10 +98,42 @@ kotlin {
                 implementation("org.lighthousegames:logging-js:1.0.0")
                 implementation('org.kodein.di:kodein-di-js:7.5.0')
             }
+        }*/
+        jvmMain {
+            dependencies {
+                apply from: rootProject.file('gradle/dependencies.gradle')
+
+                implementation('org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.3')
+                implementation("org.lighthousegames:logging-jvm:1.0.0")
+
+                api("org.seleniumhq.selenium:selenium-java:$seleniumVersion") {
+                    exclude group: 'net.bytebuddy', module: 'byte-buddy'
+                }
+                api('io.github.bonigarcia:webdrivermanager:4.3.1') {
+                    exclude group: 'org.apache.httpcomponents.core5', module: 'httpcore5-h2'
+                    exclude group: 'org.rauschig', module: 'jarchivelib'
+                }
+                implementation('org.rauschig:jarchivelib:1.1.0') {
+                    because 'used by webdrivermanager'
+                }
+
+                implementation('org.apache.httpcomponents.client5:httpclient5:5.0.3') {
+                    exclude group: 'org.apache.httpcomponents.core5', module: 'httpcore5-h2'
+                }
+
+                compileOnly("com.browserup:browserup-proxy-core:$browserupProxyVersion")
+                compileOnly("xyz.rogfam:littleproxy:$littleProxyVersion")
+
+                compileOnly("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+                implementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+            }
         }
         jvmTest {
             dependencies {
                 apply from: rootProject.file('gradle/dependencies.gradle')
+
+                implementation('org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.3')
+                implementation("org.lighthousegames:logging-jvm:1.0.0")
 
                 api("org.seleniumhq.selenium:selenium-java:$seleniumVersion") {
                     exclude group: 'net.bytebuddy', module: 'byte-buddy'
@@ -118,5 +158,19 @@ kotlin {
             }
         }
     }
+    targets {
+        configure([]) {
+            tasks.getByName(compilations.main.compileKotlinTaskName).kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
+}
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    commonMainImplementation 'org.apache.httpcomponents.client5:httpclient5:5.1-beta1'
 }
 

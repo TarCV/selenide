@@ -1,5 +1,7 @@
 package org.openqa.selenium
 
-class NotFoundException(): WebDriverException() {
+import org.openqa.selenium.WebDriverException
+
+actual class NotFoundException actual constructor(): org.openqa.selenium.WebDriverException() {
 
 }

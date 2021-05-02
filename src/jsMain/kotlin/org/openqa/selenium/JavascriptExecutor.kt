@@ -1,6 +1,6 @@
 package org.openqa.selenium
 
-interface JavascriptExecutor {
-    fun <T> executeScript(code: String, vararg arg: Any): T
-    fun <T> executeAsyncScript(code: String, vararg arg: Any): T
+actual interface JavascriptExecutor {
+    actual fun <T> executeScript(code: String, vararg arg: Any): T
+    actual fun <T> executeAsyncScript(code: String, vararg arg: Any): T
 }

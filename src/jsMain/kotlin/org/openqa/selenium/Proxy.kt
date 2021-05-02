@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class Proxy {
+actual class Proxy {
 }

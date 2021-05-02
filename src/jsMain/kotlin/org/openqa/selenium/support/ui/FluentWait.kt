@@ -3,12 +3,12 @@ package org.openqa.selenium.support.ui
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
-open class FluentWait<T>(input: T) {
+actual open class FluentWait<T> actual constructor(input: T) {
     @ExperimentalTime
-    fun withTimeout(duration: Duration): FluentWait<T> = TODO()
+    actual fun withTimeout(duration: Duration): FluentWait<T> = TODO()
     @ExperimentalTime
-    fun pollingEvery(duration: Duration): FluentWait<T> = TODO()
+    actual fun pollingEvery(duration: Duration): FluentWait<T> = TODO()
 
-    suspend fun until(predicate: () -> Boolean): T = TODO()
-    suspend fun <E: Any> until(predicate: ExpectedCondition<E>): E = TODO()
+    suspend actual fun until(predicate: () -> Boolean): T = TODO()
+    suspend actual fun <E: Any> until(predicate: ExpectedCondition<E>): E = TODO()
 }

@@ -1,5 +1,7 @@
 package org.openqa.selenium
 
-interface HasCapabilities {
-    val capabilities: Capabilities
+import org.openqa.selenium.Capabilities
+
+actual interface HasCapabilities {
+    actual val capabilities: org.openqa.selenium.Capabilities
 }

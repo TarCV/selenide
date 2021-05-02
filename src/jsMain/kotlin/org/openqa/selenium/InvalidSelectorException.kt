@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class InvalidSelectorException(message: String, cause: Throwable?): Exception(message, cause) {
+actual class InvalidSelectorException actual constructor(message: String, cause: Throwable?): Exception(message, cause) {
 }

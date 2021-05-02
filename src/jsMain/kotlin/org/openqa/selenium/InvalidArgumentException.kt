@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class InvalidArgumentException: Exception() {
+actual class InvalidArgumentException: Exception() {
 }

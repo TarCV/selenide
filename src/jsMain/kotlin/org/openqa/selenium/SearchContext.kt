@@ -1,6 +1,9 @@
 package org.openqa.selenium
 
-interface SearchContext {
-    fun findElement(by: By): WebElement
-    fun findElements(by: By): List<WebElement>
+import org.openqa.selenium.By
+import org.openqa.selenium.WebElement
+
+actual interface SearchContext {
+    actual fun findElement(by: org.openqa.selenium.By): org.openqa.selenium.WebElement
+    actual fun findElements(by: org.openqa.selenium.By): List<org.openqa.selenium.WebElement>
 }

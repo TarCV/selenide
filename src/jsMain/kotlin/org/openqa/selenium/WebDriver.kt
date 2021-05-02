@@ -4,49 +4,49 @@ import org.openqa.selenium.logging.LogEntries
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
-interface WebDriver: SearchContext {
-    val currentUrl: String
-    val pageSource: String
-    val title: String
-    val windowHandle: String
-    val windowHandles: Set<String>
+actual interface WebDriver: org.openqa.selenium.SearchContext {
+    actual val currentUrl: String
+    actual val pageSource: String
+    actual val title: String
+    actual val windowHandle: String
+    actual val windowHandles: Set<String>
 
-    fun manage(): Manager
-    fun navigate(): Navigator
-    fun switchTo(): TargetLocator
-    fun quit()
-    fun close()
+    actual fun manage(): Manager
+    actual fun navigate(): Navigator
+    actual fun switchTo(): TargetLocator
+    actual fun quit()
+    actual fun close()
 
-    interface Manager {
-        suspend fun deleteAllCookies()
+    actual interface Manager {
+        actual suspend fun deleteAllCookies()
         @ExperimentalTime
-        fun timeouts(): Timeouts
-        fun logs(): Logs
+        actual fun timeouts(): Timeouts
+        actual fun logs(): Logs
     }
 
     @ExperimentalTime
-    interface Timeouts {
-        fun pageLoadTimeout(duration: Duration)
+    actual interface Timeouts {
+        actual fun pageLoadTimeout(duration: Duration)
 
     }
 
-    interface Navigator {
-        suspend fun to(url: String)
-        suspend fun back()
-        suspend fun forward()
-        suspend fun refresh()
+    actual interface Navigator {
+        actual suspend fun to(url: String)
+        actual suspend fun back()
+        actual suspend fun forward()
+        actual suspend fun refresh()
     }
-    interface TargetLocator {
-        suspend fun frame(index: Int): WebDriver
-        suspend fun frame(nameOrId: String): WebDriver
-        suspend fun frame(frameElement: WebElement): WebDriver
-        suspend fun parentFrame(): WebDriver
-        suspend fun defaultContent(): WebDriver
-        suspend fun activeElement(): WebElement
-        suspend fun alert(): Alert
-        suspend fun window(nameOrHandleOrTitle: String): WebDriver
+    actual interface TargetLocator {
+        actual suspend fun frame(index: Int): org.openqa.selenium.WebDriver
+        actual suspend fun frame(nameOrId: String): org.openqa.selenium.WebDriver
+        actual suspend fun frame(frameElement: org.openqa.selenium.WebElement): org.openqa.selenium.WebDriver
+        actual suspend fun parentFrame(): org.openqa.selenium.WebDriver
+        actual suspend fun defaultContent(): org.openqa.selenium.WebDriver
+        actual suspend fun activeElement(): org.openqa.selenium.WebElement
+        actual suspend fun alert(): org.openqa.selenium.Alert
+        actual suspend fun window(nameOrHandleOrTitle: String): org.openqa.selenium.WebDriver
     }
-    interface Logs {
-        operator fun get(logType: String): LogEntries = TODO()
+    actual interface Logs {
+        actual operator fun get(logType: String): org.openqa.selenium.logging.LogEntries
     }
 }

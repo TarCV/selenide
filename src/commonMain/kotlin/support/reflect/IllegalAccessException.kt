@@ -1,0 +1,3 @@
+package support.reflect
+
+expect class IllegalAccessException: ReflectiveOperationException

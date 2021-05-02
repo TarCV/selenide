@@ -1,3 +1,3 @@
 package org.openqa.selenium
 
-class NoSuchWindowException(message: String) : Exception(message)
+actual class NoSuchWindowException actual constructor(message: String) : Exception(message)

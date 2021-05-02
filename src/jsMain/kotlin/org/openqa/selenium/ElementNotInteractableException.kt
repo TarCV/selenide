@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class ElementNotInteractableException: Exception() {
+actual class ElementNotInteractableException: Exception() {
 }

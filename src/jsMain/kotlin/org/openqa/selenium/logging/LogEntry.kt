@@ -1,6 +1,6 @@
 package org.openqa.selenium.logging
 
-import java.util.logging.Level
+import support.logging.Level
 
 class LogEntry {
     val level: Level

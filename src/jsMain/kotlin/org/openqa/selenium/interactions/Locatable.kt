@@ -1,4 +1,4 @@
 package org.openqa.selenium.interactions
 
-interface Locatable {
+actual interface Locatable {
 }

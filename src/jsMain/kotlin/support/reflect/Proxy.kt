@@ -1,7 +1,8 @@
 package support.reflect
 
+import support.InvocationHandler
 import kotlin.reflect.KClass
 
-object Proxy {
-    fun newProxyInstance(unused: Any?, interfaces: Array<KClass<*>>, handler: Any): Any = TODO()
+actual object Proxy {
+    actual fun newProxyInstance(unused: Any?, interfaces: Array<KClass<*>>, handler: InvocationHandler): Any = TODO()
 }

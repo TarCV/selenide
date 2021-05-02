@@ -1,10 +1,10 @@
 package support
 
-object System {
-    fun getProperty(key: String, defaultValue: String): String = TODO()
-    fun getProperty(key: String): String? = TODO()
-    fun nanoTime(): Long = TODO()
-    fun currentTimeMillis(): Long = TODO()
-    fun currentThreadId(): Int = TODO()
-    fun getenv(key: String): String = TODO("Not yet implemented")
+actual object System {
+    actual fun getProperty(key: String, defaultValue: String): String = TODO()
+    actual fun getProperty(key: String): String? = TODO()
+    actual fun nanoTime(): Long = TODO()
+    actual fun currentTimeMillis(): Long = TODO()
+    actual fun currentThreadId(): Long = TODO()
+    actual fun getenv(key: String): String = TODO("Not yet implemented")
 }

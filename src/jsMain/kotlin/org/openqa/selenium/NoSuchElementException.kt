@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class NoSuchElementException: Exception() {
+actual class NoSuchElementException: Exception() {
 }

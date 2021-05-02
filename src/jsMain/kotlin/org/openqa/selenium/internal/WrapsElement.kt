@@ -2,6 +2,6 @@ package org.openqa.selenium.internal
 
 import org.openqa.selenium.WebElement
 
-interface WrapsElement {
-    val wrappedElement: WebElement
+actual interface WrapsElement {
+    actual val wrappedElement: org.openqa.selenium.WebElement
 }

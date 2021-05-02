@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class InvalidElementStateException: Exception() {
+actual class InvalidElementStateException: Exception() {
 }

@@ -1,5 +1,5 @@
 package support
 
-interface Predicate<T> {
-    operator fun invoke(input: T): Boolean
+actual interface Predicate<T> {
+    actual fun test(input: T): Boolean
 }

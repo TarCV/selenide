@@ -1,36 +1,40 @@
 package org.openqa.selenium
 
-interface By {
-    companion object {
-        fun cssSelector(selector: String): By = TODO()
-        fun className(selector: String): By = TODO()
-        fun name(selector: String): By = TODO()
-        fun xpath(selector: String): By = TODO()
-        fun linkText(selector: String): By = TODO()
-        fun partialLinkText(selector: String): By = TODO()
-        fun id(selector: String): By = TODO()
-        fun tagName(selector: String): By = TODO()
+import org.openqa.selenium.By
+import org.openqa.selenium.SearchContext
+import org.openqa.selenium.WebElement
+
+actual interface By {
+    actual companion object {
+        actual fun cssSelector(selector: String): org.openqa.selenium.By = TODO()
+        actual fun className(selector: String): org.openqa.selenium.By = TODO()
+        actual fun name(selector: String): org.openqa.selenium.By = TODO()
+        actual fun xpath(selector: String): org.openqa.selenium.By = TODO()
+        actual fun linkText(selector: String): org.openqa.selenium.By = TODO()
+        actual fun partialLinkText(selector: String): org.openqa.selenium.By = TODO()
+        actual fun id(selector: String): org.openqa.selenium.By = TODO()
+        actual fun tagName(selector: String): org.openqa.selenium.By = TODO()
     }
 
-    fun findElement(context: SearchContext): WebElement
-    fun findElements(context: SearchContext): List<WebElement>
+    actual fun findElement(context: org.openqa.selenium.SearchContext): org.openqa.selenium.WebElement
+    actual fun findElements(context: org.openqa.selenium.SearchContext): List<org.openqa.selenium.WebElement>
 
-    open class ByXPath(selector: String): By {
-        override fun findElement(context: SearchContext): WebElement {
+    open actual class ByXPath actual constructor(selector: String): org.openqa.selenium.By {
+        override actual fun findElement(context: org.openqa.selenium.SearchContext): org.openqa.selenium.WebElement {
             TODO("Not yet implemented")
         }
 
-        override fun findElements(context: SearchContext): List<WebElement> {
+        override actual fun findElements(context: org.openqa.selenium.SearchContext): List<org.openqa.selenium.WebElement> {
             TODO("Not yet implemented")
         }
     }
 
-    open class ByCssSelector(selector: String): By {
-        override fun findElement(context: SearchContext): WebElement {
+    open actual class ByCssSelector actual constructor(selector: String): org.openqa.selenium.By {
+        override actual fun findElement(context: org.openqa.selenium.SearchContext): org.openqa.selenium.WebElement {
             TODO("Not yet implemented")
         }
 
-        override fun findElements(context: SearchContext): List<WebElement> {
+        override actual fun findElements(context: org.openqa.selenium.SearchContext): List<org.openqa.selenium.WebElement> {
             TODO("Not yet implemented")
         }
     }

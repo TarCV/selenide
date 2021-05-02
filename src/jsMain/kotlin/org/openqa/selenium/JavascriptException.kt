@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class JavascriptException: Exception() {
+actual class JavascriptException: Exception() {
 }

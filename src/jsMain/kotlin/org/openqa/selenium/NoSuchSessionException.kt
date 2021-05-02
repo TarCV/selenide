@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class NoSuchSessionException: Exception() {
+actual class NoSuchSessionException: Exception() {
 }

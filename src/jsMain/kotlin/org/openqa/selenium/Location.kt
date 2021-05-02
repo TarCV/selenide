@@ -1,9 +1,9 @@
 package org.openqa.selenium
 
-class Location {
-    val x: Int
+actual class Location {
+    actual val x: Int
         get() = TODO("Not yet implemented")
-    val y: Int
+    actual val y: Int
         get() = TODO("Not yet implemented")
 
 }

@@ -1,5 +1,5 @@
 package org.openqa.selenium
 
-open class WebDriverException: Exception() {
-    fun addInfo(key: String, value: String): Unit = TODO()
+actual open class WebDriverException: Exception() {
+    actual fun addInfo(key: String, value: String): Unit = TODO()
 }

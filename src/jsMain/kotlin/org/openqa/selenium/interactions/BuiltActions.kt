@@ -1,5 +1,5 @@
 package org.openqa.selenium.internal
 
-class BuiltActions {
-    fun perform(): Unit = TODO()
+actual class BuiltActions {
+    actual fun perform(): Unit = TODO()
 }

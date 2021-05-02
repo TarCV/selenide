@@ -1,5 +1,7 @@
 package org.openqa.selenium
 
-interface WrapsDriver {
-    val wrappedDriver: WebDriver
+import org.openqa.selenium.WebDriver
+
+actual interface WrapsDriver {
+    actual val wrappedDriver: org.openqa.selenium.WebDriver
 }
