@@ -3,10 +3,10 @@ package com.codeborne.selenide.impl
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelectorMode
 import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.filecontent.sizzleJs
 import org.openqa.selenium.By
 import org.openqa.selenium.By.ByCssSelector
 import org.openqa.selenium.By.ByXPath
-import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
@@ -15,7 +15,6 @@ import org.openqa.selenium.WebElement
  * Thanks to http://selenium.polteq.com/en/injecting-the-sizzle-css-selector-library/
  */
 open class WebElementSelector {
-    protected val sizzleSource = FileContent("sizzle.js")
     fun findElement(driver: Driver, context: SearchContext, selector: By): WebElement {
         checkThatXPathNotStartingFromSlash(context, selector)
         if (driver.config().selectorMode() === SelectorMode.CSS || selector !is ByCssSelector) {
@@ -88,7 +87,7 @@ open class WebElementSelector {
     }
 
     protected fun injectSizzle(driver: Driver) = synchronized(this) {
-        driver.executeJavaScript<Any>(sizzleSource.content)
+        driver.executeJavaScript<Any>(sizzleJs)
     }
 
     companion object {

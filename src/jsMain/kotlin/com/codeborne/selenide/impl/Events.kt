@@ -1,18 +1,18 @@
 package com.codeborne.selenide.impl
 
 import com.codeborne.selenide.Driver
+import org.lighthousegames.logging.KmLog
+import org.lighthousegames.logging.logging
 import org.openqa.selenium.StaleElementReferenceException
 import org.openqa.selenium.WebElement
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
-class Events internal constructor(private val log: Logger) {
+class Events internal constructor(private val log: KmLog) {
     fun fireEvent(driver: Driver, element: WebElement, vararg event: String?) {
         try {
             executeJavaScript(driver, element, *event)
         } catch (ignore: StaleElementReferenceException) {
         } catch (e: Exception) {
-            log.warn("Failed to trigger events {}: {}", listOf(*event), Cleanup.of.webdriverExceptionMessage(e))
+            log.warn { "Failed to trigger events ${listOf(*event)}: ${Cleanup.of.webdriverExceptionMessage(e)}" }
         }
     }
 
@@ -22,8 +22,9 @@ class Events internal constructor(private val log: Logger) {
 
     companion object {
         var events = Events(
-            LoggerFactory.getLogger(
+            logging(
                 Events::class
+                    .simpleName
             )
         )
         private const val JS_CODE_TO_TRIGGER_EVENT = "var webElement = arguments[0];\n" +

@@ -1,3 +1,6 @@
+package com.codeborne.selenide.filecontent
+
+val clickJs = """
 (function (element, offsetX, offsetY) {
   const rect = element.getBoundingClientRect();
 
@@ -23,3 +26,4 @@
   }
   element.dispatchEvent(mouseEvent());
 })(arguments[0], arguments[1], arguments[2]);
+""".trim()

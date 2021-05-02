@@ -15,8 +15,8 @@ class RequestSizeWatchdog : RequestFilter {
         messageInfo: HttpMessageInfo
     ): HttpResponse? {
         if (contents.binaryContents.size > threshold) {
-            log.warn("Too large request {}: {} bytes", messageInfo.url, contents.binaryContents.size)
-            log.trace("Request content: {}", contents.textContents)
+            log.warn("Too large request ${}: ${} bytes", messageInfo.url, contents.binaryContents.size)
+            log.trace("Request content: ${}", contents.textContents)
         }
         return null
     }

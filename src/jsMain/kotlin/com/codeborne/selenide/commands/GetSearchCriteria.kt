@@ -6,6 +6,6 @@ import com.codeborne.selenide.impl.WebElementSource
 
 class GetSearchCriteria : Command<String> {
     override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): String {
-        return locator.searchCriteria
+        return locator.getSearchCriteria()
     }
 }

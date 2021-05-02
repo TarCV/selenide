@@ -2,7 +2,6 @@ package com.codeborne.selenide.webdriver
 
 import org.openqa.selenium.Capabilities
 import org.openqa.selenium.MutableCapabilities
-import support.System
 
 /**
  * A subclass of MutableCapabilities which has fixed `merge` method:
@@ -13,7 +12,7 @@ class MergeableCapabilities(base: Capabilities, extraCapabilities: Capabilities)
         return text1.isNotEmpty() && text2.isNotEmpty() && text1 != text2
     }
 
-    override fun setCapability(key: String, value: Any) {
+    override fun setCapability(key: String, value: Any?) {
         if (value is Map<*, *>) {
             setCapabilityMap(key, value as Map<String, Any>)
         } else {
@@ -23,15 +22,19 @@ class MergeableCapabilities(base: Capabilities, extraCapabilities: Capabilities)
 
     private fun setCapabilityMap(key: String, value: Map<String, Any>) {
         val previousValue = getCapability(key)
-        if (previousValue == null) {
-            super.setCapability(key, value)
-        } else if (previousValue is Map<*, *>) {
-            super.setCapability(key, mergeMaps(previousValue as Map<String, Any>, value))
-        } else {
-            throw IllegalArgumentException(
-                "Cannot merge capability " + key + " of different types: " +
-                        value::class.simpleName + " vs " + previousValue::class.simpleName
-            )
+        when (previousValue) {
+            null -> {
+                super.setCapability(key, value)
+            }
+            is Map<*, *> -> {
+                super.setCapability(key, mergeMaps(previousValue as Map<String, Any>, value))
+            }
+            else -> {
+                throw IllegalArgumentException(
+                    "Cannot merge capability " + key + " of different types: " +
+                            value::class.simpleName + " vs " + previousValue::class.simpleName
+                )
+            }
         }
     }
 

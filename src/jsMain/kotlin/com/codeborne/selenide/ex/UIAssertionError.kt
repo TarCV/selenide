@@ -29,7 +29,7 @@ open class UIAssertionError : AssertionError {
         return message
     }
     protected fun uiDetails(): String {
-        return screenshot.summary() + ErrorMessages.timeout(timeoutMs) + ErrorMessages.causedBy(cause)
+        return /*TODO: screenshot.summary() +*/ ErrorMessages.timeout(timeoutMs) + ErrorMessages.causedBy(cause)
     }
 
     companion object {

@@ -24,7 +24,7 @@ class SelectOptionByValue : Command<Nothing?> {
         return null
     }
 
-    private fun selectOptionByValue(selectField: WebElementSource, select: Select, value: String) {
+    private suspend fun selectOptionByValue(selectField: WebElementSource, select: Select, value: String) {
         try {
             select.selectByValue(value)
         } catch (e: NoSuchElementException) {

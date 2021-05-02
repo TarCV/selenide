@@ -140,7 +140,7 @@ open class SelenidePageFactory : PageObjectFactory {
             return if (searchContext is SelenideElement) {
                 searchContext
             } else {
-                logger.warn("Cannot initialize field {}", field)
+                logger.warn("Cannot initialize field ${}", field)
                 null
             }
         }

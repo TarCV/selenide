@@ -3,33 +3,35 @@ package com.codeborne.selenide.impl
 import okio.ExperimentalFileSystem
 import okio.FileSystem
 import okio.IOException
+import okio.NodeJsFileSystem
 import okio.Path
 import okio.Source
-import org.slf4j.LoggerFactory
+import org.lighthousegames.logging.logging
+import java.nio.file.Paths
 
 object FileHelper {
-    private val log = LoggerFactory.getLogger(FileHelper::class)
+    private val log = logging(FileHelper::class.simpleName)
 
     @ExperimentalFileSystem
-    private val virtualFiles: FileSystem = TODO()
+    private val fileSystem: FileSystem = NodeJsFileSystem
 
     @ExperimentalFileSystem
     fun writeToFile(source: ByteArray, targetFile: Path) {
         ensureParentFolderExists(targetFile) // TODO: wasn't present in Java version
-        virtualFiles.write(targetFile) {
+        fileSystem.write(targetFile) {
             write(source)
         }
     }
 
     @ExperimentalFileSystem
     fun copyFile(sourceFile: Path, targetFile: Path) {
-        virtualFiles.copy(sourceFile, targetFile)
+        fileSystem.copy(sourceFile, targetFile)
     }
 
     @ExperimentalFileSystem
     fun copyFile(`in`: Source, targetFile: Path) {
         ensureParentFolderExists(targetFile)
-        virtualFiles.write(targetFile) {
+        fileSystem.write(targetFile) {
             writeAll(`in`)
         }
     }
@@ -44,9 +46,9 @@ object FileHelper {
     @ExperimentalFileSystem
     fun ensureFolderExists(folder: Path): Path {
         if (!exists(canonicalPath(folder))) {
-            log.info("Creating folder: {}", folder)
+            log.info { "Creating folder: $folder" }
             try {
-                virtualFiles.createDirectories(folder)
+                fileSystem.createDirectories(folder)
             } catch (e: IOException) {
                 throw IllegalArgumentException("Failed to create folder '$folder'", e)
             }
@@ -57,7 +59,7 @@ object FileHelper {
     @ExperimentalFileSystem
     fun moveFile(srcFile: Path, destFile: Path) {
         try {
-            virtualFiles.atomicMove(srcFile, destFile)
+            fileSystem.atomicMove(srcFile, destFile)
         } catch (e: IOException) {
             throw IllegalStateException(
                 "Failed to move file $srcFile to $destFile", e
@@ -67,36 +69,66 @@ object FileHelper {
 
     @ExperimentalFileSystem
     fun deleteFolderIfEmpty(folder: Path) {
-        if (virtualFiles.metadataOrNull(folder)?.isDirectory == true) {
-            val files = virtualFiles.list(folder)
+        if (fileSystem.metadataOrNull(folder)?.isDirectory == true) {
+            val files = fileSystem.list(folder)
             if (files.isEmpty()) {
-                virtualFiles.delete(folder)
+                fileSystem.delete(folder)
             }
         }
     }
 
     @ExperimentalFileSystem
     fun exists(path: Path): Boolean {
-        return virtualFiles.exists(path)
+        return fileSystem.exists(path)
     }
 
     @ExperimentalFileSystem
     fun isFile(path: Path): Boolean {
-        return virtualFiles.metadataOrNull(path)?.isRegularFile == true
+        return fileSystem.metadataOrNull(path)?.isRegularFile == true
     }
 
     @ExperimentalFileSystem
     fun lastModified(file: Path): Long {
-        return virtualFiles.metadataOrNull(file)?.lastModifiedAtMillis ?: 0
+        return fileSystem.metadataOrNull(file)?.lastModifiedAtMillis ?: 0
     }
 
     @ExperimentalFileSystem
     fun listFiles(folder: Path): List<Path> {
-        return virtualFiles.list(folder)
+        return fileSystem.list(folder)
     }
 
     @ExperimentalFileSystem
     fun canonicalPath(path: Path): Path {
-        return virtualFiles.canonicalize(path)
+        return fileSystem.canonicalize(path)
     }
+
+    @ExperimentalFileSystem
+    fun relativize(relativeTo: Path, other: Path): Path {
+        val fixedSegments = canonicalPath(relativeTo).segments()
+        val otherSegments = canonicalPath(other).segments()
+
+        val commonPrefixLength = fixedSegments.zip(otherSegments)
+            .takeWhile { (a, b) -> a == b }
+            .count()
+
+        val commonPrefix = fixedSegments.take(commonPrefixLength)
+        val goParentSteps = List(fixedSegments.size - commonPrefixLength) { ".." }
+        val newSegments = otherSegments.drop(commonPrefixLength)
+
+        val resultSegments = commonPrefix + goParentSteps + newSegments
+        return Paths.get(*resultSegments.toTypedArray())
+    }
+}
+
+@ExperimentalFileSystem
+private fun Path.segments(): List<String> {
+    val segments = mutableListOf(this.name)
+
+    var parent = this.parent
+    while (parent != null) {
+        segments += parent.name
+        parent = parent.parent
+    }
+
+    return segments.reversed()
 }

@@ -1,41 +1,34 @@
 package com.codeborne.selenide
 
-import com.codeborne.selenide.drivercommands.LazyDriver
 import com.codeborne.selenide.drivercommands.Navigator
 import com.codeborne.selenide.impl.ElementFinder
 import com.codeborne.selenide.impl.PageObjectFactory
 import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementWrapper
 import com.codeborne.selenide.logevents.SelenideLogger
+import kotlinx.coroutines.flow.firstOrNull
 import okio.ExperimentalFileSystem
 import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
-import org.openqa.selenium.support.events.WebDriverEventListener
 import support.URL
-import kotlin.time.ExperimentalTime
 
 /**
  * "Selenide driver" is a container for WebDriver + proxy server + settings
  */
 @ExperimentalFileSystem
-open class SelenideDriver {
-    private val config: Config
-    private val driver: Driver
+open class SelenideDriver(private val config: Config, private val driver: Driver) {
 
-    @ExperimentalTime
+/*
+TODO:    @ExperimentalTime
     constructor(config: Config, listeners: List<WebDriverEventListener> = emptyList()) : this(
         config,
         LazyDriver(config, null, listeners)
     ) {
     }
+*/
 
-    constructor(config: Config, driver: Driver) {
-        this.config = config
-        this.driver = driver
-    }
-
-/*
+    /*
 TODO:    constructor(
         config: Config, webDriver: WebDriver, selenideProxy: SelenideProxyServer?,
         browserDownloadsFolder: DownloadsFolder = SharedDownloadsFolder(config.downloadsFolder())
@@ -110,15 +103,15 @@ TODO:    constructor(
         return pageFactory.page(driver(), pageObject)
     }
 
-    fun refresh() {
+    suspend fun refresh() {
         navigator.refresh(driver())
     }
 
-    fun back() {
+    suspend fun back() {
         navigator.back(driver())
     }
 
-    fun forward() {
+    suspend fun forward() {
         navigator.forward(driver())
     }
 
@@ -226,12 +219,9 @@ TODO:    constructor(
         return findAll(criteria)
     }
     suspend fun getSelectedRadio(radioField: By): SelenideElement? {
-        for (radio in `$$`(radioField)) {
-            if (radio.getAttribute("checked") != null) {
-                return `$`(radio)
-            }
-        }
-        return null
+        return `$$`(radioField).asFlow()
+            .firstOrNull { it.getAttribute("checked") != null }
+            ?.let { it -> `$`(it) }
     }
     fun modal(): Modal {
         return Modal(driver())

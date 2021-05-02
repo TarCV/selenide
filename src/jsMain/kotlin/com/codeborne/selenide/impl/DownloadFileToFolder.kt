@@ -6,8 +6,8 @@ import com.codeborne.selenide.files.DownloadedFile
 import com.codeborne.selenide.files.FileFilter
 import okio.ExperimentalFileSystem
 import okio.Path
+import org.lighthousegames.logging.logging
 import org.openqa.selenium.WebElement
-import org.slf4j.LoggerFactory
 import support.System
 
 class DownloadFileToFolder internal constructor(
@@ -54,12 +54,8 @@ class DownloadFileToFolder internal constructor(
     ): Downloads {
         val hasDownloads = HasDownloads(fileFilter, clickMoment)
         waiter.wait(folder, { hasDownloads(it) }, timeout, config.pollingInterval())
-        if (log.isInfoEnabled) {
-          log.info(hasDownloads.downloads.filesAsString())
-        }
-        if (log.isDebugEnabled) {
-          log.debug("All downloaded files in {}: {}", folder, folder.files())
-        }
+        log.info { hasDownloads.downloads.filesAsString() }
+        log.debug { "All downloaded files in ${folder}: ${folder.files()}" }
         return hasDownloads.downloads
     }
 
@@ -92,7 +88,7 @@ class DownloadFileToFolder internal constructor(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(DownloadFileToFolder::class)
+        private val log = logging(DownloadFileToFolder::class.simpleName)
 
         /**
          * Depending on OS, file modification time can have seconds precision, not milliseconds.

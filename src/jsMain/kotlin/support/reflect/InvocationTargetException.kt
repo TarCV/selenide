@@ -1,5 +1,3 @@
 package support.reflect
 
-class InvocationTargetException: Exception() {
-
-}
+class InvocationTargetException(val targetException: Throwable): Exception()

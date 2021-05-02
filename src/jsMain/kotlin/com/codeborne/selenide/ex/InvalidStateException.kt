@@ -11,5 +11,5 @@ class InvalidStateException : UIAssertionError {
     ) {
     }
 
-    constructor(driver: Driver, message: String) : super(driver, "Invalid element state: $message") {}
+    constructor(driver: Driver, message: String) : super(driver, "Invalid element state: $message")
 }

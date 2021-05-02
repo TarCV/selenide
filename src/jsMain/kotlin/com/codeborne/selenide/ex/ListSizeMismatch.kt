@@ -1,6 +1,5 @@
 package com.codeborne.selenide.ex
 
-import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.ElementsCollection.Companion.elementsToString
 import com.codeborne.selenide.impl.CollectionSource
@@ -18,7 +17,7 @@ suspend fun ListSizeMismatch(
         (if (explanation == null) "" else " (because $explanation)") +
         ", actual: " + (actualElements?.size ?: 0) +
         ", collection: " + collection.description() +
-        "\n" + "Elements: " + elementsToString(collection.driver(), actualElements), lastError
+        "\n" + "Elements: " + elementsToString(collection.driver(), actualElements)
     return ListSizeMismatch(driver, message, lastError)
 }
 

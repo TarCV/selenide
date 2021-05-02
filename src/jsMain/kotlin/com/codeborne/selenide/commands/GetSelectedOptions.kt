@@ -31,8 +31,8 @@ class GetSelectedOptions : Command<ElementsCollection?> {
         private suspend fun select(selectElement: WebElementSource): Select {
             return Select(selectElement.getWebElement())
         }
-        override fun description(): String {
-            return alias.getOrElse { selectElement.description() + " selected options" }
+        override suspend fun description(): String {
+            return alias.getOrElseAsync { selectElement.description() + " selected options" }
         }
         override fun driver(): Driver {
             return selectElement.driver()

@@ -48,7 +48,7 @@ class CreateDriverCommand internal constructor(private val fileNamer: FileNamer)
         )
         val webdriver = factory.createWebDriver(config, browserProxy, browserDownloadsFolder)
         log.info(
-            "Create webdriver in current thread {}: {} -> {}",
+            "Create webdriver in current thread ${}: ${} -> ${}",
             support.System.currentThreadId(), webdriver::class.simpleName, webdriver
         )
         val webDriver = addListeners(webdriver, listeners)
@@ -62,7 +62,7 @@ class CreateDriverCommand internal constructor(private val fileNamer: FileNamer)
             )
         }
 */
-        return Result(webDriver, null /* TODO: selenideProxyServer*/, null /* TODO: from(browserDownloadsFolder) */)
+        return Result(webDriver /*, null TODO: selenideProxyServer*/, null /* TODO: from(browserDownloadsFolder) */)
     }
 
     private fun addListeners(webdriver: WebDriver, listeners: List<WebDriverEventListener>): WebDriver {
@@ -71,7 +71,7 @@ class CreateDriverCommand internal constructor(private val fileNamer: FileNamer)
         }
         val wrapper = EventFiringWebDriver(webdriver)
         for (listener in listeners) {
-            log.info("Add listener to webdriver: {}", listener)
+            log.info("Add listener to webdriver: ${}", listener)
             wrapper.register(listener)
         }
         return wrapper
@@ -80,7 +80,7 @@ class CreateDriverCommand internal constructor(private val fileNamer: FileNamer)
     @ExperimentalFileSystem
     class Result(
         val webDriver: WebDriver,
-        val selenideProxyServer: /*SelenideProxyServer*/Nothing?,
+        /*TODO: val selenideProxyServer: SelenideProxyServerNothing?,*/
         val browserDownloadsFolder: DownloadsFolder?
     )
 

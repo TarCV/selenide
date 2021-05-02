@@ -72,9 +72,23 @@ kotlin {
             dependencies {
                 // Version should match the version in 'appium-base-driver'
                 implementation(npm('webdriverio', '6.0.2', false))
+
                 implementation('org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.4.3')
                 implementation("com.squareup.okio:okio-js:3.0.0-alpha.4")
+                implementation("com.squareup.okio:okio-nodefilesystem-js:3.0.0-alpha.4")
                 implementation("org.lighthousegames:logging-js:1.0.0")
+                implementation('org.kodein.di:kodein-di-js:7.5.0')
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation(kotlin("test-js"))
+
+                implementation('org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.4.3')
+                implementation("com.squareup.okio:okio-js:3.0.0-alpha.4")
+                implementation("com.squareup.okio:okio-nodefilesystem-js:3.0.0-alpha.4")
+                implementation("org.lighthousegames:logging-js:1.0.0")
+                implementation('org.kodein.di:kodein-di-js:7.5.0')
             }
         }
         jvmTest {

@@ -10,7 +10,7 @@ class BySelectorCollection(private val driver: Driver, private val parent: Searc
     CollectionSource {
     private var alias = Alias.NONE
 
-    constructor(driver: Driver, selector: By) : this(driver, null, selector) {}
+    constructor(driver: Driver, selector: By) : this(driver, null, selector)
 
     override suspend fun getElements(): List<WebElement> {
         val searchContext = parent ?: driver.webDriver
@@ -22,7 +22,7 @@ class BySelectorCollection(private val driver: Driver, private val parent: Searc
             WebElementSelector.instance.findElement(driver, searchContext, selector)
         } else WebElementSelector.instance.findElements(driver, searchContext, selector)[index]
     }
-    override fun description(): String {
+    override suspend fun description(): String {
         return alias.getOrElse { composeDescription() }
     }
 

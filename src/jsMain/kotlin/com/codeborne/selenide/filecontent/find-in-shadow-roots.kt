@@ -1,3 +1,6 @@
+package com.codeborne.selenide.filecontent
+
+val findInShadowRootsJs = """
 (function () {
   function findInShadows(target, shadowRoots, searchContext) {
     if (shadowRoots.length === 0) {
@@ -23,3 +26,4 @@
     findInShadows(arguments[0], arguments[1], document) :
     findInShadows(arguments[0], arguments[1], getShadowRoot(arguments[2]));
 })
+""".trim()

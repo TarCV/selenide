@@ -1,12 +1,12 @@
 package com.codeborne.selenide.impl
 
 import com.codeborne.selenide.Driver
+import org.lighthousegames.logging.logging
 import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.StaleElementReferenceException
 import org.openqa.selenium.UnsupportedCommandException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
-import org.slf4j.LoggerFactory
 
 class Describe(private val driver: Driver, private val element: WebElement) {
     private val sb = StringBuilder()
@@ -24,14 +24,14 @@ class Describe(private val driver: Driver, private val element: WebElement) {
             if (probablyBrowserDoesNotSupportJavaScript.message?.toLowerCase()
                     ?.contains("method is not implemented") != true
             ) {
-                log.warn("Failed to get attributes via JS: {}", probablyBrowserDoesNotSupportJavaScript.toString())
+                log.warn { "Failed to get attributes via JS: $probablyBrowserDoesNotSupportJavaScript" }
             }
         }
         return appendPredefinedAttributes()
     }
 
     private suspend fun appendAllAttributes(): Describe {
-        val map = driver.executeJavaScript<Map<String, String>>(
+        val map = driver.executeJavaScript<Map<String, String?>?>(
             "var s = {};" +
                     "var attrs = arguments[0].attributes;" +
                     "for (var i = 0; i < attrs.length; i++) {" +
@@ -41,15 +41,17 @@ class Describe(private val driver: Driver, private val element: WebElement) {
                     "   }" +
                     "}" +
                     "return s;", element
-        )
-        val sortedByName: SortedMap<String, String> = TreeMap()
-        if (map != null) {
-            sortedByName.putAll(map)
+        ).let { it?.toMutableMap() ?: mutableMapOf() }
+
+        map["value"] = element.getAttribute("value")
+        if (!map.containsKey("type")) {
+            map["type"] = element.getAttribute("type")
         }
-        sortedByName["value"] = element.getAttribute("value")
-        if (!sortedByName.containsKey("type")) {
-            sortedByName["type"] = element.getAttribute("type")
-        }
+
+        val sortedByName = map
+            .entries
+            .sortedBy { it.key }
+
         for ((key, value) in sortedByName) {
             attr(key, value)
         }
@@ -82,11 +84,7 @@ class Describe(private val driver: Driver, private val element: WebElement) {
             if (probablyBrowserDoesNotSupportJavaScript.message?.toLowerCase()
                     ?.contains("method is not implemented") != true
             ) {
-                log.warn(
-                    "Failed to get attribute {}: {}",
-                    attributeName,
-                    probablyBrowserDoesNotSupportJavaScript.toString()
-                )
+                log.warn { "Failed to get attribute ${attributeName}: $probablyBrowserDoesNotSupportJavaScript" }
             }
             this
         }
@@ -133,13 +131,15 @@ class Describe(private val driver: Driver, private val element: WebElement) {
                 sb.append(' ').append("displayed:false")
             }
         } catch (e: UnsupportedOperationException) {
-            log.debug("Failed to check visibility", e)
+            // TODO: was debug in Java
+            log.warn(e) { "Failed to check visibility" }
             sb.append(' ').append("displayed:").append(Cleanup.of.webdriverExceptionMessage(e))
         } catch (e: WebDriverException) {
-            log.debug("Failed to check visibility", e)
+            // TODO: was debug in Java
+            log.warn(e) { "Failed to check visibility" }
             sb.append(' ').append("displayed:").append(Cleanup.of.webdriverExceptionMessage(e))
         } catch (e: RuntimeException) {
-            log.error("Failed to check visibility", e)
+            log.error(e) { "Failed to check visibility" }
             sb.append(' ').append("displayed:").append(Cleanup.of.webdriverExceptionMessage(e))
         }
         return this
@@ -149,16 +149,17 @@ class Describe(private val driver: Driver, private val element: WebElement) {
         return try {
             method()
         } catch (e: WebDriverException) {
-            log.debug("Failed to get {}", name, e)
+            // TODO: was debug in Java
+            log.warn(e) { "Failed to get $name" }
             Cleanup.of.webdriverExceptionMessage(e)
         } catch (e: RuntimeException) {
-            log.error("Failed to get {}", name, e)
+            log.error(e) { "Failed to get $name" }
             "?"
         }
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(Describe::class)
+        private val log = logging(Describe::class.simpleName)
     }
 
     init {

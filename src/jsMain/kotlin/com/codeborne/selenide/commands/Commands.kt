@@ -1,5 +1,6 @@
 package com.codeborne.selenide.commands
 
+import co.touchlab.stately.collections.IsoMutableMap
 import com.codeborne.selenide.Command
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.impl.Plugins
@@ -8,15 +9,15 @@ import okio.ExperimentalFileSystem
 
 @ExperimentalFileSystem
 open class Commands protected constructor() {
-    private val commands: MutableMap<String, Command<*>> = HashMap(128)
+    private val commands: MutableMap<String, Command<*>> = IsoMutableMap()
     private fun addTechnicalCommands() {
         add("as", As())
         add("getAlias", GetAlias())
         add("toString", ToString())
         add("toWebElement", ToWebElement())
         add("getWrappedElement", GetWrappedElement())
-        add("screenshot", TakeScreenshot())
-        add("screenshotAsImage", TakeScreenshotAsImage())
+// TODO:        add("screenshot", TakeScreenshot())
+// TODO:        add("screenshotAsImage", TakeScreenshotAsImage())
         add("getSearchCriteria", GetSearchCriteria())
         add("execute", Execute<Any>())
     }
@@ -113,7 +114,7 @@ open class Commands protected constructor() {
         add("waitUntil", WaitUntil())
     }
 
-    fun add(method: String, command: Command<*>) = syncronized(this) {
+    fun add(method: String, command: Command<*>) {
         commands[method] = command
     }
 

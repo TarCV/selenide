@@ -1,22 +1,26 @@
 package com.codeborne.selenide.webdriver
 
+import com.codeborne.selenide.Browser
 import com.codeborne.selenide.Config
 import com.codeborne.selenide.impl.FileHelper
-import com.codeborne.selenide.impl.FileNamer
 import okio.ExperimentalFileSystem
 import okio.Path
 import okio.Path.Companion.toPath
-import org.slf4j.LoggerFactory
+import org.lighthousegames.logging.logging
+import org.openqa.selenium.MutableCapabilities
+import org.openqa.selenium.remote.CapabilityType
+import org.openqa.selenium.remote.DesiredCapabilities
 import support.System
 
 abstract class AbstractDriverFactory : DriverFactory {
-    private val fileNamer = FileNamer()
+    // This was used in java version:
+    // TODO: private val fileNamer = FileNamer()
     @ExperimentalFileSystem
     protected fun webdriverLog(config: Config): Path {
         val logFolder = FileHelper.ensureFolderExists(FileHelper.canonicalPath(config.reportsFolder().toPath()))
-        val logFileName = "webdriver.${fileNamer.generateFileName()}.log"
+        val logFileName = "webdriver.${"log" /*fileNamer.generateFileName()*/}.log"
         val logFile = FileHelper.canonicalPath(logFolder / logFileName)
-        log.info("Write webdriver logs to: {}", logFile)
+        log.info { "Write webdriver logs to: $logFile" }
         return logFile
     }
 
@@ -26,13 +30,17 @@ abstract class AbstractDriverFactory : DriverFactory {
         }
         return dsBuilder.build()
     }*/
-    /*fun createCommonCapabilities(config: Config, browser: Browser, proxy: Proxy?): MutableCapabilities {
+    fun createCommonCapabilities(config: Config, browser: Browser, proxy: /* TODO: Proxy*/Nothing?): MutableCapabilities {
         val capabilities = DesiredCapabilities()
+/* TODO:
         if (proxy != null) {
             capabilities.setCapability(CapabilityType.PROXY, proxy)
         }
-        if (config.browserVersion() != null && config.browserVersion()?.isEmpty() != true) {
-            capabilities.version = config.browserVersion()
+*/
+        config.browserVersion()?.let {
+            if (it.isNotEmpty()) {
+                capabilities.version = it
+            }
         }
         capabilities.setCapability(CapabilityType.PAGE_LOAD_STRATEGY, config.pageLoadStrategy())
         capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true)
@@ -42,17 +50,17 @@ abstract class AbstractDriverFactory : DriverFactory {
         capabilities.isJavascriptEnabled = true
         capabilities.setCapability(CapabilityType.TAKES_SCREENSHOT, true)
         capabilities.setCapability(CapabilityType.SUPPORTS_ALERTS, true)
-        transferCapabilitiesFromSystemProperties(capabilities)
+// TODO:        transferCapabilitiesFromSystemProperties(capabilities)
         return MergeableCapabilities(capabilities, config.browserCapabilities())
     }
 
-    protected fun transferCapabilitiesFromSystemProperties(currentBrowserCapabilities: DesiredCapabilities) {
+    /*protected fun transferCapabilitiesFromSystemProperties(currentBrowserCapabilities: DesiredCapabilities) {
         val prefix = "capabilities."
         for (key in System.getProperties().stringPropertyNames()) {
             if (key.startsWith(prefix)) {
                 val capability = key.substring(prefix.length)
                 val value = System.getProperties().getProperty(key)
-                log.debug("Use {}={}", key, value)
+                log.debug("Use ${}=${}", key, value)
                 currentBrowserCapabilities.setCapability(capability, convertStringToNearestObjectType(value))
             }
         }
@@ -64,12 +72,10 @@ abstract class AbstractDriverFactory : DriverFactory {
      * @return string's object representation
      */
     fun convertStringToNearestObjectType(value: String): Any {
-        return if (isBoolean(value)) {
-            Boolean.valueOf(value)
-        } else if (isInteger(value)) {
-            value.toInt()
-        } else {
-            value
+        return when {
+            isBoolean(value) -> value.toBoolean()
+            isInteger(value) -> value.toInt()
+            else -> value
         }
     }
     protected fun isInteger(value: String): Boolean {
@@ -92,7 +98,7 @@ abstract class AbstractDriverFactory : DriverFactory {
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(AbstractDriverFactory::class)
+        private val log = logging(AbstractDriverFactory::class.simpleName)
         private val REGEX_SIGNED_INTEGER = kotlin.text.Regex("^-?\\d+$")
         private val REGEX_VERSION = kotlin.text.Regex("(\\d+)(\\..*)?")
     }

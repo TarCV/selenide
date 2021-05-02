@@ -20,15 +20,12 @@ abstract class WebElementSource {
         private set
     abstract fun driver(): Driver
     abstract suspend fun getWebElement(): WebElement
-    abstract val searchCriteria: String
+    abstract suspend fun getSearchCriteria(): String
     fun setAlias(alias: String) {
         this.alias = Alias(alias)
     }
-    fun description(): String {
-        return alias.getOrElse { searchCriteria }
-    }
-    override fun toString(): String {
-        return description()
+    suspend fun description(): String {
+        return alias.getOrElseAsync { getSearchCriteria() }
     }
     open fun find(proxy: SelenideElement, arg: Any, index: Int): SelenideElement {
         return wrap(driver(), proxy, getSelector(arg), index)

@@ -64,7 +64,7 @@ class FileDownloadFilter internal constructor(private val config: Config, privat
             FileUtils.writeByteArrayToFile(file, contents.binaryContents)
             downloads.add(DownloadedFile(file, r.headers))
         } catch (e: IOException) {
-            log.error("Failed to save downloaded file to {} for url {}", file.absolutePath, messageInfo.url, e)
+            log.error("Failed to save downloaded file to ${} for url ${}", file.absolutePath, messageInfo.url, e)
         }
     }
 
@@ -88,7 +88,7 @@ class FileDownloadFilter internal constructor(private val config: Config, privat
             .orElseGet {
                 log.info("Cannot extract file name from http headers. Found headers: ")
                 for ((key, value) in response.headers) {
-                    log.info("{}={}", key, value)
+                    log.info("${}=${}", key, value)
                 }
                 val fileNameFromUrl = httpHelper.getFileName(response.url)
                 if (StringUtils.isNotBlank(fileNameFromUrl)) fileNameFromUrl else downloader.randomFileName()

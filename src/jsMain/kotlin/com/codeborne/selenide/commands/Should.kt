@@ -5,7 +5,7 @@ import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.impl.WebElementSource
 
 open class Should protected constructor(private val prefix: String) : Command<SelenideElement> {
-    constructor() : this("") {}
+    constructor() : this("")
 
     @kotlin.time.ExperimentalTime
     override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {

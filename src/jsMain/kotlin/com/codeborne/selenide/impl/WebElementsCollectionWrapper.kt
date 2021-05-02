@@ -12,8 +12,8 @@ class WebElementsCollectionWrapper(private val driver: Driver, elements: Collect
     override suspend fun getElement(index: Int): WebElement {
         return getElements()[index]
     }
-    override fun description(): String = runBlocking {
-        alias.getOrElse { "$$(" + getElements().size + " elements)" }
+    override suspend fun description(): String {
+        return alias.getOrElseAsync { "$$(" + getElements().size + " elements)" }
     }
     override fun driver(): Driver {
         return driver

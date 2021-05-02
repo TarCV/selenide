@@ -4,8 +4,8 @@ import com.codeborne.selenide.impl.Html
 import org.openqa.selenium.WebElement
 
 class Texts : ExactTexts {
-    constructor(vararg expectedTexts: String) : super(*expectedTexts) {}
-    constructor(expectedTexts: List<String>) : super(expectedTexts) {}
+    constructor(vararg expectedTexts: String) : super(*expectedTexts)
+    constructor(expectedTexts: List<String>) : super(expectedTexts)
     override operator fun invoke(elements: List<WebElement>): Boolean {
         if (elements.size != expectedTexts.size) {
             return false

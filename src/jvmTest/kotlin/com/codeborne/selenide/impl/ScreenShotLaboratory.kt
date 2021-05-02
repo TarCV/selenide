@@ -4,7 +4,6 @@ import com.codeborne.selenide.Config
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideTargetLocator
 import com.codeborne.selenide.impl.FileHelper.ensureParentFolderExists
-import com.codeborne.selenide.impl.FileHelper.writeToFile
 import com.codeborne.selenide.impl.Plugins.inject
 import com.codeborne.selenide.impl.Screenshot.Companion.none
 import org.openqa.selenium.JavascriptExecutor
@@ -14,11 +13,11 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 import org.slf4j.LoggerFactory
+import support.URLEncoder
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.IOException
 import java.io.UnsupportedEncodingException
-import support.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -115,7 +114,7 @@ open class ScreenShotLaboratory constructor(
                 return writeToFile(driver, destination)
             }
         } catch (e: IOException) {
-            log.error("Failed to take screenshot of {}", element, e)
+            log.error("Failed to take screenshot of ${}", element, e)
         }
         return null
     }
@@ -145,7 +144,7 @@ open class ScreenShotLaboratory constructor(
             val elementHeight = getRescaledElementHeight(element, img)
             (img.getSubimage(elementLocation.getX(), elementLocation.getY(), elementWidth, elementHeight))
         } catch (e: IOException) {
-            log.error("Failed to take screenshot of {}", element, e)
+            log.error("Failed to take screenshot of ${}", element, e)
             null
         } catch (e: RasterFormatException) {
             log.warn("Cannot take screenshot because element is not displayed on current screen position")
@@ -162,7 +161,7 @@ open class ScreenShotLaboratory constructor(
                 return writeToFile(driver, destination)
             }
         } catch (e: IOException) {
-            log.error("Failed to take screenshot of {} inside frame {}", element, iframe, e)
+            log.error("Failed to take screenshot of ${} inside frame ${}", element, iframe, e)
         }
         return null
     }
@@ -188,7 +187,7 @@ open class ScreenShotLaboratory constructor(
         img = try {
             ImageIO.read(ByteArrayInputStream(screen))
         } catch (e: IOException) {
-            log.error("Failed to take screenshot of {} inside frame {}", element, iframe, e)
+            log.error("Failed to take screenshot of ${} inside frame ${}", element, iframe, e)
             return null
         } catch (ex: RasterFormatException) {
             log.warn("Cannot take screenshot because iframe is not displayed")
@@ -258,11 +257,11 @@ open class ScreenShotLaboratory constructor(
             try {
                 writeToFile(scrFile.get(), imageFile)
             } catch (e: IOException) {
-                log.error("Failed to save screenshot to {}", imageFile, e)
+                log.error("Failed to save screenshot to ${}", imageFile, e)
             }
             imageFile
         } catch (e: WebDriverException) {
-            log.error("Failed to take screenshot to {}", fileName, e)
+            log.error("Failed to take screenshot to ${}", fileName, e)
             null
         }
     }
@@ -374,7 +373,7 @@ open class ScreenShotLaboratory constructor(
         return try {
             URLEncoder.encode(str, StandardCharsets.UTF_8.name())
         } catch (e: UnsupportedEncodingException) {
-            log.debug("Cannot encode path segment: {}", str, e)
+            log.debug("Cannot encode path segment: ${}", str, e)
             str
         }
     }

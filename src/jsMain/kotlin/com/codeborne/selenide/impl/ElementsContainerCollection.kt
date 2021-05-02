@@ -10,6 +10,8 @@ import com.codeborne.selenide.impl.ElementFinder.Companion.wrap
 import org.openqa.selenium.By
 import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.SearchContext
+import support.reflect.ReflectiveOperationException
+import kotlin.reflect.KType
 
 class ElementsContainerCollection(
     private val pageFactory: PageObjectFactory,
@@ -17,7 +19,7 @@ class ElementsContainerCollection(
     private val parent: SearchContext,
     private val field: kotlin.reflect.KProperty<*>,
     private val listType: kotlin.reflect.KClass<*>,
-    private val genericTypes: Array<Type>,
+    private val genericTypes: Array<KType>,
     private val selector: By
 ) : AbstractList<ElementsContainer>() {
     override fun get(index: Int): ElementsContainer {

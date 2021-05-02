@@ -5,6 +5,7 @@ import com.codeborne.selenide.ex.UIAssertionError
 import com.codeborne.selenide.impl.BySelectorCollection
 import com.codeborne.selenide.impl.Cleanup
 import com.codeborne.selenide.impl.CollectionElement
+import com.codeborne.selenide.impl.CollectionElement.Companion.wrap
 import com.codeborne.selenide.impl.CollectionElementByCondition
 import com.codeborne.selenide.impl.CollectionSnapshot
 import com.codeborne.selenide.impl.CollectionSource
@@ -13,24 +14,19 @@ import com.codeborne.selenide.impl.FilteringCollection
 import com.codeborne.selenide.impl.HeadOfCollection
 import com.codeborne.selenide.impl.LastCollectionElement
 import com.codeborne.selenide.impl.Plugins
-import com.codeborne.selenide.impl.SelenideElementIterator
-import com.codeborne.selenide.impl.SelenideElementListIterator
 import com.codeborne.selenide.impl.TailOfCollection
 import com.codeborne.selenide.impl.WebElementsCollectionWrapper
 import com.codeborne.selenide.logevents.ErrorsCollector
 import com.codeborne.selenide.logevents.LogEvent.EventStatus
 import com.codeborne.selenide.logevents.SelenideLogger
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 import kotlin.time.Duration
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.promise
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.time.milliseconds
 
 class ElementsCollection(private val collection: CollectionSource) {
@@ -42,8 +38,8 @@ class ElementsCollection(private val collection: CollectionSource) {
     ) {
     }
 
-    constructor(driver: Driver, cssSelector: String) : this(driver, By.cssSelector(cssSelector)) {}
-    constructor(driver: Driver, seleniumSelector: By) : this(BySelectorCollection(driver, seleniumSelector)) {}
+    constructor(driver: Driver, cssSelector: String) : this(driver, By.cssSelector(cssSelector))
+    constructor(driver: Driver, seleniumSelector: By) : this(BySelectorCollection(driver, seleniumSelector))
     constructor(driver: Driver, parent: WebElement, cssSelector: String) : this(
         driver,
         parent,
@@ -361,11 +357,32 @@ class ElementsCollection(private val collection: CollectionSource) {
         }
     }
 
-    suspend operator fun iterator(): MutableIterator<SelenideElement> {
-        return SelenideElementIterator(fetch())
+    suspend fun asFlow(): Flow<SelenideElement> {
+        val fetchedCollection = fetch()
+        return flow {
+            var index = 0
+            while (fetchedCollection.getElements().size > index) {
+                emit(wrap(fetchedCollection, index++))
+            }
+        }
     }
-    suspend fun listIterator(index: Int): MutableListIterator<SelenideElement> {
-        return SelenideElementListIterator(fetch(), index)
+
+    suspend fun asReversedFlow(): Flow<SelenideElement> {
+        val fetchedCollection = fetch()
+        return asReversedFlow(fetchedCollection, fetchedCollection.getElements().size)
+    }
+
+    suspend fun asReversedFlow(fromIndex: Int): Flow<SelenideElement> {
+        return asReversedFlow(fetch(), fromIndex)
+    }
+
+    private suspend fun asReversedFlow(fetchedCollection: WebElementsCollectionWrapper, fromIndex: Int): Flow<SelenideElement> {
+        return flow {
+            var i = fromIndex
+            while (i >= 0) {
+                emit(wrap(fetchedCollection, --i))
+            }
+        }
     }
 
     private suspend fun fetch(): WebElementsCollectionWrapper {
@@ -410,11 +427,13 @@ class ElementsCollection(private val collection: CollectionSource) {
         collection.setAlias(alias)
         return this
     }
-    override fun toString(): String = runBlocking {
-        try {
-            "${collection.description()} ${elementsToString(driver(), getElements())}"
+
+    // TODO: called into the actual driver in Java version
+    override fun toString(): String {
+        return try {
+            "$collection [snapshot]"
         } catch (e: RuntimeException) {
-            "${collection.description()} [${Cleanup.of.webdriverExceptionMessage(e)}]"
+            "$collection [${Cleanup.of.webdriverExceptionMessage(e)}]"
         }
     }
     private fun driver(): Driver {
@@ -432,8 +451,7 @@ class ElementsCollection(private val collection: CollectionSource) {
          * @return Array of texts (or exceptions in case of any WebDriverExceptions)
          */
             fun texts(elements: Collection<WebElement>?): List<String> {
-            return if (elements == null) emptyList() else elements
-                .map { element: WebElement -> getText(element) }
+            return elements?.map { element: WebElement -> getText(element) } ?: emptyList()
         }
 
         private fun getText(element: WebElement): String {

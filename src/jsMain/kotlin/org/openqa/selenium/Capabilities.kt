@@ -5,6 +5,10 @@ open class Capabilities {
         get() = TODO()
     val platform: String
         get() = TODO()
-    val version: String
+    var version: String
         get() = TODO()
+        set(value) = TODO()
+    var isJavascriptEnabled: Boolean
+        get() = TODO()
+        set(value) = TODO()
 }

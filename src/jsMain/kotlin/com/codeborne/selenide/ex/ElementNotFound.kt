@@ -29,19 +29,27 @@ class ElementNotFound : UIAssertionError {
     ) {
     }
 
-    constructor(collection: CollectionSource, expectedTexts: List<String?>?, lastError: Throwable?) : super(
-        collection.driver(),
-            "Element not found {${collection.description()}}" +
-                    "\nExpected: $expectedTexts"
-        lastError
-    ) {
-    }
+    internal constructor(
+        driver: Driver,
+        message: String,
+        lastError: Throwable?
+    ) : super(driver, message, lastError)
+}
 
-    constructor(collection: CollectionSource, description: String?, lastError: Throwable?) : super(
+suspend fun ElementNotFound(collection: CollectionSource, expectedTexts: List<String?>?, lastError: Throwable?): ElementNotFound {
+    return ElementNotFound(
         collection.driver(),
-            "Element not found {${collection.description()}}" +
-                    "\nExpected: $description"
+        "Element not found {${collection.description()}}" +
+            "\nExpected: $expectedTexts",
+        lastError
+    )
+}
+
+suspend fun ElementNotFound(collection: CollectionSource, description: String?, lastError: Throwable?): ElementNotFound {
+    return ElementNotFound(
+        collection.driver(),
+        "Element not found {${collection.description()}}" +
+            "\nExpected: $description"
         , lastError
-    ) {
-    }
+    )
 }

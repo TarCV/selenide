@@ -9,6 +9,9 @@ open class Alias(text: String) {
     open fun getOrElse(defaultValue: () -> String): String {
         return text ?: defaultValue() // TODO: java code just returned text value here
     }
+    open suspend fun getOrElseAsync(defaultValue: suspend () -> String): String {
+        return text ?: defaultValue() // TODO: java code just returned text value here
+    }
 
     private class NoneAlias internal constructor() : Alias("-") {
         override fun getOrElse(defaultValue: () -> String): String {

@@ -26,11 +26,11 @@ import org.apache.hc.core5.ssl.SSLContextBuilder
 import org.apache.hc.core5.ssl.TrustStrategy
 import org.openqa.selenium.WebElement
 import org.slf4j.LoggerFactory
+import support.URI
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.SocketTimeoutException
-import support.URI
 import java.security.cert.X509Certificate
 import javax.net.ssl.HostnameVerifier
 
@@ -155,7 +155,7 @@ open class DownloadFileWithHttpRequest internal constructor(private val download
         }
         log.info("Cannot extract file name from http headers. Found headers: ")
         for (header in response.headers) {
-            log.info("{}={}", header.name, header.value)
+            log.info("${}=${}", header.name, header.value)
         }
         val fileNameFromUrl = httpHelper.getFileName(fileToDownloadLocation)
         return if (StringUtils.isNotBlank(fileNameFromUrl)) fileNameFromUrl else downloader.randomFileName()

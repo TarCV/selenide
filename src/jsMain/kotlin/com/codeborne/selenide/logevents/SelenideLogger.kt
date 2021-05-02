@@ -1,18 +1,20 @@
 package com.codeborne.selenide.logevents
 
+import co.touchlab.stately.collections.IsoMutableMap
 import com.codeborne.selenide.impl.DurationFormat
 import com.codeborne.selenide.logevents.LogEvent.EventStatus
-import org.slf4j.LoggerFactory
+import org.lighthousegames.logging.logging
 import kotlin.time.Duration
 
 /**
  * Logs Selenide test steps and notifies all registered LogEventListener about it
  */
 object SelenideLogger {
-    private val LOG = LoggerFactory.getLogger(SelenideLogger::class)
-    internal val listeners = ThreadLocal.withInitial {
-      HashMap<String, LogEventListener>()
-    }
+    private val LOG = logging(SelenideLogger::class.simpleName)
+
+    // This was ThreadLocal in java
+    internal val listeners = IsoMutableMap<String, LogEventListener>()
+
     private val df = DurationFormat()
     private val methodNameRegex = "([A-Z])".toRegex()
 
@@ -23,14 +25,10 @@ object SelenideLogger {
      * @param listener event listener
      */
     fun addListener(name: String, listener: LogEventListener) {
-        var threadListeners = listeners.get()
-        if (threadListeners == null) {
-            threadListeners = HashMap()
-        }
-        threadListeners[name] = listener
-        listeners.set(threadListeners)
+        listeners[name] = listener
     }
-    @JvmSynthetic
+
+    // TODO:    @JvmSynthetic
     @kotlin.time.ExperimentalTime
     fun beginStep(source: String, methodName: String, vararg args: Any?): SelenideLog {
         return if (args.isEmpty()) {
@@ -39,39 +37,45 @@ object SelenideLogger {
             beginStep(source, readableMethodName(methodName) + "(" + readableArguments(*args) + ")")
         }
     }
+
     @kotlin.time.ExperimentalTime
     fun beginStep(source: String, methodName: String, firstArg: Any?, vararg args: Any?): SelenideLog {
-      val actualArgs = if (firstArg is Array<*> && args.isEmpty()) {
-        firstArg
-      } else if (firstArg == null && args.isEmpty()) {
-        emptyArray()
-      } else {
-        arrayOf(firstArg, *args)
-      }
-      return beginStep(source, readableMethodName(methodName) + "(" + readableArguments(*actualArgs) + ")")
+        val actualArgs = if (firstArg is Array<*> && args.isEmpty()) {
+            firstArg
+        } else if (firstArg == null && args.isEmpty()) {
+            emptyArray()
+        } else {
+            arrayOf(firstArg, *args)
+        }
+        return beginStep(source, readableMethodName(methodName) + "(" + readableArguments(*actualArgs) + ")")
     }
 
     fun readableMethodName(methodName: String): String {
-      return methodName.replace(methodNameRegex, " $1").toLowerCase()
+        return methodName.replace(methodNameRegex, " $1").toLowerCase()
     }
+
     @kotlin.time.ExperimentalTime
     fun readableArguments(vararg args: Any?): String {
         if (args.isNullOrEmpty()) {
             return ""
         }
         args[0]?.let {
-          if (it is Array<*>) {
-            return arrayToString(it as Array<Any>)
-          }
+            if (it is Array<*>) {
+                return arrayToString(it as Array<Any>)
+            }
         }
         return if (args[0] is IntArray) {
             arrayToString(args[0] as IntArray)
         } else arrayToString(args)
     }
+
     @kotlin.time.ExperimentalTime
     private fun arrayToString(args: Array<out Any?>): String {
-        return if (args.size == 1) argToString(args[0]) else "[" + Stream.of(*args).map { obj: Any? -> argToString(obj) }
-            .joinToString(", ") + ']'
+        return if (args.size == 1) argToString(args[0]) else "[" + args.joinToString(", ") { obj: Any? ->
+            argToString(
+                obj
+            )
+        } + ']'
     }
 
     @kotlin.time.ExperimentalTime
@@ -80,6 +84,7 @@ object SelenideLogger {
             df.format(arg)
         } else arg.toString()
     }
+
     private fun arrayToString(args: IntArray): String {
         return if (args.size == 1) args[0].toString() else args.contentToString()
     }
@@ -91,25 +96,25 @@ object SelenideLogger {
             try {
                 listener.beforeEvent(log)
             } catch (e: RuntimeException) {
-                LOG.error("Failed to call listener {}", listener, e)
+                LOG.error(e) { "Failed to call listener $listener" }
             }
         }
         return log
     }
 
     fun commitStep(log: SelenideLog, error: Throwable) {
-      log.error = error
-      commitStep(log, EventStatus.FAIL)
+        log.error = error
+        commitStep(log, EventStatus.FAIL)
     }
 
     fun commitStep(log: SelenideLog, status: EventStatus) {
-      log.status = status
-      val listeners = eventLoggerListeners
+        log.status = status
+        val listeners = eventLoggerListeners
         for (listener in listeners) {
             try {
                 listener.afterEvent(log)
             } catch (e: RuntimeException) {
-                LOG.error("Failed to call listener {}", listener, e)
+                LOG.error(e) {"Failed to call listener $listener" }
             }
         }
     }
@@ -128,10 +133,10 @@ object SelenideLogger {
         }
     }
 
-    fun run(source: String, subject: String, runnable: Runnable) {
+    fun run(source: String, subject: String, runnable: () -> Unit) {
         val log = beginStep(source, subject)
         try {
-            runnable.run()
+            runnable()
             commitStep(log, EventStatus.PASS)
         } catch (e: RuntimeException) {
             commitStep(log, e)
@@ -174,7 +179,7 @@ object SelenideLogger {
 
     private val eventLoggerListeners: Collection<LogEventListener>
         get() {
-            return listeners.get().values
+            return listeners.values
         }
 
     /**
@@ -184,12 +189,11 @@ object SelenideLogger {
      * @return the listener being removed
     </T> */
     fun <T : LogEventListener?> removeListener(name: String): T? {
-        val listeners = listeners.get()
-        return if (listeners == null) null else listeners.remove(name) as T?
+        return this.listeners.remove(name) as T?
     }
 
     fun removeAllListeners() {
-        listeners.remove()
+        listeners.clear()
     }
 
     /**
@@ -200,7 +204,6 @@ object SelenideLogger {
      * corresponding name has been called in current thread.
      */
     fun hasListener(name: String): Boolean {
-        val listeners: Map<String, LogEventListener>? = listeners.get()
-        return listeners != null && listeners.containsKey(name)
+        return this.listeners.containsKey(name)
     }
 }

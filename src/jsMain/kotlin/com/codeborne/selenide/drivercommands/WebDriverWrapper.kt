@@ -4,10 +4,9 @@ import com.codeborne.selenide.Browser
 import com.codeborne.selenide.Config
 import com.codeborne.selenide.DownloadsFolder
 import com.codeborne.selenide.Driver
-import com.codeborne.selenide.drivercommands.WebDriverWrapper
 import okio.ExperimentalFileSystem
+import org.lighthousegames.logging.logging
 import org.openqa.selenium.WebDriver
-import org.slf4j.LoggerFactory
 
 /**
  * A `Driver` implementation which uses given webdriver [and proxy].
@@ -44,7 +43,7 @@ class WebDriverWrapper private constructor(
     override val getAndCheckWebDriver: WebDriver
         get() {
             if (webDriver == null || !browserHealthChecker.isBrowserStillOpen(webDriver)) {
-                log.info("Webdriver has been closed meanwhile")
+                log.info { "Webdriver has been closed meanwhile" }
                 close()
                 throw IllegalStateException("Webdriver has been closed meanwhile")
             }
@@ -67,7 +66,7 @@ class WebDriverWrapper private constructor(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(WebDriverWrapper::class)
+        private val log = logging(WebDriverWrapper::class.simpleName)
     }
 
     init {

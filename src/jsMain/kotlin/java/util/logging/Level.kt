@@ -1,5 +1,7 @@
 package java.util.logging
 
 enum class Level {
-    ALL
+    ALL;
+
+    fun intValue(): Int = TODO("Not yet implemented")
 }

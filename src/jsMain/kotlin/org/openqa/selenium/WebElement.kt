@@ -11,6 +11,7 @@ interface WebElement: SearchContext {
     suspend fun click()
     suspend fun getAttribute(name: String): String?
     suspend fun getCssValue(propertyName: String): String
+    suspend fun getLocation(): Location
     suspend fun sendKeys(keys: String)
     suspend fun sendKeys(key: Keys)
 }

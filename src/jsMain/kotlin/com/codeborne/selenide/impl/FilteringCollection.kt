@@ -7,8 +7,8 @@ import org.openqa.selenium.WebElement
 class FilteringCollection(private val originalCollection: CollectionSource, private val filter: Condition) :
     CollectionSource {
     private var alias = Alias.NONE
-    override suspend fun getElements(): List<WebElement> = runBlocking {
-        originalCollection.getElements()
+    override suspend fun getElements(): List<WebElement> {
+        return originalCollection.getElements()
             .filter { webElement -> filter.apply(originalCollection.driver(), webElement) }
     }
     override suspend fun getElement(index: Int): WebElement {
@@ -18,8 +18,8 @@ class FilteringCollection(private val originalCollection: CollectionSource, priv
             .firstOrNull()
             ?: throw IndexOutOfBoundsException("Index: $index")
     }
-    override fun description(): String {
-        return alias.getOrElse { originalCollection.description() + ".filter(" + filter + ')' }
+    override suspend fun description(): String {
+        return alias.getOrElseAsync { originalCollection.description() + ".filter(" + filter + ')' }
     }
     override fun driver(): Driver {
         return originalCollection.driver()

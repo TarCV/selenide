@@ -7,9 +7,9 @@ import com.codeborne.selenide.DragAndDropOptions.Companion.usingJavaScript
 import com.codeborne.selenide.DragAndDropOptions.DragAndDropMethod
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.filecontent.dragAndDropJs
 import com.codeborne.selenide.impl.Arguments
 import com.codeborne.selenide.impl.ElementFinder
-import com.codeborne.selenide.impl.FileContent
 import com.codeborne.selenide.impl.WebElementSource
 import com.codeborne.selenide.impl.WebElementWrapper
 import org.openqa.selenium.By
@@ -22,7 +22,7 @@ open class DragAndDropTo : Command<SelenideElement> {
         target.shouldBe(Condition.visible)
         val options = Arguments(args)
             .ofType(DragAndDropOptions::class)
-            .orElse(usingJavaScript())
+            ?: usingJavaScript()
         dragAndDrop(locator, target, options)
         return proxy
     }
@@ -63,10 +63,7 @@ open class DragAndDropTo : Command<SelenideElement> {
     }
 
     private fun dragAndDropUsingJavaScript(driver: Driver, from: WebElement, to: WebElement) {
-        driver.executeJavaScript<Any>(js.content + "; dragAndDrop(arguments[0], arguments[1])", from, to)
+        driver.executeJavaScript<Any>("$dragAndDropJs; dragAndDrop(arguments[0], arguments[1])", from, to)
     }
 
-    companion object {
-        private val js = FileContent("drag_and_drop_script.js")
-    }
 }

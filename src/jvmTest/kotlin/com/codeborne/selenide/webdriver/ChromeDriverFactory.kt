@@ -22,7 +22,7 @@ open class ChromeDriverFactory : AbstractDriverFactory() {
     }
     override fun create(config: Config, browser: Browser, proxy: Proxy?, browserDownloadsFolder: File?): WebDriver {
         val chromeOptions = createCapabilities(config, browser, proxy, browserDownloadsFolder)
-        log.debug("Chrome options: {}", chromeOptions)
+        log.debug("Chrome options: ${}", chromeOptions)
         return ChromeDriver(buildService(config), chromeOptions)
     }
     protected open fun buildService(config: Config): ChromeDriverService {
@@ -36,7 +36,7 @@ open class ChromeDriverFactory : AbstractDriverFactory() {
         val options = ChromeOptions()
         options.setHeadless(config.headless())
         if (config.browserBinary().isNotEmpty()) {
-            log.info("Using browser binary: {}", config.browserBinary())
+            log.info("Using browser binary: ${}", config.browserBinary())
             options.setBinary(config.browserBinary())
         }
         options.addArguments(createChromeArguments(config, browser))
@@ -115,7 +115,7 @@ open class ChromeDriverFactory : AbstractDriverFactory() {
             chromePreferences["download.default_directory"] = browserDownloadsFolder.absolutePath
         }
         chromePreferences.putAll(parsePreferencesFromString(System.getProperty("chromeoptions.prefs", "")))
-        log.debug("Using chrome preferences: {}", chromePreferences)
+        log.debug("Using chrome preferences: ${}", chromePreferences)
         return chromePreferences
     }
     private fun parsePreferencesFromString(preferencesString: String): Map<String, Any> {
@@ -125,13 +125,13 @@ open class ChromeDriverFactory : AbstractDriverFactory() {
             val keyValue = removeQuotes(pref).split("=").toTypedArray()
             if (keyValue.size == 1) {
                 log.warn(
-                    "Missing '=' sign while parsing <key=value> pairs from {}. Key '{}' is ignored.",
+                    "Missing '=' sign while parsing <key=value> pairs from ${}. Key '${}' is ignored.",
                     preferencesString, keyValue[0]
                 )
                 continue
             } else if (keyValue.size > 2) {
                 log.warn(
-                    "More than one '=' sign while parsing <key=value> pairs from {}. Key '{}' is ignored.",
+                    "More than one '=' sign while parsing <key=value> pairs from ${}. Key '${}' is ignored.",
                     preferencesString, keyValue[0]
                 )
                 continue

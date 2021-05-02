@@ -2,6 +2,7 @@ package com.codeborne.selenide.ex
 
 import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Driver
+import com.codeborne.selenide.ex.ElementShould.Companion.describe
 import com.codeborne.selenide.impl.ElementDescriber
 import com.codeborne.selenide.impl.Plugins.inject
 import org.openqa.selenium.WebElement

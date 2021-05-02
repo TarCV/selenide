@@ -19,10 +19,10 @@ class LastCollectionElement internal constructor(private val collection: Collect
     private fun <T> lastElementOf(collection: List<T>): T {
         return collection[collection.size - 1]
     }
-    override val searchCriteria: String
-        get() {
-            return collection.description() + ":last"
-        }
+
+    override suspend fun getSearchCriteria(): String {
+        return collection.description() + ":last"
+    }
     override suspend fun createElementNotFoundError(condition: Condition, lastError: Throwable?): ElementNotFound {
         return if (collection.getElements().isEmpty()) {
             ElementNotFound(

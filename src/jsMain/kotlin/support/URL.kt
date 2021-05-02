@@ -1,5 +1,5 @@
 package support
 
-class URL {
+class URL(val url: String) {
     fun toExternalForm(): String = TODO()
 }

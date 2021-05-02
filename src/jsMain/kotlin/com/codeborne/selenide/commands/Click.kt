@@ -5,12 +5,11 @@ import com.codeborne.selenide.ClickOptions
 import com.codeborne.selenide.Command
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
-import com.codeborne.selenide.impl.FileContent
+import com.codeborne.selenide.filecontent.clickJs
 import com.codeborne.selenide.impl.WebElementSource
 import org.openqa.selenium.WebElement
 
 open class Click : Command<Nothing?> {
-    private val jsSource = FileContent("click.js")
     override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Nothing? {
         val driver = locator.driver()
         val webElement = locator.findAndAssertElementIsInteractable()
@@ -70,6 +69,6 @@ open class Click : Command<Nothing?> {
     }
 
     private fun clickViaJS(driver: Driver, element: WebElement, offsetX: Int, offsetY: Int) {
-        driver.executeJavaScript<Any>(jsSource.content, element, offsetX, offsetY)
+        driver.executeJavaScript<Any>(clickJs, element, offsetX, offsetY)
     }
 }

@@ -160,23 +160,21 @@ TODO:
                 !config.proxyEnabled() && authenticationType == AuthenticationType.BASIC
     }
 
-    fun isAbsoluteUrl(relativeOrAbsoluteUrl: String): Boolean {
-        return ABSOLUTE_URL_REGEX.matcher(relativeOrAbsoluteUrl).matches()
+    fun isAbsoluteUrl(relativeOrAbsoluteUrl: String): Boolean = ABSOLUTE_URL_REGEX.matches(relativeOrAbsoluteUrl)
+
+    suspend fun back(driver: Driver) {
+        SelenideLogger.runAsync("back", "") { driver.webDriver.navigate().back() }
     }
 
-    fun back(driver: Driver) {
-        SelenideLogger.run("back", "") { driver.webDriver.navigate().back() }
+    suspend fun forward(driver: Driver) {
+        SelenideLogger.runAsync("forward", "") { driver.webDriver.navigate().forward() }
     }
 
-    fun forward(driver: Driver) {
-        SelenideLogger.run("forward", "") { driver.webDriver.navigate().forward() }
-    }
-
-    fun refresh(driver: Driver) {
-        SelenideLogger.run("refresh", "") { driver.webDriver.navigate().refresh() }
+    suspend fun refresh(driver: Driver) {
+        SelenideLogger.runAsync("refresh", "") { driver.webDriver.navigate().refresh() }
     }
 
     companion object {
-        private val ABSOLUTE_URL_REGEX = kotlin.text.Regex("^[a-zA-Z]+:.*", kotlin.text.Regex.MULTILINE)
+        private val ABSOLUTE_URL_REGEX = kotlin.text.Regex("^[a-zA-Z]+:.*", RegexOption.MULTILINE)
     }
 }

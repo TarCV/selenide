@@ -4,7 +4,6 @@ import com.codeborne.selenide.Browser
 import com.codeborne.selenide.Config
 import com.codeborne.selenide.DownloadsFolder
 import com.codeborne.selenide.Driver
-import com.codeborne.selenide.drivercommands.LazyDriver
 import com.codeborne.selenide.webdriver.WebDriverFactory
 import okio.ExperimentalFileSystem
 import org.openqa.selenium.Proxy
@@ -74,7 +73,7 @@ class LazyDriver internal constructor(
               createDriver()
             } else if (it == null) {
               log.info(
-                "No webdriver is bound to current thread: {} - let's create a new webdriver",
+                "No webdriver is bound to current thread: ${} - let's create a new webdriver",
                 support.System.currentThreadId()
               )
               createDriver()

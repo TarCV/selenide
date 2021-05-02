@@ -13,7 +13,7 @@ import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementSource
 import okio.ExperimentalFileSystem
 import okio.Path
-import org.slf4j.LoggerFactory
+import org.lighthousegames.logging.logging
 
 @ExperimentalFileSystem
 class DownloadFile internal constructor(
@@ -32,7 +32,7 @@ class DownloadFile internal constructor(
         val config = locator.driver().config()
         val options = getDownloadOptions(config, args)
         val timeout = options.getTimeout(config.timeout())
-        log.debug("Download file: {}", options)
+        log.debug { "Download file: $options" }
         return when (options.method) {
 /* TODO:
             FileDownloadMode.HTTPGET -> {
@@ -78,6 +78,6 @@ class DownloadFile internal constructor(
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(DownloadFile::class)
+        private val log = logging(DownloadFile::class.simpleName)
     }
 }

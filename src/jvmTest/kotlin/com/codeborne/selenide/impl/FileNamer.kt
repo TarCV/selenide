@@ -1,7 +1,6 @@
 package com.codeborne.selenide.impl
 
-import support.management.ManagementFactory
-import support.System
+import java.lang.management.ManagementFactory
 
 open class FileNamer {
     /**
@@ -9,7 +8,7 @@ open class FileNamer {
      * Name starts with a current time, making it (more or less) easy to sort those files and find something.
      */
     open fun generateFileName(): String {
-        return "${System.currentTimeMillis()}_${pid()}_${support.System.currentThreadId()}"
+        return "${System.currentTimeMillis()}_${pid()}_${Thread.currentThread().id}"
     }
     private fun pid(): String {
         return REGEX_MXBEAN_NAME.replaceFirst(ManagementFactory.getRuntimeMXBean().name, "$1")

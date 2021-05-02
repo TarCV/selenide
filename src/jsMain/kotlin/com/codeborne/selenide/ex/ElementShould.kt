@@ -17,7 +17,7 @@ class ElementShould internal constructor(
     driver: Driver, message: String, lastError: Throwable?
 ): UIAssertionError(driver, message, lastError) {
     companion object {
-        private val describe = Plugins.inject(
+        internal val describe = Plugins.inject(
             ElementDescriber::class
         )
     }

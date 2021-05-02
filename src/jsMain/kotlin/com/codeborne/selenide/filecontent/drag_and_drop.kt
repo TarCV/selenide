@@ -1,3 +1,6 @@
+package com.codeborne.selenide.filecontent
+
+val dragAndDropJs = """
 function createEvent(typeOfEvent) {
   var event = document.createEvent("CustomEvent");
   event.initCustomEvent(typeOfEvent, true, true, null);
@@ -32,3 +35,4 @@ function dragAndDrop(element, target) {
   var dragEndEvent = createEvent('dragend');
   dispatchEvent(element, dragEndEvent, dropEvent.dataTransfer);
 }
+""".trim()

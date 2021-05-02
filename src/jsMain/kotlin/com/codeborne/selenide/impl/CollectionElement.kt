@@ -16,10 +16,10 @@ class CollectionElement internal constructor(private val collection: CollectionS
     override suspend fun getWebElement(): WebElement {
         return collection.getElement(index)
     }
-    override val searchCriteria: String
-        get() {
-            return collection.description() + '[' + index + ']'
-        }
+
+    override suspend fun getSearchCriteria(): String {
+        return collection.description() + '[' + index + ']'
+    }
     override suspend fun createElementNotFoundError(condition: Condition, lastError: Throwable?): ElementNotFound {
         return if (collection.getElements().isEmpty()) {
             ElementNotFound(

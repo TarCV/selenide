@@ -4,8 +4,8 @@ import com.codeborne.selenide.impl.Html
 import org.openqa.selenium.WebElement
 
 class ExactTextsCaseSensitiveInAnyOrder : ExactTexts {
-    constructor(vararg exactTexts: String) : super(*exactTexts) {}
-    constructor(exactTexts: List<String>) : super(exactTexts) {}
+    constructor(vararg exactTexts: String) : super(*exactTexts)
+    constructor(exactTexts: List<String>) : super(exactTexts)
     override operator fun invoke(elements: List<WebElement>): Boolean {
         if (elements.size != expectedTexts.size) {
             return false

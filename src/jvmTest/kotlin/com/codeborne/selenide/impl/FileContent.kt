@@ -15,7 +15,7 @@ class FileContent(private val filePath: String) {
                 filePath
               )
             )
-            IOUtils.toString(sizzleJs, StandardCharsets.UTF_8)
+            sizzleJs.toString()
         } catch (e: IOException) {
             throw IllegalArgumentException("Cannot load $filePath from classpath", e)
         }

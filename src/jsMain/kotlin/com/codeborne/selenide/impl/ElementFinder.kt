@@ -5,7 +5,6 @@ import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.ex.ElementNotFound
 import org.openqa.selenium.By
-import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebElement
 import support.reflect.Proxy
@@ -54,16 +53,16 @@ class ElementFinder internal constructor(
         }
         return super.createElementNotFoundError(condition, lastError)
     }
-    override val searchCriteria: String
-        get() {
-            return if (parent == null) elementCriteria() else if (parent is SelenideElement) parent.searchCriteria + "/" + elementCriteria() else elementCriteria()
-        }
+
+    override suspend fun getSearchCriteria(): String {
+        return if (parent == null) elementCriteria() else if (parent is SelenideElement) parent.searchCriteria + "/" + elementCriteria() else elementCriteria()
+    }
 
     private fun elementCriteria(): String {
         return if (index == 0) describe.selector(criteria) else describe.selector(criteria) + '[' + index + ']'
     }
     override fun toString(): String {
-        return "{" + description() + '}'
+        return "{" + alias.getOrElse { "parent: $parent, criteria: $criteria" } + '}'
     }
 
     companion object {

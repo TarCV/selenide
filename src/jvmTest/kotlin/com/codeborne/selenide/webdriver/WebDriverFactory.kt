@@ -2,17 +2,16 @@ package com.codeborne.selenide.webdriver
 
 import com.codeborne.selenide.Browser
 import com.codeborne.selenide.Config
+import com.codeborne.selenide.impl.FileHelper
+import okio.ExperimentalFileSystem
+import okio.Path
 import org.openqa.selenium.HasCapabilities
 import org.openqa.selenium.Proxy
 import org.openqa.selenium.UnsupportedCommandException
 import org.openqa.selenium.WebDriver
 import org.slf4j.LoggerFactory
-import support.reflect.IllegalAccessException
-import support.reflect.InstantiationException
 import support.reflect.InvocationTargetException
-import support.reflect.NoSuchMethodException
 import support.reflect.newInstance
-import kotlin.time.milliseconds
 
 class WebDriverFactory {
     private val factories = factories()
@@ -23,15 +22,16 @@ class WebDriverFactory {
 // TODO:        result[Browsers.CHROME] = ChromeDriverFactory::class
         return result
     }
+    @ExperimentalFileSystem
     @kotlin.time.ExperimentalTime
     fun createWebDriver(config: Config, proxy: Proxy?, browserDownloadsFolder: Path?): WebDriver {
-        log.debug("browser={}", config.browser())
-        log.debug("browser.version={}", config.browserVersion())
-        log.debug("remote={}", config.remote())
-        log.debug("browserSize={}", config.browserSize())
-        log.debug("startMaximized={}", config.startMaximized())
+        log.debug("browser=${}", config.browser())
+        log.debug("browser.version=${}", config.browserVersion())
+        log.debug("remote=${}", config.remote())
+        log.debug("browserSize=${}", config.browserSize())
+        log.debug("startMaximized=${}", config.startMaximized())
         if (browserDownloadsFolder != null) {
-            log.debug("downloadsFolder={}", browserDownloadsFolder.absolutePath)
+            log.debug("downloadsFolder=${}", FileHelper.canonicalPath(browserDownloadsFolder))
         }
         val browser = Browser(config.browser(), config.headless())
         val webdriver = createWebDriverInstance(config, browser, proxy, browserDownloadsFolder)
@@ -41,7 +41,7 @@ TODO:        browserResizer.adjustBrowserSize(config, webdriver)
 */
         setLoadTimeout(config, webdriver)
         logBrowserVersion(webdriver)
-// TODO:       log.info("Selenide v. {}", SelenideDriver::class.getPackage().implementationVersion)
+// TODO:       log.info("Selenide v. ${}", SelenideDriver::class.getPackage().implementationVersion)
 // TODO:       logSeleniumInfo()
         return webdriver
     }
@@ -51,9 +51,9 @@ TODO:        browserResizer.adjustBrowserSize(config, webdriver)
         try {
             webdriver.manage().timeouts().pageLoadTimeout(config.pageLoadTimeout().milliseconds)
         } catch (e: UnsupportedCommandException) {
-            log.info("Failed to set page load timeout to {} ms: {}", config.pageLoadTimeout(), e.toString())
+            log.info("Failed to set page load timeout to ${} ms: ${}", config.pageLoadTimeout(), e.toString())
         } catch (e: RuntimeException) {
-            log.error("Failed to set page load timeout to {} ms", config.pageLoadTimeout(), e)
+            log.error("Failed to set page load timeout to ${} ms", config.pageLoadTimeout(), e)
         }
     }
     private fun createWebDriverInstance(
@@ -90,7 +90,7 @@ TODO:        browserResizer.adjustBrowserSize(config, webdriver)
 /*
 TODO:    private fun logSeleniumInfo() {
         val seleniumInfo = BuildInfo()
-        log.info("Selenium WebDriver v. {} build time: {}", seleniumInfo.releaseLabel, seleniumInfo.buildTime)
+        log.info("Selenium WebDriver v. ${} build time: ${}", seleniumInfo.releaseLabel, seleniumInfo.buildTime)
     }
 */
 
@@ -98,11 +98,11 @@ TODO:    private fun logSeleniumInfo() {
         if (webdriver is HasCapabilities) {
             val capabilities = (webdriver as HasCapabilities).capabilities
             log.info(
-                "BrowserName={} Version={} Platform={}",
+                "BrowserName=${} Version=${} Platform=${}",
                 capabilities.browserName, capabilities.version, capabilities.platform
             )
         } else {
-            log.info("BrowserName={}", webdriver::class.simpleName)
+            log.info("BrowserName=${}", webdriver::class.simpleName)
         }
     }
 

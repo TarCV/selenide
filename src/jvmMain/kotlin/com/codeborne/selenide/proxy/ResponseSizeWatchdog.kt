@@ -10,8 +10,8 @@ class ResponseSizeWatchdog : ResponseFilter {
     var threshold = 2 * 1024 * 1024 // 2 MB
     override fun filterResponse(response: HttpResponse, contents: HttpMessageContents, messageInfo: HttpMessageInfo) {
         if (contents.binaryContents.size > threshold) {
-            log.warn("Too large response {}: {} bytes", messageInfo.url, contents.binaryContents.size)
-            log.trace("Response content: {}", contents.textContents)
+            log.warn("Too large response ${}: ${} bytes", messageInfo.url, contents.binaryContents.size)
+            log.trace("Response content: ${}", contents.textContents)
         }
     }
 

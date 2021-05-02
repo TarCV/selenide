@@ -1,5 +1,6 @@
 package com.codeborne.selenide
 
+import kotlinx.coroutines.delay
 import support.System
 import kotlin.time.milliseconds
 
@@ -14,7 +15,7 @@ class Stopwatch(timeoutMs: Long) {
     @kotlin.time.ExperimentalTime
     suspend fun sleep(milliseconds: Long) {
         if (isTimeoutReached) return
-        delay(ms)
+        delay(milliseconds)
     }
 
 }

@@ -3,7 +3,6 @@ package com.codeborne.selenide.impl
 import com.codeborne.selenide.AssertionMode
 import com.codeborne.selenide.Config
 import com.codeborne.selenide.Driver
-import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.Stopwatch
 import com.codeborne.selenide.commands.Commands.Companion.instance
 import com.codeborne.selenide.ex.UIAssertionError
@@ -17,6 +16,9 @@ import okio.IOException
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.WebDriverException
 import support.InvocationHandler
+import support.reflect.InvocationTargetException
+import support.reflect.ReflectiveOperationException
+import support.reflect.invoke
 import kotlin.reflect.KFunction
 import kotlin.time.Duration
 
@@ -90,7 +92,7 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
                 return if (isSelenideElementMethod(method)) {
                     instance.execute<Any>(proxy, webElementSource, method.name, args)
                 } else {
-                  method.invoke(webElementSource.getWebElement(), *args ?: arrayOfNulls(1))
+                  method.invoke(webElementSource.getWebElement(), *args)
                 }
             } catch (e: InvocationTargetException) {
                 e.targetException
@@ -157,7 +159,8 @@ internal open class SelenideElementProxy(private val webElementSource: WebElemen
         )
 
         fun isSelenideElementMethod(method: KFunction<*>): Boolean {
-            return SelenideElement::class.isInstance(method.declaringClass)
+            return false
+// TODO:            return SelenideElement::class.isInstance(method.declaringClass)
         }
 
         fun shouldRetryAfterError(e: Throwable?): Boolean {

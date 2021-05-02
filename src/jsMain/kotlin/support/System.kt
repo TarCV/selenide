@@ -6,4 +6,5 @@ object System {
     fun nanoTime(): Long = TODO()
     fun currentTimeMillis(): Long = TODO()
     fun currentThreadId(): Int = TODO()
+    fun getenv(key: String): String = TODO("Not yet implemented")
 }

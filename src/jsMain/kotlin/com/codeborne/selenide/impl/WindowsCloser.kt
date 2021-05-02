@@ -1,8 +1,8 @@
 package com.codeborne.selenide.impl
 
+import org.lighthousegames.logging.logging
 import org.openqa.selenium.NoSuchWindowException
 import org.openqa.selenium.WebDriver
-import org.slf4j.LoggerFactory
 
 open class WindowsCloser {
     open suspend fun <T: Any> runAndCloseArisedWindows(webDriver: WebDriver, lambda: suspend () -> T): T {
@@ -30,29 +30,25 @@ open class WindowsCloser {
     }
 
     private suspend fun closeWindows(webDriver: WebDriver, windows: Set<String>) {
-        log.info("Path has been opened in a new window, let's close {} new windows", windows.size)
+        log.info { "Path has been opened in a new window, let's close ${windows.size} new windows" }
         for (newWindow in windows) {
             closeWindow(webDriver, newWindow)
         }
     }
 
     private suspend fun closeWindow(webDriver: WebDriver, window: String) {
-        log.info("  Let's close {}", window)
+        log.info { "  Let's close $window" }
         try {
             webDriver.switchTo().window(window)
             webDriver.close()
         } catch (windowHasBeenClosedMeanwhile: NoSuchWindowException) {
-            log.info(
-                "  Failed to close {}: {}",
-                window,
-                Cleanup.of.webdriverExceptionMessage(windowHasBeenClosedMeanwhile)
-            )
+            log.info { "  Failed to close ${window}: ${Cleanup.of.webdriverExceptionMessage(windowHasBeenClosedMeanwhile)}" }
         } catch (e: Exception) {
-            log.warn("  Failed to close {}", window, e)
+            log.warn(e) { "  Failed to close $window" }
         }
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(WindowsCloser::class)
+        private val log = logging(WindowsCloser::class.simpleName)
     }
 }

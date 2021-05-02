@@ -1,7 +1,6 @@
 package com.codeborne.selenide.collections
 
 import com.codeborne.selenide.CollectionCondition
-import com.codeborne.selenide.ElementsCollection
 import com.codeborne.selenide.ElementsCollection.Companion.texts
 import com.codeborne.selenide.ex.DoesNotContainTextsError
 import com.codeborne.selenide.ex.ElementNotFound
@@ -11,7 +10,7 @@ import org.openqa.selenium.WebElement
 class ContainExactTextsCaseSensitive(expectedTexts: List<String>) : CollectionCondition() {
     private val expectedTexts: List<String>
 
-    constructor(vararg expectedTexts: String) : this(listOf<String>(*expectedTexts)) {}
+    constructor(vararg expectedTexts: String) : this(listOf<String>(*expectedTexts))
 
     override operator fun invoke(elements: List<WebElement>): Boolean {
         return if (elements.size < expectedTexts.size) {

@@ -1,17 +1,19 @@
 package com.codeborne.selenide.impl
 
 import com.codeborne.selenide.Driver
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.openqa.selenium.WebElement
 
 class CollectionSnapshot(private val originalCollection: CollectionSource) : CollectionSource {
-    // TODO: make thread-safe:
-    private val _elementsSnapshot: List<WebElement>? = null
+    private val _elementsSnapshot = GlobalScope.async(Dispatchers.Unconfined, start = CoroutineStart.LAZY) {
+        ArrayList(originalCollection.getElements())
+    }
 
     private suspend fun getElementsSnapshot(): List<WebElement> {
-        if (_elementsSnapshot == null) {
-            _elementsSnapshot = ArrayList(originalCollection.getElements())
-        }
-        return _elementsSnapshot
+        return _elementsSnapshot.await()
     }
 
     private var alias = Alias.NONE
@@ -21,8 +23,8 @@ class CollectionSnapshot(private val originalCollection: CollectionSource) : Col
     override suspend fun getElement(index: Int): WebElement {
         return getElementsSnapshot()[index]
     }
-    override fun description(): String {
-        return alias.getOrElse {
+    override suspend fun description(): String {
+        return alias.getOrElseAsync {
             "${originalCollection.description()}.snapshot(${getElementsSnapshot()}.size elements)"
         }
     }

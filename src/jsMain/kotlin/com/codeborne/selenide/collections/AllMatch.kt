@@ -7,6 +7,6 @@ class AllMatch(description: String, predicate: (WebElement) -> Boolean) :
     override operator fun invoke(elements: List<WebElement>): Boolean {
         return if (elements.isEmpty()) {
             false
-        } else elements.allMatch(predicate)
+        } else elements.all(predicate)
     }
 }

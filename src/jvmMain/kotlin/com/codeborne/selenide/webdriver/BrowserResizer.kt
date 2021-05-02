@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 internal class BrowserResizer {
     fun adjustBrowserPosition(config: Config, driver: WebDriver) {
         config.browserPosition()?.let {
-            log.info("Set browser position to {}", it)
+            log.info("Set browser position to ${}", it)
             val coordinates = it.split("x").toTypedArray()
             val x = coordinates[0].toInt()
             val y = coordinates[1].toInt()
@@ -24,7 +24,7 @@ internal class BrowserResizer {
     fun adjustBrowserSize(config: Config, driver: WebDriver) {
       val configBrowserSize = config.browserSize()
       if (configBrowserSize != null && !config.startMaximized()) {
-            log.info("Set browser size to {}", configBrowserSize)
+            log.info("Set browser size to ${}", configBrowserSize)
             val dimension = configBrowserSize.split("x").toTypedArray()
             val width = dimension[0].toInt()
             val height = dimension[1].toInt()
@@ -33,7 +33,7 @@ internal class BrowserResizer {
             try {
                 driver.manage().window().maximize()
             } catch (cannotMaximize: Exception) {
-                log.warn("Cannot maximize {}: {}", driver::class.simpleName, cannotMaximize)
+                log.warn("Cannot maximize ${}: ${}", driver::class.simpleName, cannotMaximize)
             }
         }
     }

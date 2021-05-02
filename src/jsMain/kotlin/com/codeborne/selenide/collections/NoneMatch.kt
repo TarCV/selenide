@@ -7,6 +7,6 @@ class NoneMatch(description: String, predicate: (WebElement) -> Boolean) :
     override operator fun invoke(elements: List<WebElement>): Boolean {
         return if (elements.isEmpty()) {
             false
-        } else elements.noneMatch(predicate)
+        } else elements.none(predicate)
     }
 }

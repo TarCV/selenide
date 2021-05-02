@@ -15,7 +15,7 @@ class CollectionElementByCondition internal constructor(
         return collection.driver()
     }
 
-    override suspend fun getWebElement(): WebElement = {
+    override suspend fun getWebElement(): WebElement {
         val list = collection.getElements()
         for (element in list) {
             if (condition.apply(driver(), element)) {
@@ -24,10 +24,10 @@ class CollectionElementByCondition internal constructor(
         }
         throw ElementNotFound(driver(), description(), condition)
     }
-    override val searchCriteria: String
-        get() {
-            return collection.description() + ".findBy(" + condition + ")"
-        }
+
+    override suspend fun getSearchCriteria(): String {
+        return collection.description() + ".findBy(" + condition + ")"
+    }
 
     companion object {
         fun wrap(collection: CollectionSource, condition: Condition): SelenideElement {

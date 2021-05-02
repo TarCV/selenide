@@ -8,4 +8,4 @@ class DialogTextMismatch(driver: Driver, actualText: String?, expectedText: Stri
                 "\nActual: $actualText" +
                 "\nExpected: $expectedText"
     )
-)
+

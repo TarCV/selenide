@@ -1,17 +1,15 @@
 package com.codeborne.selenide.selector
 
+import com.codeborne.selenide.filecontent.findInShadowRootsJs
 import com.codeborne.selenide.impl.Cleanup
-import com.codeborne.selenide.impl.FileContent
 import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.WrapsDriver
 
 object ByShadow {
-    private val jsSource = FileContent("find-in-shadow-roots.js")
 
     /**
      * Find target elements inside shadow-root that attached to shadow-host.
@@ -30,8 +28,7 @@ object ByShadow {
         return ByShadowCss(target, shadowHost, *innerShadowHosts)
     }
 
-        class ByShadowCss internal constructor(target: String, shadowHost: String, vararg innerShadowHosts: String) :
-        By() {
+    class ByShadowCss internal constructor(target: String, shadowHost: String, vararg innerShadowHosts: String) : By {
         private val shadowHostsChain: MutableList<String>
         private val target: String
         override fun findElement(context: SearchContext): WebElement {
@@ -55,14 +52,14 @@ object ByShadow {
 
         private fun findElementsInDocument(context: JavascriptExecutor): List<WebElement> {
             return context.executeScript(
-                "return " + jsSource.content + "(arguments[0], arguments[1])", target, shadowHostsChain
+                "return $findInShadowRootsJs(arguments[0], arguments[1])", target, shadowHostsChain
             ) as List<WebElement>
         }
 
         private fun findElementsInElement(context: SearchContext): List<WebElement> {
             val js = (context as WrapsDriver).wrappedDriver as JavascriptExecutor
             return js.executeScript(
-                "return " + jsSource.content + "(arguments[0], arguments[1], arguments[2])",
+                "return $findInShadowRootsJs(arguments[0], arguments[1], arguments[2])",
                 target,
                 shadowHostsChain,
                 context
