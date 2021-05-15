@@ -62,7 +62,7 @@ open class DragAndDropTo : Command<SelenideElement> {
         org.openqa.selenium.interactions.Actions(driver.webDriver).dragAndDrop(from, target).perform()
     }
 
-    private fun dragAndDropUsingJavaScript(driver: Driver, from: org.openqa.selenium.WebElement, to: org.openqa.selenium.WebElement) {
+    private suspend fun dragAndDropUsingJavaScript(driver: Driver, from: org.openqa.selenium.WebElement, to: org.openqa.selenium.WebElement) {
         driver.executeJavaScript<Any>("$dragAndDropJs; dragAndDrop(arguments[0], arguments[1])", from, to)
     }
 

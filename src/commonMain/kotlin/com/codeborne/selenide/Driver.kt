@@ -21,11 +21,11 @@ interface Driver {
         return hasWebDriverStarted() && webDriver is org.openqa.selenium.JavascriptExecutor
     }
 
-    fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T {
+    suspend fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T {
         return (webDriver as org.openqa.selenium.JavascriptExecutor).executeScript(jsCode, *arguments) as T
     }
 
-    fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T {
+    suspend fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T {
         return (webDriver as org.openqa.selenium.JavascriptExecutor).executeAsyncScript(jsCode, *arguments) as T
     }
 
@@ -34,15 +34,17 @@ interface Driver {
             webDriver.manage().deleteAllCookies()
         }
     }
-    val userAgent: String
-        get() = executeJavaScript("return navigator.userAgent;")
+
+    suspend fun getUserAgent(): String = executeJavaScript("return navigator.userAgent;")
+
     fun source(): String {
         return webDriver.pageSource
     }
     fun url(): String {
         return webDriver.currentUrl
     }
-    fun getCurrentFrameUrl(): String = executeJavaScript<Any>("return window.location.href").toString()
+    suspend fun getCurrentFrameUrl(): String = executeJavaScript<Any>("return window.location.href").toString()
+
     fun switchTo(): SelenideTargetLocator {
         return SelenideTargetLocator(this)
     }

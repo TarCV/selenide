@@ -1,8 +1,12 @@
+buildscript {
+    ext {
+        junitVersion = '5.7.1'
+    }
+}
 plugins {
   id 'org.jetbrains.kotlin.multiplatform'
   id "org.jetbrains.kotlin.plugin.allopen"
 }
-def junitVersion = '5.7.1'
 kotlin {
     jvm {
         withJava()
@@ -15,6 +19,7 @@ kotlin {
     }
     js {
         nodejs()
+        binaries.executable()
 
         compilations.all {
             kotlinOptions {
@@ -27,35 +32,42 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("com.benasher44:uuid:0.2.4")
-                implementation 'co.touchlab:stately-isolate:1.1.4-a1'
-                implementation 'co.touchlab:stately-iso-collections:1.1.4-a1'
+                api("org.seleniumhq.selenium:selenium-java:$seleniumVersion") {
+                    exclude group: 'net.bytebuddy', module: 'byte-buddy'
+                }
+                implementation('org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3')
+                implementation("com.squareup.okio:okio-multiplatform:3.0.0-alpha.4")
+
+                implementation project(':')
             }
         }
-        jsMain {
+        jvmMain {
             dependencies {
-                implementation project(':')
-// TODO:               implementation project(':').sourceSets.test.output
-
-                // Version should match the version in 'appium-base-driver'
-                implementation(npm('webdriverio', '6.0.2', false))
-                implementation('org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.4.3')
-                implementation("com.squareup.okio:okio-js:3.0.0-alpha.4")
-                implementation("org.lighthousegames:logging-js:1.0.0")
+                implementation("org.lighthousegames:logging-jvm:1.0.0")
             }
         }
         jvmTest {
             dependencies {
+                apply from: rootProject.file('gradle/dependencies.gradle')
                 implementation project(':')
                 implementation project(':').sourceSets.test.output
 
-                apply from: rootProject.file('gradle/dependencies.gradle')
+//                apply from: rootProject.file('gradle/dependencies.gradle')
 
+                implementation('com.willowtreeapps.assertk:assertk-jvm:0.23.1')
+                implementation("org.lighthousegames:logging-jvm:1.0.0")
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
                 compileOnly("org.junit.jupiter:junit-jupiter-api:$junitVersion")
                 implementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
                 implementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
                 implementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+            }
+        }
+    }
+    targets {
+        configure([]) {
+            tasks.getByName(compilations.main.compileKotlinTaskName).kotlinOptions {
+                jvmTarget = "1.8"
             }
         }
     }

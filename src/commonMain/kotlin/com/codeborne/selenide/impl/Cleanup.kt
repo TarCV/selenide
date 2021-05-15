@@ -1,6 +1,8 @@
 package com.codeborne.selenide.impl
 
 import org.openqa.selenium.InvalidSelectorException
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 class Cleanup {
     fun webdriverExceptionMessage(webDriverException: Throwable): String {
@@ -59,6 +61,8 @@ class Cleanup {
         private val REGEX_SELENIUM_WARNING =
             Regex("(.*)\\(WARNING: The server did not provide any stacktrace.*")
         private val REGEX_SELENIUM_PACKAGE = Regex("org\\.openqa\\.selenium\\.(.*)")
+
+        @JvmField
         val of = Cleanup()
     }
 }

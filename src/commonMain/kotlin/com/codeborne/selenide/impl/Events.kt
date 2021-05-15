@@ -7,7 +7,7 @@ import org.openqa.selenium.StaleElementReferenceException
 import org.openqa.selenium.WebElement
 
 class Events internal constructor(private val log: KmLog) {
-    fun fireEvent(driver: Driver, element: org.openqa.selenium.WebElement, vararg event: String?) {
+    suspend fun fireEvent(driver: Driver, element: org.openqa.selenium.WebElement, vararg event: String?) {
         try {
             executeJavaScript(driver, element, *event)
         } catch (ignore: org.openqa.selenium.StaleElementReferenceException) {
@@ -16,7 +16,7 @@ class Events internal constructor(private val log: KmLog) {
         }
     }
 
-    fun executeJavaScript(driver: Driver, element: org.openqa.selenium.WebElement, vararg event: String?) {
+    suspend fun executeJavaScript(driver: Driver, element: org.openqa.selenium.WebElement, vararg event: String?) {
         driver.executeJavaScript<Any>(JS_CODE_TO_TRIGGER_EVENT, element, event)
     }
 

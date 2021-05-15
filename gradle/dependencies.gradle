@@ -7,6 +7,7 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-servlet:${jettyVersion}")
     implementation("commons-fileupload:commons-fileupload:${commonsFileuploadVersion}")
     implementation("org.mockito:mockito-core:$mockitoVersion")
+    implementation("org.mockito.kotlin:mockito-kotlin:3.1.0")
     implementation("org.assertj:assertj-core:$assertjVersion")
     implementation("com.automation-remarks:video-recorder-junit5:$videoRecorderVersion") {
         exclude group: 'org.awaitility'

@@ -55,7 +55,7 @@ class SetValue : Command<SelenideElement> {
         }
     }
 
-    private fun setValueByJs(driver: Driver, element: org.openqa.selenium.WebElement, text: String): String? {
+    private suspend fun setValueByJs(driver: Driver, element: org.openqa.selenium.WebElement, text: String): String? {
         return driver.executeJavaScript(
             "return (function(webelement, text) {" +
                     "if (webelement.getAttribute('readonly') != undefined) return 'Cannot change value of readonly element';" +

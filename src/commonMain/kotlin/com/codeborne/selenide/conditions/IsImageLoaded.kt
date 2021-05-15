@@ -10,7 +10,7 @@ class IsImageLoaded : Condition("is image") {
     }
 
     companion object {
-        fun isImage(driver: Driver, webElement: org.openqa.selenium.WebElement): Boolean {
+        suspend fun isImage(driver: Driver, webElement: org.openqa.selenium.WebElement): Boolean {
             return driver.executeJavaScript(
                 "return arguments[0].tagName.toLowerCase() === 'img' && " +
                         "arguments[0].complete && " +

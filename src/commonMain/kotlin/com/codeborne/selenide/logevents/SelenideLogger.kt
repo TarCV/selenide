@@ -6,6 +6,7 @@ import com.codeborne.selenide.logevents.LogEvent.EventStatus
 import org.lighthousegames.logging.logging
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 import kotlin.time.Duration
 
 /**
@@ -31,8 +32,8 @@ object SelenideLogger {
         listeners[name] = listener
     }
 
-    // TODO:    @JvmSynthetic
     @kotlin.time.ExperimentalTime
+    @JvmSynthetic
     fun beginStep(source: String, methodName: String, vararg args: Any?): SelenideLog {
         return if (args.isEmpty()) {
             beginStep(source, methodName)
@@ -96,6 +97,7 @@ object SelenideLogger {
         return if (args.size == 1) args[0].toString() else args.contentToString()
     }
 
+    @JvmStatic
     fun beginStep(source: String, subject: String): SelenideLog {
         val listeners = eventLoggerListeners
         val log = SelenideLog(source, subject)

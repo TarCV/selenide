@@ -16,7 +16,7 @@ final class SelenideDriverFinalCleanupThreadTest {
     WebDriver driver = mock(WebDriver.class);
     CloseDriverCommand closeDriverCommand = mock(CloseDriverCommand.class);
 
-    new SelenideDriverFinalCleanupThread(config, driver, null, closeDriverCommand).run();
+    new SelenideDriverFinalCleanupThread(config, driver, null, closeDriverCommand).invoke();
 
     verify(closeDriverCommand).close(config, driver, null);
     verifyNoMoreInteractions(closeDriverCommand);

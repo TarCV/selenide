@@ -1,5 +1,7 @@
 package com.codeborne.selenide
 
+import kotlin.jvm.JvmStatic
+
 
 class DragAndDropOptions(val method: DragAndDropMethod) {
 
@@ -20,10 +22,12 @@ class DragAndDropOptions(val method: DragAndDropMethod) {
     }
 
     companion object {
+        @JvmStatic
         fun usingJavaScript(): DragAndDropOptions {
             return DragAndDropOptions(DragAndDropMethod.JS)
         }
 
+        @JvmStatic
         fun usingActions(): DragAndDropOptions {
             return DragAndDropOptions(DragAndDropMethod.ACTIONS)
         }

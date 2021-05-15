@@ -1,4 +1,4 @@
-package support.integration.server;
+package integration.server;
 
 import java.util.Map;
 

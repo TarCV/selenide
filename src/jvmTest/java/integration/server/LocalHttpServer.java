@@ -1,4 +1,4 @@
-package support.integration.server;
+package integration.server;
 
 import org.apache.commons.fileupload.FileItem;
 import org.eclipse.jetty.server.Connector;

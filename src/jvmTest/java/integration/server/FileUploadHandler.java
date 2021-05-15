@@ -1,4 +1,4 @@
-package support.integration.server;
+package integration.server;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -27,7 +27,7 @@ class FileUploadHandler extends BaseHandler {
   @Override
   public Result post(HttpServletRequest request, HttpServletResponse response) {
     DiskFileItemFactory factory = new DiskFileItemFactory();
-    factory.setRepository(new Path(System.getProperty("java.io.tmpdir")));
+    factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
     ServletFileUpload upload = new ServletFileUpload(factory);
     upload.setHeaderEncoding(UTF_8.name());
     try {

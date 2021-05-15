@@ -8,6 +8,6 @@ package com.codeborne.selenide.logevents
  * @see SelenideLogger
  */
 interface LogEventListener {
-    fun afterEvent(currentLog: LogEvent)
-    fun beforeEvent(currentLog: LogEvent)
+    fun afterEvent(logEvent: LogEvent)
+    fun beforeEvent(logEvent: LogEvent)
 }

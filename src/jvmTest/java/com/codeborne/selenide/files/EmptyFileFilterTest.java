@@ -1,5 +1,6 @@
 package com.codeborne.selenide.files;
 
+import okio.Path;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -13,11 +14,11 @@ final class EmptyFileFilterTest {
 
   @Test
   void matchesAnyFile() {
-    assertThat(filter.match(new DownloadedFile(new File(""), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File("cv.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File("cv1.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File(" cv.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File("cv.pdf "), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("")), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("cv.pdf")), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("cv1.pdf")), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File(" cv.pdf")), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("cv.pdf ")), emptyMap()))).isTrue();
   }
 
   @Test

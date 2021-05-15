@@ -1,5 +1,7 @@
 package com.codeborne.selenide.impl
 
+import kotlin.jvm.JvmField
+
 
 class Html {
     fun matches(text: String, regex: String): Boolean {
@@ -28,6 +30,8 @@ class Html {
 
     companion object {
         private val REGEX_SPACES = kotlin.text.Regex("[\\s\\n\\r\u00a0]+")
+
+        @JvmField
         var text = Html()
     }
 }

@@ -35,7 +35,7 @@ open class Click : Command<Nothing?> {
     }
 
     // should be removed after deleting SelenideElement.click(int offsetX, int offsetY);
-    protected fun click(driver: Driver, element: org.openqa.selenium.WebElement, offsetX: Int, offsetY: Int) {
+    protected suspend fun click(driver: Driver, element: org.openqa.selenium.WebElement, offsetX: Int, offsetY: Int) {
         if (driver.config().clickViaJs()) {
             clickViaJS(driver, element, offsetX, offsetY)
         } else {
@@ -47,7 +47,7 @@ open class Click : Command<Nothing?> {
         }
     }
 
-    private fun click(driver: Driver, webElement: org.openqa.selenium.WebElement, clickOptions: ClickOptions) {
+    private suspend fun click(driver: Driver, webElement: org.openqa.selenium.WebElement, clickOptions: ClickOptions) {
         when (clickOptions.clickOption()) {
             ClickMethod.DEFAULT -> {
                 defaultClick(driver, webElement, clickOptions.offsetX(), clickOptions.offsetY())
@@ -68,7 +68,7 @@ open class Click : Command<Nothing?> {
             .perform()
     }
 
-    private fun clickViaJS(driver: Driver, element: org.openqa.selenium.WebElement, offsetX: Int, offsetY: Int) {
+    private suspend fun clickViaJS(driver: Driver, element: org.openqa.selenium.WebElement, offsetX: Int, offsetY: Int) {
         driver.executeJavaScript<Any>(clickJs, element, offsetX, offsetY)
     }
 }

@@ -1,6 +1,7 @@
 package com.codeborne.selenide
 
 import com.codeborne.selenide.drivercommands.Navigator
+import com.codeborne.selenide.drivercommands.WebDriverWrapper
 import com.codeborne.selenide.impl.ElementFinder
 import com.codeborne.selenide.impl.PageObjectFactory
 import com.codeborne.selenide.impl.Plugins
@@ -12,6 +13,8 @@ import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import support.net.URL
+import kotlin.jvm.JvmOverloads
+import kotlin.time.ExperimentalTime
 
 /**
  * "Selenide driver" is a container for WebDriver + proxy server + settings
@@ -19,24 +22,15 @@ import support.net.URL
 @ExperimentalFileSystem
 open class SelenideDriver(private val config: Config, private val driver: Driver) {
 
-/*
-TODO:    @ExperimentalTime
-    constructor(config: Config, listeners: List<WebDriverEventListener> = emptyList()) : this(
-        config,
-        LazyDriver(config, null, listeners)
-    ) {
-    }
-*/
-
-    /*
-TODO:    constructor(
-        config: Config, webDriver: WebDriver, selenideProxy: SelenideProxyServer?,
+    @JvmOverloads
+    constructor(
+        config: Config, webDriver: org.openqa.selenium.WebDriver, selenideProxy: /*SelenideProxyServer*/Nothing? = null,
         browserDownloadsFolder: DownloadsFolder = SharedDownloadsFolder(config.downloadsFolder())
-    ) {
-        this.config = config
-        driver = WebDriverWrapper(config, webDriver, selenideProxy, browserDownloadsFolder)
-    }
-*/
+    ): this(
+        config,
+        WebDriverWrapper(config, webDriver, selenideProxy, browserDownloadsFolder)
+    )
+
     fun config(): Config {
         return config
     }
@@ -115,8 +109,8 @@ TODO:    constructor(
         navigator.forward(driver())
     }
 
-    fun updateHash(hash: String) {
-        SelenideLogger.run("updateHash", hash) {
+    suspend fun updateHash(hash: String) {
+        SelenideLogger.runAsync("updateHash", hash) {
             val localHash = if (hash[0] == '#') hash.substring(1) else hash
             executeJavaScript<Any>("window.location.hash='$localHash'")
         }
@@ -147,22 +141,23 @@ TODO:    constructor(
         driver.close()
     }
 
-    fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T? {
+    suspend fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T? {
         return driver().executeJavaScript(jsCode, *arguments)
     }
 
-    fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T? {
+    suspend fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T? {
         return driver().executeAsyncJavaScript(jsCode, *arguments)
     }
-    val focusedElement: org.openqa.selenium.WebElement?
-        get() = executeJavaScript<org.openqa.selenium.WebElement>("return document.activeElement")
+
+    suspend fun getFocusedElement(): org.openqa.selenium.WebElement? =
+        executeJavaScript<org.openqa.selenium.WebElement>("return document.activeElement")
 
     @kotlin.time.ExperimentalTime
     fun Wait(): SelenideWait {
         return SelenideWait(webDriver, config().timeout(), config().pollingInterval())
     }
 
-    fun zoom(factor: Double) {
+    suspend fun zoom(factor: Double) {
         executeJavaScript<Any>(
             "document.body.style.transform = 'scale(' + arguments[0] + ')';" +
                     "document.body.style.transformOrigin = '0 0';",
@@ -229,11 +224,11 @@ TODO:    constructor(
     val webDriverLogs: WebDriverLogs
         get() = WebDriverLogs(driver())
 
-    fun clearBrowserLocalStorage() {
+    suspend fun clearBrowserLocalStorage() {
         executeJavaScript<Any>("localStorage.clear();")
     }
 
-    fun atBottom(): Boolean {
+    suspend fun atBottom(): Boolean {
         return executeJavaScript("return window.pageYOffset + window.innerHeight >= document.body.scrollHeight")
           ?: false // TODO: was unsafe in java code
     }
@@ -247,10 +242,10 @@ TODO:    constructor(
     fun source(): String? {
         return webDriver.pageSource
     }
-    val currentFrameUrl: String
-        get() = executeJavaScript<Any>("return window.location.href").toString()
-    val userAgent: String
-        get() = driver().userAgent
+
+    suspend fun getCurrentFrameUrl(): String = executeJavaScript<Any>("return window.location.href").toString()
+
+    suspend fun getUserAgent(): String = driver().getUserAgent()
 
     /**
      * Take a screenshot of the current page

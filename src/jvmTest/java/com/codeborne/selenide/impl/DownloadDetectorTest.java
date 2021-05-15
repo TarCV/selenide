@@ -3,6 +3,8 @@ package com.codeborne.selenide.impl;
 import com.codeborne.selenide.files.DownloadedFile;
 import java.util.HashMap;
 import java.util.Map;
+
+import okio.Path;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -18,8 +20,8 @@ final class DownloadDetectorTest {
 
   @Test
   void responseWithContentDispositionHeaderHasHighRank() {
-    DownloadedFile response1 = new DownloadedFile(new File("cv.pdf"), withContentDisposition("attachment; filename=cv.pdf"));
-    DownloadedFile response2 = new DownloadedFile(new File("script.js"), withContentType("application/javascript"));
+    DownloadedFile response1 = new DownloadedFile(Path.get("cv.pdf"), withContentDisposition("attachment; filename=cv.pdf"));
+    DownloadedFile response2 = new DownloadedFile(Path.get("script.js"), withContentType("application/javascript"));
 
     assertThat(detector.compare(response1, response2)).isEqualTo(-1);
     assertThat(detector.compare(response2, response1)).isEqualTo(1);
@@ -27,8 +29,8 @@ final class DownloadDetectorTest {
 
   @Test
   void htmlResponseHasLowRank() {
-    DownloadedFile response1 = new DownloadedFile(new File("some-file.txt"), withContentType("application/octet-stream"));
-    DownloadedFile response2 = new DownloadedFile(new File("event.json"), withContentType("application/json"));
+    DownloadedFile response1 = new DownloadedFile(Path.get("some-file.txt"), withContentType("application/octet-stream"));
+    DownloadedFile response2 = new DownloadedFile(Path.get("event.json"), withContentType("application/json"));
 
     assertThat(detector.compare(response1, response2)).isEqualTo(-1);
     assertThat(detector.compare(response2, response1)).isEqualTo(1);
@@ -64,10 +66,10 @@ final class DownloadDetectorTest {
     return map;
   }
 
-  private File fileCreatedSecondsAgo(String name, int secondsAgo) {
+  private Path fileCreatedSecondsAgo(String name, int secondsAgo) {
     File file = mock(File.class);
     when(file.getName()).thenReturn(name);
     when(file.lastModified()).thenReturn(now - 1000L * secondsAgo);
-    return file;
+    return Path.get(file);
   }
 }

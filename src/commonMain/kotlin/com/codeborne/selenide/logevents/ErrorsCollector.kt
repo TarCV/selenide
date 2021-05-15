@@ -8,13 +8,13 @@ import com.codeborne.selenide.logevents.SelenideLogger.hasListener
 
 class ErrorsCollector : LogEventListener {
     private val errors: MutableList<Throwable?> = ArrayList()
-    override fun afterEvent(currentLog: LogEvent) {
-        if (currentLog.status === EventStatus.FAIL) {
-            errors.add(currentLog.error)
+    override fun afterEvent(logEvent: LogEvent) {
+        if (logEvent.status === EventStatus.FAIL) {
+            errors.add(logEvent.error)
         }
     }
 
-    override fun beforeEvent(currentLog: LogEvent) {
+    override fun beforeEvent(logEvent: LogEvent) {
         // ignore
     }
 

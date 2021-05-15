@@ -1,5 +1,6 @@
 package com.codeborne.selenide.files;
 
+import okio.Path;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -13,10 +14,10 @@ final class FilenameRegexFilterTest {
 
   @Test
   void matchesFileByNameUsingGivenRegularExpression() {
-    assertThat(filter.match(new DownloadedFile(new Path("cv-100.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new Path("cv100.pdf"), emptyMap()))).isFalse();
-    assertThat(filter.match(new DownloadedFile(new Path("cv.pdf"), emptyMap()))).isFalse();
-    assertThat(filter.match(new DownloadedFile(new Path("cv-ten.pdf"), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(Path.get("cv-100.pdf"), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(Path.get("cv100.pdf"), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(Path.get("cv.pdf"), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(Path.get("cv-ten.pdf"), emptyMap()))).isFalse();
   }
 
   @Test

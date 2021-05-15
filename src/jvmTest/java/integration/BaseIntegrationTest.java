@@ -1,7 +1,9 @@
-package support.integration;
+package integration;
 
 import com.codeborne.selenide.Browser;
+import com.codeborne.selenide.impl.FileHelper;
 import integration.server.LocalHttpServer;
+import okio.Path;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,9 +51,9 @@ public abstract class BaseIntegrationTest {
   }
 
   private static void setUpVideoRecorder() {
-    Path videoFolder = new Path(System.getProperty("selenide.reportsFolder", "build/reports/tests"));
+    Path videoFolder = Path.get(System.getProperty("selenide.reportsFolder", "build/reports/tests"));
     ensureFolderExists(videoFolder);
-    System.setProperty("video.folder", videoFolder.getAbsolutePath());
+    System.setProperty("video.folder", FileHelper.canonicalPath(videoFolder).toString());
     System.setProperty("video.enabled", String.valueOf(!browser().isHeadless()));
     System.setProperty("video.mode", String.valueOf(ANNOTATED));
   }

@@ -22,7 +22,7 @@ class PseudoElementPropertyWithValue(
         return "$name $pseudoElementName {$propertyName: $expectedPropertyValue;}"
     }
 
-    private fun getPseudoElementPropertyValue(driver: Driver, element: org.openqa.selenium.WebElement): String {
+    private suspend fun getPseudoElementPropertyValue(driver: Driver, element: org.openqa.selenium.WebElement): String {
         val propertyValue = driver.executeJavaScript<String>(JS_CODE, element, pseudoElementName, propertyName)
         return propertyValue ?: ""
     }

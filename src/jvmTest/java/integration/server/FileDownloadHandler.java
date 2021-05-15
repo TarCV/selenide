@@ -1,4 +1,4 @@
-package support.integration.server;
+package integration.server;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

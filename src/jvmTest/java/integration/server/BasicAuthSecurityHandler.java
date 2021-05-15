@@ -1,4 +1,4 @@
-package support.integration.server;
+package integration.server;
 
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;

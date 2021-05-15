@@ -1,5 +1,6 @@
 package com.codeborne.selenide.files;
 
+import okio.Path;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -11,16 +12,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 final class DownloadedFileTest {
   @Test
   void hasContentDispositionHeader() {
-    DownloadedFile file1 = new DownloadedFile(new File("x"), header("content-disposition", "filename=prices.csv"));
-    DownloadedFile file2 = new DownloadedFile(new File("x"), header("", ""));
+    DownloadedFile file1 = new DownloadedFile(Path.get(new File("x")), header("content-disposition", "filename=prices.csv"));
+    DownloadedFile file2 = new DownloadedFile(Path.get(new File("x")), header("", ""));
     assertThat(file1.hasContentDispositionHeader()).isTrue();
     assertThat(file2.hasContentDispositionHeader()).isFalse();
   }
 
   @Test
   void getContentType() {
-    DownloadedFile file1 = new DownloadedFile(new File("x"), header("content-type", "application/pdf"));
-    DownloadedFile file2 = new DownloadedFile(new File("x"), header("", ""));
+    DownloadedFile file1 = new DownloadedFile(Path.get(new File("x")), header("content-type", "application/pdf"));
+    DownloadedFile file2 = new DownloadedFile(Path.get(new File("x")), header("", ""));
     assertThat(file1.getContentType()).isEqualTo("application/pdf");
     assertThat(file2.getContentType()).isNull();
   }

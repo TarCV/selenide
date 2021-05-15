@@ -15,6 +15,7 @@ import support.System
 abstract class AbstractDriverFactory : DriverFactory {
     // This was used in java version:
     // TODO: private val fileNamer = FileNamer()
+
     @ExperimentalFileSystem
     protected fun webdriverLog(config: Config): Path {
         val logFolder = FileHelper.ensureFolderExists(FileHelper.canonicalPath(config.reportsFolder().toPath()))
@@ -24,12 +25,6 @@ abstract class AbstractDriverFactory : DriverFactory {
         return logFile
     }
 
-    /* TODO: protected fun <DS : DriverService?, B : DriverService.Builder<DS, *>> withLog(config: Config, dsBuilder: B): DS {
-        if (config.webdriverLogsEnabled()) {
-            dsBuilder.withLogFile(webdriverLog(config))
-        }
-        return dsBuilder.build()
-    }*/
     fun createCommonCapabilities(config: Config, browser: Browser, proxy: /* TODO: Proxy*/Any?): org.openqa.selenium.MutableCapabilities {
         val capabilities = org.openqa.selenium.remote.DesiredCapabilities()
 /* TODO:

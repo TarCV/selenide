@@ -1,5 +1,6 @@
 package com.codeborne.selenide.files;
 
+import okio.Path;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -13,14 +14,14 @@ final class ExtensionFilterTest {
 
   @Test
   void matchesFileByExtension() {
-    assertThat(filter.match(new DownloadedFile(new File("cv.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File("report.pdf"), emptyMap()))).isTrue();
-    assertThat(filter.match(new DownloadedFile(new File("report.PDF"), emptyMap()))).isFalse();
-    assertThat(filter.match(new DownloadedFile(new File("cv.pdff"), emptyMap()))).isFalse();
-    assertThat(filter.match(new DownloadedFile(new File("cv.ppdf"), emptyMap()))).isFalse();
-    assertThat(filter.match(new DownloadedFile(new File("cv.pdf.gz"), emptyMap()))).isFalse();
-    assertThat(filter.match(new DownloadedFile(new File("cv.xpdf"), emptyMap()))).isFalse();
-    assertThat(filter.match(new DownloadedFile(new File("cv.pdfx"), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("cv.pdf")), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("report.pdf")), emptyMap()))).isTrue();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("report.PDF")), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("cv.pdff")), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("cv.ppdf")), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("cv.pdf.gz")), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("cv.xpdf")), emptyMap()))).isFalse();
+    assertThat(filter.match(new DownloadedFile(Path.get(new File("cv.pdfx")), emptyMap()))).isFalse();
   }
 
   @Test

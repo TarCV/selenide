@@ -1,4 +1,4 @@
-package support.integration.server;
+package integration.server;
 
 import java.util.Objects;
 import java.util.stream.Stream;

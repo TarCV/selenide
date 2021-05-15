@@ -3,7 +3,7 @@ package com.codeborne.selenide.files
 import okio.ExperimentalFileSystem
 
 
-internal class FilenameRegexFilter(fileNameRegex: String) : FileFilter {
+class FilenameRegexFilter(fileNameRegex: String) : FileFilter {
     private val fileNameRegex: kotlin.text.Regex = kotlin.text.Regex(fileNameRegex)
 
     @ExperimentalFileSystem

@@ -1,5 +1,7 @@
 package com.codeborne.selenide.impl
 
+import kotlin.jvm.JvmStatic
+
 
 class Screenshot(val image: String?, val source: String?) {
 
@@ -20,6 +22,7 @@ class Screenshot(val image: String?, val source: String?) {
     }
 
     companion object {
+        @JvmStatic
         fun none(): Screenshot {
             return Screenshot(null as String?, null)
         }

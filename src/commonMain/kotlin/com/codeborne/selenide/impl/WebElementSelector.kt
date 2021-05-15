@@ -15,7 +15,7 @@ import org.openqa.selenium.WebElement
  * Thanks to http://selenium.polteq.com/en/injecting-the-sizzle-css-selector-library/
  */
 open class WebElementSelector {
-    fun findElement(driver: Driver, context: org.openqa.selenium.SearchContext, selector: org.openqa.selenium.By): org.openqa.selenium.WebElement {
+    suspend fun findElement(driver: Driver, context: org.openqa.selenium.SearchContext, selector: org.openqa.selenium.By): org.openqa.selenium.WebElement {
         checkThatXPathNotStartingFromSlash(context, selector)
         if (driver.config().selectorMode() === SelectorMode.CSS || selector !is ByCssSelector) {
             return findElement(context, selector)
@@ -26,7 +26,7 @@ open class WebElementSelector {
         }
         return webElements[0]
     }
-    fun findElements(driver: Driver, context: org.openqa.selenium.SearchContext, selector: org.openqa.selenium.By): List<org.openqa.selenium.WebElement> {
+    suspend fun findElements(driver: Driver, context: org.openqa.selenium.SearchContext, selector: org.openqa.selenium.By): List<org.openqa.selenium.WebElement> {
         checkThatXPathNotStartingFromSlash(context, selector)
         return if (driver.config().selectorMode() === SelectorMode.CSS || selector !is ByCssSelector) {
             findElements(context, selector)
@@ -56,7 +56,7 @@ open class WebElementSelector {
             }
         }
     }
-    protected fun evaluateSizzleSelector(
+    protected suspend fun evaluateSizzleSelector(
         driver: Driver,
         context: org.openqa.selenium.SearchContext?,
         sizzleCssSelector: ByCssSelector
@@ -72,13 +72,13 @@ open class WebElementSelector {
         ) else driver.executeJavaScript("return Sizzle(arguments[0])", sizzleSelector)
     }
 
-    protected fun injectSizzleIfNeeded(driver: Driver) {
+    protected suspend fun injectSizzleIfNeeded(driver: Driver) {
         if (!sizzleLoaded(driver)) {
             injectSizzle(driver)
         }
     }
 
-    protected fun sizzleLoaded(driver: Driver): Boolean {
+    protected suspend fun sizzleLoaded(driver: Driver): Boolean {
         return try {
             driver.executeJavaScript("return typeof Sizzle != 'undefined'")
         } catch (e: org.openqa.selenium.WebDriverException) {
@@ -87,7 +87,7 @@ open class WebElementSelector {
     }
 
     // TODO: was synchronized in Java code
-    protected fun injectSizzle(driver: Driver) = driver.executeJavaScript<Any>(sizzleJs)
+    protected suspend fun injectSizzle(driver: Driver) = driver.executeJavaScript<Any>(sizzleJs)
 
     companion object {
         var instance = WebElementSelector()

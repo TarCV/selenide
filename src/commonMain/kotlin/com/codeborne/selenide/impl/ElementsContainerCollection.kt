@@ -21,8 +21,8 @@ class ElementsContainerCollection(
     private val listType: kotlin.reflect.KClass<*>,
     private val genericTypes: Array<KType>,
     private val selector: org.openqa.selenium.By
-) : AbstractList<ElementsContainer>() {
-    override fun get(index: Int): ElementsContainer {
+) {
+    fun get(index: Int): ElementsContainer {
         val self: SelenideElement = wrap(driver, parent, selector, index)
         return try {
             pageFactory.initElementsContainer(driver, field, self, listType, genericTypes)
@@ -30,12 +30,12 @@ class ElementsContainerCollection(
             throw PageObjectException("Failed to initialize field $field", e)
         }
     }
-    override val size: Int
-        get() {
-            return try {
-                WebElementSelector.instance.findElements(driver, parent, selector).size
-            } catch (e: org.openqa.selenium.NoSuchElementException) {
-                throw ElementNotFound(driver, selector.toString(), Condition.exist, e)
-            }
+
+    suspend fun getSize(): Int {
+        return try {
+            WebElementSelector.instance.findElements(driver, parent, selector).size
+        } catch (e: org.openqa.selenium.NoSuchElementException) {
+            throw ElementNotFound(driver, selector.toString(), Condition.exist, e)
         }
+    }
 }

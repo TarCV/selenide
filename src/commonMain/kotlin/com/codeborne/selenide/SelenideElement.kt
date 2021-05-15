@@ -580,7 +580,7 @@ interface SelenideElement : org.openqa.selenium.WebElement, org.openqa.selenium.
      *
      * @see com.codeborne.selenide.commands.Find
      */
-    fun find(selector: org.openqa.selenium.By): SelenideElement?
+    fun find(selector: org.openqa.selenium.By): SelenideElement
 
     /**
      * ATTENTION! This method doesn't start any search yet!

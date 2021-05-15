@@ -13,4 +13,4 @@
  * "./gradle opera"
  */
 
-package support.integration;
+package integration;

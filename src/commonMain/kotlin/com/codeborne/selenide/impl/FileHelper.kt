@@ -53,6 +53,7 @@ object FileHelper {
     }
 
     @ExperimentalFileSystem
+    @JvmStatic
     fun ensureFolderExists(folder: Path): Path {
         if (!exists(canonicalPath(folder))) {
             log.info { "Creating folder: $folder" }
@@ -108,6 +109,7 @@ object FileHelper {
     }
 
     @ExperimentalFileSystem
+    @JvmStatic
     fun canonicalPath(path: Path): Path {
         return fileSystem.canonicalize(path)
     }

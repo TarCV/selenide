@@ -3,7 +3,6 @@ package com.codeborne.selenide.impl;
 import com.codeborne.selenide.SelenideConfig;
 import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.SharedDownloadsFolder;
 import com.codeborne.selenide.ex.ElementNotFound;
 import com.codeborne.selenide.ex.ElementShould;
 import com.codeborne.selenide.logevents.LogEvent;
@@ -26,7 +25,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +35,6 @@ import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.value;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.impl.SelenideElementProxy.isSelenideElementMethod;
 import static com.codeborne.selenide.impl.SelenideElementProxy.shouldRetryAfterError;
 import static com.codeborne.selenide.logevents.LogEvent.EventStatus.FAIL;
 import static com.codeborne.selenide.logevents.LogEvent.EventStatus.PASS;
@@ -55,7 +52,7 @@ final class SelenideElementProxyTest implements WithAssertions {
     .screenshots(false)
     .timeout(3)
     .pollingInterval(1);
-  private final SelenideDriver driver = new SelenideDriver(config, webdriver, null, new SharedDownloadsFolder("build/downloads/123"));
+  private final SelenideDriver driver = new SelenideDriver(config, webdriver);
 
   @BeforeEach
   void mockWebDriver() {
@@ -182,19 +179,19 @@ final class SelenideElementProxyTest implements WithAssertions {
     }
 
     @Override
-    public void afterEvent(LogEvent currentLog) {
-      String format = String.format("{%s} %s: %s", currentLog.getElement(), currentLog.getSubject(), currentLog.getStatus());
+    public void afterEvent(LogEvent logEvent) {
+      String format = String.format("{%s} %s: %s", logEvent.getElement(), logEvent.getSubject(), logEvent.getStatus());
       log.info(format);
-      assertThat(currentLog.getElement())
+      assertThat(logEvent.getElement())
         .contains(expectSelector);
-      assertThat(currentLog.getSubject())
+      assertThat(logEvent.getSubject())
         .contains(expectSubject);
-      assertThat(currentLog.getStatus())
+      assertThat(logEvent.getStatus())
         .isEqualTo(expectStatus);
     }
 
     @Override
-    public void beforeEvent(@NotNull LogEvent currentLog) {
+    public void beforeEvent(@NotNull LogEvent logEvent) {
 
     }
   }

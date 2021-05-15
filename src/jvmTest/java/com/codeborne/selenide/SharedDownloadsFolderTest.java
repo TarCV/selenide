@@ -1,5 +1,6 @@
 package com.codeborne.selenide;
 
+import okio.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -15,7 +16,7 @@ final class SharedDownloadsFolderTest {
     touch(new File(folder, "file1"));
     touch(new File(folder, "file2"));
 
-    new SharedDownloadsFolder(folder.getAbsoluteFile()).cleanupBeforeDownload();
+    new SharedDownloadsFolder(folder.getAbsoluteFile().toString()).cleanupBeforeDownload();
 
     assertThat(new File(folder, "file1")).exists();
     assertThat(new File(folder, "file2")).exists();

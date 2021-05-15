@@ -26,6 +26,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
+import kotlin.jvm.JvmStatic
 import kotlin.time.Duration
 import kotlin.time.milliseconds
 
@@ -357,10 +358,10 @@ class ElementsCollection(private val collection: CollectionSource) {
         }
     }
 
-    suspend fun asFlow(): Flow<SelenideElement> {
+    suspend fun asFlow(startIndex: Int = 0): Flow<SelenideElement> {
         val fetchedCollection = fetch()
         return flow {
-            var index = 0
+            var index = startIndex
             while (fetchedCollection.getElements().size > index) {
                 emit(wrap(fetchedCollection, index++))
             }
@@ -439,6 +440,8 @@ class ElementsCollection(private val collection: CollectionSource) {
     private fun driver(): Driver {
         return collection.driver()
     }
+
+    suspend fun isEmpty(): Boolean = getElements().isEmpty()
 
     companion object {
         private val describe = Plugins.injectA(

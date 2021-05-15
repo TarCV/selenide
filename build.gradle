@@ -133,6 +133,8 @@ kotlin {
                 apply from: rootProject.file('gradle/dependencies.gradle')
 
                 implementation('org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.3')
+                implementation('org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.3')
+                implementation('com.willowtreeapps.assertk:assertk-jvm:0.23.1')
                 implementation("org.lighthousegames:logging-jvm:1.0.0")
 
                 api("org.seleniumhq.selenium:selenium-java:$seleniumVersion") {
@@ -166,11 +168,5 @@ kotlin {
         }
     }
 }
-repositories {
-    mavenCentral()
-}
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    commonMainImplementation 'org.apache.httpcomponents.client5:httpclient5:5.1-beta1'
-}
 
+apply from: rootProject.file('gradle/tests.gradle')

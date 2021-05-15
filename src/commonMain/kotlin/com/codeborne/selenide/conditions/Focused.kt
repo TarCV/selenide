@@ -11,7 +11,7 @@ class Focused : Condition("focused") {
         ElementDescriber::class
     )
 
-    private fun getFocusedElement(driver: Driver): org.openqa.selenium.WebElement? {
+    private suspend fun getFocusedElement(driver: Driver): org.openqa.selenium.WebElement? {
         return driver.executeJavaScript("return document.activeElement")
     }
 

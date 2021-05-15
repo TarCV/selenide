@@ -12,7 +12,7 @@ class GetOwnText : Command<String> {
     }
 
     companion object {
-        fun getOwnText(driver: Driver, element: org.openqa.selenium.WebElement): String {
+        suspend fun getOwnText(driver: Driver, element: org.openqa.selenium.WebElement): String {
             return driver.executeJavaScript(
                 """return Array.prototype.filter.call(arguments[0].childNodes, function (element) {
   return element.nodeType === Node.TEXT_NODE;

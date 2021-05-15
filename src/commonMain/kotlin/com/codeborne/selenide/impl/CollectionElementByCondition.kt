@@ -6,6 +6,7 @@ import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.ex.ElementNotFound
 import org.openqa.selenium.WebElement
 import support.reflect.Proxy
+import kotlin.jvm.JvmStatic
 
 class CollectionElementByCondition internal constructor(
     private val collection: CollectionSource,
@@ -30,6 +31,7 @@ class CollectionElementByCondition internal constructor(
     }
 
     companion object {
+        @JvmStatic
         fun wrap(collection: CollectionSource, condition: Condition): SelenideElement {
             return Proxy.newProxyInstance(
                  null, arrayOf<kotlin.reflect.KClass<*>>(SelenideElement::class),

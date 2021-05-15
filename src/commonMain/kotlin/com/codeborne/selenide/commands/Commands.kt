@@ -6,6 +6,7 @@ import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementSource
 import okio.ExperimentalFileSystem
+import kotlin.jvm.JvmStatic
 
 @ExperimentalFileSystem
 open class Commands protected constructor() {
