@@ -18,24 +18,24 @@ internal class SelectedTextTest : ITest() {
     }
 
     @Test
-    fun selectedTextIsCorrect() {
+    fun selectedTextIsCorrect() = runBlockingTest {
         makeSelection(0, 5)
         selectableElement.shouldHave(selectedText("this "))
     }
 
     @Test
-    fun selectedTextIsCaseSensitive() {
+    fun selectedTextIsCaseSensitive() = runBlockingTest {
         makeSelection(5, 10)
         selectableElement.shouldNotHave(selectedText("Is a "))
     }
 
     @Test
-    fun selectedTextReturnsEmptyWhenNothingIsSelected() {
+    fun selectedTextReturnsEmptyWhenNothingIsSelected() = runBlockingTest {
         selectableElement.shouldHave(selectedText(""))
     }
 
     @Test
-    fun reappliedSelectionsAreDetectedCorrectly() {
+    fun reappliedSelectionsAreDetectedCorrectly() = runBlockingTest {
         makeSelection(2, 4)
         makeSelection(3, 13)
         selectableElement.shouldHave(selectedText("s is a lon"))
@@ -44,7 +44,7 @@ internal class SelectedTextTest : ITest() {
     private val selectableElement: SelenideElement
         get() = `$`(By.id("selected"))
 
-    private fun makeSelection(start: Int, tail: Int) {
+    private fun makeSelection(start: Int, tail: Int) = runBlockingTest {
         `$`(By.id("start")).setValue(start.toString())
         `$`(By.id("tail")).setValue(tail.toString())
         `$`(By.id("selectable")).click()

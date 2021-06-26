@@ -57,8 +57,8 @@ internal class ToStringCommandTest : WithAssertions {
         assertThat(elementString)
             .isEqualTo(
                 String.format(
-                    "Element not found {By.name: }%n" +
-                            "Expected: visible%n" +
+                    "Element not found {By.name: }\n" +
+                            "Expected: visible\n" +
                             "Timeout: 0 ms."
                 )
             )

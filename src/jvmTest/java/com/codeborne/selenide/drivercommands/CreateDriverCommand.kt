@@ -45,7 +45,7 @@ class CreateDriverCommand internal constructor(private val fileNamer: FileNamer)
         )
         val webDriver = addListeners(webdriver, listeners)
         Runtime.getRuntime().addShutdownHook(
-            thread {
+            thread(start = false) {
                 SelenideDriverFinalCleanupThread(config, webDriver, null).invoke()
             }
         )

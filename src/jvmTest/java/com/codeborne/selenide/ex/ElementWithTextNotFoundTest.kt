@@ -23,11 +23,11 @@ internal class ElementWithTextNotFoundTest : WithAssertions {
         )
         assertThat(elementWithTextNotFound).hasMessage(
             String.format(
-                "Element with text not found%n" +
-                        "Actual: [Niff, Naff, Nuff]%n" +
-                        "Expected: [Piff, Paff, Puff]%n" +
-                        "Collection: .characters%n" +
-                        "Timeout: 9 s.%n" +
+                "Element with text not found\n" +
+                        "Actual: [Niff, Naff, Nuff]\n" +
+                        "Expected: [Piff, Paff, Puff]\n" +
+                        "Collection: .characters\n" +
+                        "Timeout: 9 s.\n" +
                         "Caused by: NoSuchElementException: ups"
             )
         )
@@ -43,12 +43,12 @@ internal class ElementWithTextNotFoundTest : WithAssertions {
         )
         assertThat(elementWithTextNotFound).hasMessage(
             String.format(
-                "Element with text not found%n" +
-                        "Actual: [Niff, Naff, Nuff]%n" +
-                        "Expected: [Piff, Paff, Puff]%n" +
-                        "Because: we expect favorite characters%n" +
-                        "Collection: .characters%n" +
-                        "Timeout: 9 s.%n" +
+                "Element with text not found\n" +
+                        "Actual: [Niff, Naff, Nuff]\n" +
+                        "Expected: [Piff, Paff, Puff]\n" +
+                        "Because: we expect favorite characters\n" +
+                        "Collection: .characters\n" +
+                        "Timeout: 9 s.\n" +
                         "Caused by: NoSuchElementException: ups"
             )
         )

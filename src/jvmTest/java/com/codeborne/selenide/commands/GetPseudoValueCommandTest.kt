@@ -8,8 +8,8 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.WithAssertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.openqa.selenium.WebElement
 
 @ExperimentalCoroutinesApi
@@ -28,10 +28,10 @@ internal class GetPseudoValueCommandTest : WithAssertions {
     fun execute() = runBlockingTest {
         Mockito.`when`(
             driver.executeJavaScript<Any>(
-                ArgumentMatchers.any(),
-                ArgumentMatchers.any(),
-                ArgumentMatchers.any(),
-                ArgumentMatchers.any()
+                any(),
+                any(),
+                any(),
+                any()
             )
         ).thenReturn("hello")
         assertThat<Any>(GetPseudoValue().execute(proxy, locator, arrayOf<Any>(":before", "content")))

@@ -64,8 +64,8 @@ internal class AnyMatchTest {
                 startsWith(
                     String.format(
                         "Collection matcher error" +
-                                "%nExpected: any of elements to match [Predicate description] predicate" +
-                                "%nCollection: Collection description"
+                                "\nExpected: any of elements to match [Predicate description] predicate" +
+                                "\nCollection: Collection description"
                         )
                     )
             }

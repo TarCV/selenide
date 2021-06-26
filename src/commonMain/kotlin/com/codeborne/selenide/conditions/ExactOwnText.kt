@@ -12,7 +12,7 @@ class ExactOwnText(private val expectedText: String) : Condition("exact own text
     }
 
     override fun toString(): String {
-        return "${name} '{expectedText}'"
+        return "${name} '${expectedText}'"
     }
 
     override suspend fun actualValue(driver: Driver, element: org.openqa.selenium.WebElement): String {

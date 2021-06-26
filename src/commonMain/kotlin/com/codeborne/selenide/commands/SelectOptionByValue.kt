@@ -8,8 +8,8 @@ import com.codeborne.selenide.impl.WebElementSource
 import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.support.ui.Select
 
-class SelectOptionByValue : Command<Nothing?> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Nothing? {
+class SelectOptionByValue : Command<Unit> {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): Unit {
         val select = Select(locator.getWebElement())
         require(!(args == null || args.isEmpty())) { "Missing arguments" }
       val firstArg = args[0]
@@ -21,7 +21,6 @@ class SelectOptionByValue : Command<Nothing?> {
                 selectOptionByValue(locator, select, value)
             }
         }
-        return null
     }
 
     private suspend fun selectOptionByValue(selectField: WebElementSource, select: Select, value: String) {

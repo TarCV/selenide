@@ -29,13 +29,13 @@ internal class InvalidXPathTest : ITest() {
     }
 
     @Test
-    fun usingInvalidXPathShouldThrowInvalidSelectorException() {
+    fun usingInvalidXPathShouldThrowInvalidSelectorException() = runBlockingTest {
         assertThat { `$`(By.xpath("##[id")).shouldNot(Condition.exist) }.isFailure()
             .isInstanceOf(InvalidSelectorException::class.java)
     }
 
     @Test
-    fun lookingForMissingElementByXPathShouldFail() {
+    fun lookingForMissingElementByXPathShouldFail() = runBlockingTest {
         assertThat { `$`(By.xpath("//tagga")).should(Condition.exist) }.isFailure()
             .all {
                 isInstanceOf(ElementNotFound::class.java)
@@ -44,7 +44,7 @@ internal class InvalidXPathTest : ITest() {
     }
 
     @Test
-    fun `$x_insideElement_cannotUseXpathStartingWithSlash`() {
+    fun `$x_insideElement_cannotUseXpathStartingWithSlash`() = runBlockingTest {
         assertThat { `$`("#apostrophes-and-quotes").`$x`("//a").should(Condition.exist) }.isFailure()
             .all {
                 isInstanceOf(IllegalArgumentException::class.java)
@@ -53,7 +53,7 @@ internal class InvalidXPathTest : ITest() {
     }
 
     @Test
-    fun find_insideElement_cannotUseXpathStartingWithSlash() {
+    fun find_insideElement_cannotUseXpathStartingWithSlash() = runBlockingTest {
         assertThat { `$`("#apostrophes-and-quotes").`$`(By.xpath("//a")).should(Condition.exist) }.isFailure()
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessage("XPath starting from / searches from root")

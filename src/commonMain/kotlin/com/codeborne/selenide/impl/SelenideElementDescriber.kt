@@ -2,7 +2,6 @@ package com.codeborne.selenide.impl
 
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
-import org.openqa.selenium.By
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 

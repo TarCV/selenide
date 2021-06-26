@@ -11,9 +11,9 @@ final class DialogTextMismatchTest implements WithAssertions {
     Driver driver = new DriverStub();
     DialogTextMismatch dialogTextMismatch = new DialogTextMismatch(driver, "Actual text", "Expected text");
 
-    assertThat(dialogTextMismatch).hasMessage(String.format("Dialog text mismatch%n" +
-      "Actual: Actual text%n" +
-      "Expected: Expected text%n" +
+    assertThat(dialogTextMismatch).hasMessage(String.format("Dialog text mismatch\n" +
+      "Actual: Actual text\n" +
+      "Expected: Expected text\n" +
       "Timeout: 0 ms."));
   }
 }

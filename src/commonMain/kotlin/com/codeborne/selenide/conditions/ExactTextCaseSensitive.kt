@@ -11,6 +11,6 @@ class ExactTextCaseSensitive(private val expectedText: String) : Condition("exac
     }
 
     override fun toString(): String {
-        return "${name} '{expectedText}'"
+        return "${name} '${expectedText}'"
     }
 }

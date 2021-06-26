@@ -19,7 +19,7 @@ internal class ElementEnabledTest : ITest() {
     }
 
     @Test
-    fun canCheckIfElementIsEnabled() {
+    fun canCheckIfElementIsEnabled() = runBlockingTest {
         `$`("#login-button").shouldNotBe(Condition.enabled)
         `$`("#login-button").shouldBe(Condition.disabled)
         `$`("#username").shouldBe(Condition.enabled)
@@ -27,13 +27,13 @@ internal class ElementEnabledTest : ITest() {
     }
 
     @Test
-    fun unexistingElementIsNotEnabled() {
+    fun unexistingElementIsNotEnabled() = runBlockingTest {
         assertThat { `$`("#unexisting-element").shouldBe(Condition.enabled) }.isFailure()
             .isInstanceOf(ElementNotFound::class.java)
     }
 
     @Test
-    fun hiddenElementIsEnabled() {
+    fun hiddenElementIsEnabled() = runBlockingTest {
         `$`("#captcha").shouldBe(Condition.enabled)
         `$`("#captcha").shouldNotBe(Condition.disabled)
     }

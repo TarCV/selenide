@@ -21,8 +21,8 @@ internal class ElementNotFoundTest : WithAssertions {
     fun elementNotFoundWithByCriteria() {
         val elementNotFoundById = ElementNotFound(driver, By.id("Hello"), Condition.exist)
         val expectedMessage = String.format(
-            "Element not found {By.id: Hello}%n" +
-                    "Expected: exist%n" +
+            "Element not found {By.id: Hello}\n" +
+                    "Expected: exist\n" +
                     "Timeout: 0 ms."
         )
         assertThat(elementNotFoundById).hasMessage(expectedMessage)
@@ -32,8 +32,8 @@ internal class ElementNotFoundTest : WithAssertions {
     fun elementNotFoundWithStringCriteria() {
         val elementNotFoundById = ElementNotFound(driver, "Hello", Condition.exist)
         val expectedMessage = String.format(
-            "Element not found {Hello}%n" +
-                    "Expected: exist%n" +
+            "Element not found {Hello}\n" +
+                    "Expected: exist\n" +
                     "Timeout: 0 ms."
         )
         assertThat(elementNotFoundById).hasMessage(expectedMessage)
@@ -43,9 +43,9 @@ internal class ElementNotFoundTest : WithAssertions {
     fun elementNotFoundWithStringCriteriaAndThrowableError() {
         val elementNotFoundById = ElementNotFound(driver, "Hello", Condition.exist, Throwable("Error message"))
         val expectedMessage = String.format(
-            "Element not found {Hello}%n" +
-                    "Expected: exist%n" +
-                    "Timeout: 0 ms.%n" +
+            "Element not found {Hello}\n" +
+                    "Expected: exist\n" +
+                    "Timeout: 0 ms.\n" +
                     "Caused by: java.lang.Throwable: Error message"
         )
         assertThat(elementNotFoundById).hasMessage(expectedMessage)
@@ -63,9 +63,9 @@ internal class ElementNotFoundTest : WithAssertions {
             Throwable("Error message")
         )
         val expectedMessage = String.format(
-            "Element not found {mock collection description}%n" +
-                    "Expected: Exact texts [One, Two, Three]%n" +
-                    "Timeout: 0 ms.%n" +
+            "Element not found {mock collection description}\n" +
+                    "Expected: Exact texts [One, Two, Three]\n" +
+                    "Timeout: 0 ms.\n" +
                     "Caused by: java.lang.Throwable: Error message"
         )
         assertThat(elementNotFoundById).hasMessage(expectedMessage)

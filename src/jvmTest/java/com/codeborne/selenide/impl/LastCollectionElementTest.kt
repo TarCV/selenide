@@ -46,7 +46,7 @@ internal class LastCollectionElementTest : WithAssertions {
         val notFoundError = lastCollectionElement
             .createElementNotFoundError(be(Condition.empty), StaleElementReferenceException("stale error"))
         assertThat(notFoundError)
-            .hasMessageStartingWith(String.format("Element not found {ul#employees li.employee:last}%nExpected: visible"))
+            .hasMessageStartingWith(String.format("Element not found {ul#employees li.employee:last}\nExpected: visible"))
     }
 
     @Test
@@ -54,7 +54,7 @@ internal class LastCollectionElementTest : WithAssertions {
         val notFoundError = lastCollectionElement
             .createElementNotFoundError(be(Condition.empty), StaleElementReferenceException("stale error"))
         assertThat(notFoundError)
-            .hasMessageStartingWith(String.format("Element not found {ul#employees li.employee:last}%nExpected: be empty"))
+            .hasMessageStartingWith(String.format("Element not found {ul#employees li.employee:last}\nExpected: be empty"))
     }
 
     @Test

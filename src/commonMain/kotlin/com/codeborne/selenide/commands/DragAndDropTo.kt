@@ -12,12 +12,11 @@ import com.codeborne.selenide.impl.Arguments
 import com.codeborne.selenide.impl.ElementFinder
 import com.codeborne.selenide.impl.WebElementSource
 import com.codeborne.selenide.impl.WebElementWrapper
-import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
 
 open class DragAndDropTo : Command<SelenideElement> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): SelenideElement {
         val target = findTarget(locator.driver(), args)
         target.shouldBe(Condition.visible)
         val options = Arguments(args)

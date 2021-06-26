@@ -8,8 +8,8 @@ import com.codeborne.selenide.impl.WebElementSource
 import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.support.ui.Select
 
-class SelectOptionByTextOrIndex : Command<Nothing?> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Nothing? {
+class SelectOptionByTextOrIndex : Command<Unit> {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): Unit {
         require(!(args == null || args.isEmpty())) { "Missing arguments" }
       val firstArg = args[0]
       if (firstArg is Array<*> && firstArg[0] is String) { // TODO: why check in Java code was incomplete?
@@ -17,7 +17,6 @@ class SelectOptionByTextOrIndex : Command<Nothing?> {
         } else if (firstArg is IntArray) {
             selectOptionsByIndexes(locator, firstArg)
         }
-        return null
     }
 
     private suspend fun selectOptionsByTexts(selectField: WebElementSource, texts: Array<String>) {

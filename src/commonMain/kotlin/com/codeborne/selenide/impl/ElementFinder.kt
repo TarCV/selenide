@@ -4,10 +4,8 @@ import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.ex.ElementNotFound
-import org.openqa.selenium.By
 import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebElement
-import support.reflect.Proxy
 
 class ElementFinder internal constructor(
     private val driver: Driver,
@@ -15,9 +13,8 @@ class ElementFinder internal constructor(
     private val criteria: org.openqa.selenium.By,
     private val index: Int
 ) : WebElementSource() {
-    private val describe = Plugins.injectA(
-        ElementDescriber::class
-    )
+    private val describe = Plugins.elementDescriber
+
     override fun find(proxy: SelenideElement, arg: Any, index: Int): SelenideElement {
         return if (arg is org.openqa.selenium.By) wrap(driver, proxy, arg, index) else wrap(
             driver, proxy, org.openqa.selenium.By.cssSelector(arg as String), index
@@ -44,7 +41,7 @@ class ElementFinder internal constructor(
         ) else super.findAll()
     }
     private val searchContext: org.openqa.selenium.SearchContext
-        get() = if (parent == null) driver().webDriver else if (parent is SelenideElement) parent.toWebElement() else parent
+        get() = if (parent == null) driver().webDriver else parent
     override suspend fun createElementNotFoundError(condition: Condition, lastError: Throwable?): ElementNotFound {
         if (parent is SelenideElement) {
             parent.should(Condition.exist)
@@ -54,8 +51,14 @@ class ElementFinder internal constructor(
         return super.createElementNotFoundError(condition, lastError)
     }
 
-    override suspend fun getSearchCriteria(): String {
-        return if (parent == null) elementCriteria() else if (parent is SelenideElement) parent.searchCriteria + "/" + elementCriteria() else elementCriteria()
+    override fun getSearchCriteria(): String {
+        return if (parent == null) {
+            elementCriteria()
+        } else if (parent is SelenideElement) {
+            parent.searchCriteria + "/" + elementCriteria()
+        } else {
+            elementCriteria()
+        }
     }
 
     private fun elementCriteria(): String {
@@ -82,21 +85,16 @@ class ElementFinder internal constructor(
             return wrap(driver, null, criteria, 0)
         }
 
-        fun wrap(driver: Driver, parent: org.openqa.selenium.SearchContext?, criteria: org.openqa.selenium.By, index: Int): SelenideElement {
-            return wrap(driver, SelenideElement::class, parent, criteria, index)
-        }
-
-        fun <T : SelenideElement> wrap(
+        fun wrap(
             driver: Driver,
-            clazz: kotlin.reflect.KClass<T>,
             parent: org.openqa.selenium.SearchContext?,
             criteria: org.openqa.selenium.By,
             index: Int
-        ): T {
-            return Proxy.newProxyInstance(
-                null, arrayOf<kotlin.reflect.KClass<*>>(clazz),
+        ): SelenideElement {
+            return SelenideElement(
                 SelenideElementProxy(ElementFinder(driver, parent, criteria, index))
-            ) as T
+            )
         }
+
     }
 }

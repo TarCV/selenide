@@ -79,8 +79,8 @@ internal class ItemWithTextTest : WithAssertions {
                         String.format(
                             String.format(
                                 "Element with text not found" +
-                                    "%nActual: %s" +
-                                    "%nExpected: %s",
+                                    "\nActual: %s" +
+                                    "\nExpected: %s",
                                 texts,
                                 listOf(expectedText)
                             )

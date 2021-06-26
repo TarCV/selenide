@@ -1,5 +1,5 @@
 package com.codeborne.selenide.ex
 
-import support.reflect.ReflectiveOperationException
+import java.lang.ReflectiveOperationException
 
 class PageObjectException(message: String?, cause: ReflectiveOperationException?) : RuntimeException(message, cause)

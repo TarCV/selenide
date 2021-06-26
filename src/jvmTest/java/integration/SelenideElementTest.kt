@@ -38,14 +38,14 @@ internal class SelenideElementTest : ITest() {
 
     @Test
     fun  // @Ignore(value = "probably a bug in Selenide")
-            selenideElementChainedWithByTextSelector() {
+            selenideElementChainedWithByTextSelector() = runBlockingTest {
         `$`("#status").`$`(withText("Smith")).shouldBe(Condition.visible)
         `$`("#status").`$`(byText("Bob Smith")).shouldBe(Condition.visible)
     }
 
     @Test
     @Disabled(value = "It fails, please check if it is right")
-    fun selenideElementChainedElementByTextWhenTextIsDirectContentOfTheParent() {
+    fun selenideElementChainedElementByTextWhenTextIsDirectContentOfTheParent() = runBlockingTest {
         // e.g. <div id="radioButton><img/>Мастер<div/></div>
         `$`("#radioButtons").`$`(withText("Мастер")).shouldBe(Condition.visible) //Fails
     }

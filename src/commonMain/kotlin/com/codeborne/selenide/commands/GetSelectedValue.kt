@@ -15,7 +15,7 @@ class GetSelectedValue : Command<String?> {
     constructor(getSelectedOption: Command<SelenideElement>) {
         this.getSelectedOption = getSelectedOption
     }
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): String? {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): String? {
         val option: org.openqa.selenium.WebElement? = getSelectedOption.execute(proxy, locator, args)
         return option?.getAttribute("value")
     }

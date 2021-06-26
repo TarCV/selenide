@@ -61,7 +61,7 @@ internal class SizeGreaterThanTest : WithAssertions {
             .isNotNull()
             .all {
                 startsWith(
-                    (String.format("List size mismatch: expected: > 10, actual: 0, collection: Collection description%nElements: []"))
+                    (String.format("List size mismatch: expected: > 10, actual: 0, collection: Collection description\nElements: []"))
                 )
             }
     }

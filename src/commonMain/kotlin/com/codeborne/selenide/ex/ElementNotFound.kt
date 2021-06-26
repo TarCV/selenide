@@ -3,7 +3,6 @@ package com.codeborne.selenide.ex
 import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.impl.CollectionSource
-import org.openqa.selenium.By
 
 class ElementNotFound : UIAssertionError {
     constructor(driver: Driver, searchCriteria: org.openqa.selenium.By, expectedCondition: Condition?) : this(

@@ -5,11 +5,11 @@ import org.openqa.selenium.Location
 import org.openqa.selenium.SearchContext
 
 actual interface WebElement: org.openqa.selenium.SearchContext {
-    actual val isDisplayed: Boolean
-    actual val isEnabled: Boolean
-    actual val isSelected: Boolean
-    actual val text: String
-    actual val tagName: String
+    actual suspend fun isDisplayed(): Boolean
+    actual suspend fun isEnabled(): Boolean
+    actual suspend fun isSelected(): Boolean
+    actual suspend fun getText(): String
+    actual suspend fun getTagName(): String
 
     actual suspend fun clear()
     actual suspend fun click()

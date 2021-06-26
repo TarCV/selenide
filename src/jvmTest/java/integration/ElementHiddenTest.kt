@@ -16,32 +16,32 @@ internal class ElementHiddenTest : ITest() {
     }
 
     @Test
-    fun shouldBeHidden() {
+    fun shouldBeHidden() = runBlockingTest {
         `$`("#hide").shouldBe(Condition.hidden)
     }
 
     @Test
-    fun shouldDisappear() {
+    fun shouldDisappear() = runBlockingTest {
         `$`("#hide").should(Condition.disappear)
     }
 
     @Test
-    fun waitUntilDisappears() {
+    fun waitUntilDisappears() = runBlockingTest {
         `$`("#hide").waitUntil(Condition.disappears, 2000)
     }
 
     @Test
-    fun shouldNotBeVisible() {
+    fun shouldNotBeVisible() = runBlockingTest {
         `$`("#hide").shouldNotBe(Condition.visible)
     }
 
     @Test
-    fun shouldExist() {
+    fun shouldExist() = runBlockingTest {
         `$`("#hide").should(Condition.exist)
     }
 
     @Test
-    fun shouldNotAppear() {
+    fun shouldNotAppear() = runBlockingTest {
         `$`("#hide").shouldNot(Condition.appear)
     }
 }

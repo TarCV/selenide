@@ -3,18 +3,14 @@ package com.codeborne.selenide
 import com.codeborne.selenide.drivercommands.Navigator
 import com.codeborne.selenide.drivercommands.WebDriverWrapper
 import com.codeborne.selenide.impl.ElementFinder
-import com.codeborne.selenide.impl.PageObjectFactory
-import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementWrapper
 import com.codeborne.selenide.logevents.SelenideLogger
 import kotlinx.coroutines.flow.firstOrNull
 import okio.ExperimentalFileSystem
-import org.openqa.selenium.By
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.WebElement
 import support.net.URL
 import kotlin.jvm.JvmOverloads
-import kotlin.time.ExperimentalTime
 
 /**
  * "Selenide driver" is a container for WebDriver + proxy server + settings
@@ -63,7 +59,7 @@ open class SelenideDriver(private val config: Config, private val driver: Driver
     suspend fun open(absoluteUrl: URL, domain: String, login: String, password: String) {
         navigator.open(this, absoluteUrl, domain, login, password)
     }
-    suspend fun <PageObjectClass: Any> open(
+    /* TODO: suspend fun <PageObjectClass: Any> open(
         relativeOrAbsoluteUrl: String,
         pageObjectClassClass: kotlin.reflect.KClass<PageObjectClass>
     ): PageObjectClass {
@@ -89,13 +85,15 @@ open class SelenideDriver(private val config: Config, private val driver: Driver
     ): PageObjectClass {
         open(absoluteUrl, domain, login, password)
         return page(pageObjectClassClass)
-    }
-    fun <PageObjectClass: Any> page(pageObjectClass: kotlin.reflect.KClass<PageObjectClass>): PageObjectClass {
+    }*/
+/*
+TODO:    fun <PageObjectClass: Any> page(pageObjectClass: kotlin.reflect.KClass<PageObjectClass>): PageObjectClass {
         return pageFactory.page(driver(), pageObjectClass)
     }
     fun <PageObjectClass: Any, T : PageObjectClass> page(pageObject: T): PageObjectClass {
         return pageFactory.page(driver(), pageObject)
     }
+*/
 
     suspend fun refresh() {
         navigator.refresh(driver())
@@ -296,9 +294,7 @@ open class SelenideDriver(private val config: Config, private val driver: Driver
     companion object {
         private val navigator = Navigator()
 // TODO:        private val screenshots = ScreenShotLaboratory.instance
-        private val pageFactory = Plugins.injectA(
-            PageObjectFactory::class
-        )
+// TODO:        private val pageFactory = Plugins.pageObjectFactory
         /* TODO: val downloadFileWithHttpRequest: DownloadFileWithHttpRequest by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             DownloadFileWithHttpRequest()
         }*/

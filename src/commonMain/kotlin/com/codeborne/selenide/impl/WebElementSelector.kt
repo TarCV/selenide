@@ -4,7 +4,6 @@ import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelectorMode
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.filecontent.Sizzle.sizzleJs
-import org.openqa.selenium.By
 import org.openqa.selenium.By.ByCssSelector
 import org.openqa.selenium.By.ByXPath
 import org.openqa.selenium.SearchContext
@@ -37,13 +36,13 @@ open class WebElementSelector {
         )
     }
 
-    private fun findElement(context: org.openqa.selenium.SearchContext, selector: org.openqa.selenium.By): org.openqa.selenium.WebElement {
+    private suspend fun findElement(context: org.openqa.selenium.SearchContext, selector: org.openqa.selenium.By): org.openqa.selenium.WebElement {
         return if (context is SelenideElement) context.toWebElement().findElement(selector) else context.findElement(
             selector
         )
     }
 
-    private fun findElements(context: org.openqa.selenium.SearchContext, selector: org.openqa.selenium.By): List<org.openqa.selenium.WebElement> {
+    private suspend fun findElements(context: org.openqa.selenium.SearchContext, selector: org.openqa.selenium.By): List<org.openqa.selenium.WebElement> {
         return if (context is SelenideElement) context.toWebElement().findElements(selector) else context.findElements(
             selector
         )

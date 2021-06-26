@@ -8,7 +8,7 @@ import com.codeborne.selenide.impl.WebElementSource
 import org.openqa.selenium.WebDriverException
 
 class IsDisplayed : Command<Boolean> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Boolean {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): Boolean {
         return try {
             val element = locator.getWebElement()
             element.isDisplayed

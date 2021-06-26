@@ -104,8 +104,8 @@ class ContainExactTextsCaseSensitiveTest {
                 .all {
                     startsWith(
                         String.format(
-                            "The collection with text elements: %s%n" +
-                                "should contain all of the following text elements: %s%n" +
+                            "The collection with text elements: %s\n" +
+                                "should contain all of the following text elements: %s\n" +
                                 "but could not find these elements: %s",
                             elements,
                             Arrays.asList("Test-One", "Test-Two", "Test-Three"), listOf("Test-Three")
@@ -138,8 +138,8 @@ class ContainExactTextsCaseSensitiveTest {
                 .all {
                     startsWith(
                         String.format(
-                            "The collection with text elements: %s%n" +
-                                "should contain all of the following text elements: %s%n" +
+                            "The collection with text elements: %s\n" +
+                                "should contain all of the following text elements: %s\n" +
                                 "but could not find these elements: %s",
                             ElementsCollection.texts(elements),
                             Arrays.asList("Test-One", "Test-Two", "Test-Three"),
@@ -173,8 +173,8 @@ class ContainExactTextsCaseSensitiveTest {
                 .all {
                     startsWith(
                         String.format(
-                            "The collection with text elements: %s%n" +
-                                "should contain all of the following text elements: %s%n" +
+                            "The collection with text elements: %s\n" +
+                                "should contain all of the following text elements: %s\n" +
                                 "but could not find these elements: %s",
                             ElementsCollection.texts(elements),
                             Arrays.asList("Test-One", "Test-Two", "Test-Three"), listOf("Test-Three")
@@ -203,7 +203,7 @@ class ContainExactTextsCaseSensitiveTest {
                 startsWith(
                     String.format(
                         "Element not found {Empty collection}" +
-                            "%nExpected: Contains exact texts case-sensitive [Test-One, Test-Two, Test-Three]"
+                            "\nExpected: Contains exact texts case-sensitive [Test-One, Test-Two, Test-Three]"
                     )
                 )
             }
@@ -228,7 +228,7 @@ class ContainExactTextsCaseSensitiveTest {
                 startsWith(
                     String.format(
                         "Element not found {Empty collection}" +
-                            "%nExpected: Contains exact texts case-sensitive [Test-One, Test-Two, Test-Three]"
+                            "\nExpected: Contains exact texts case-sensitive [Test-One, Test-Two, Test-Three]"
                     )
                 )
             }

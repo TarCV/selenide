@@ -74,8 +74,8 @@ internal class NoneMatchTest : WithAssertions {
                 startsWith(
                     String.format(
                         "Collection matcher error" +
-                            "%nExpected: none of elements to match [Predicate description] predicate" +
-                            "%nCollection: Collection description"
+                            "\nExpected: none of elements to match [Predicate description] predicate" +
+                            "\nCollection: Collection description"
                     )
                 )
             }

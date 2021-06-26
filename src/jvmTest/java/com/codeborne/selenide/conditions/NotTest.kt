@@ -8,8 +8,8 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.openqa.selenium.WebElement
 
 @ExperimentalCoroutinesApi
@@ -42,9 +42,7 @@ internal class NotTest {
         val webElement = Mockito.mock(WebElement::class.java)
         Mockito.`when`<Any?>(
             originalCondition.actualValue(
-                ArgumentMatchers.any(
-                    Driver::class.java
-                ), ArgumentMatchers.any(WebElement::class.java)
+                any(), any()
             )
         )
             .thenReturn("original condition actual value")
@@ -59,9 +57,7 @@ internal class NotTest {
         val webElement = Mockito.mock(WebElement::class.java)
         Mockito.`when`<Any>(
             originalCondition.apply(
-                ArgumentMatchers.any(Driver::class.java), ArgumentMatchers.any(
-                    WebElement::class.java
-                )
+                any(), any()
             )
         ).thenReturn(true)
         Assertions.assertThat(notCondition!!.apply(driver, webElement)).isFalse
@@ -74,9 +70,7 @@ internal class NotTest {
         val webElement = Mockito.mock(WebElement::class.java)
         Mockito.`when`<Any>(
             originalCondition.apply(
-                ArgumentMatchers.any(Driver::class.java), ArgumentMatchers.any(
-                    WebElement::class.java
-                )
+                any(), any()
             )
         ).thenReturn(false)
         Assertions.assertThat(notCondition!!.apply(driver, webElement)).isTrue

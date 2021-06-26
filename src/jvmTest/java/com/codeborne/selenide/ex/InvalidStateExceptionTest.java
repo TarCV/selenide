@@ -17,8 +17,8 @@ final class InvalidStateExceptionTest implements WithAssertions {
     assertThat(invalidStateException).hasMessageStartingWith("Invalid element state");
     assertThat(invalidStateException).hasMessageEndingWith("StaleElementReferenceException: Houston, we have a problem");
     assertThat(invalidStateException).hasToString(String.format("Invalid element state: " +
-      "Houston, we have a problem%n" +
-      "Timeout: 0 ms.%n" +
+      "Houston, we have a problem\n" +
+      "Timeout: 0 ms.\n" +
       "Caused by: StaleElementReferenceException: Houston, we have a problem"));
   }
 
@@ -27,7 +27,7 @@ final class InvalidStateExceptionTest implements WithAssertions {
     InvalidStateException invalidStateException = new InvalidStateException(driver, "Houston, we have a problem");
 
     assertThat(invalidStateException).hasMessageStartingWith("Invalid element state: Houston, we have a problem");
-    assertThat(invalidStateException).hasToString(String.format("Invalid element state: Houston, we have a problem%n" +
+    assertThat(invalidStateException).hasToString(String.format("Invalid element state: Houston, we have a problem\n" +
       "Timeout: 0 ms."));
   }
 }

@@ -5,8 +5,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
 import org.lighthousegames.logging.KmLog
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.same
 import org.openqa.selenium.StaleElementReferenceException
 import org.openqa.selenium.WebElement
 
@@ -19,7 +20,7 @@ internal class EventsTest {
     @Test
     fun triggersEventsByExecutingJSCode() = runBlockingTest {
         Mockito.doNothing().`when`(events)
-            .executeJavaScript(ArgumentMatchers.any(), ArgumentMatchers.same(element), ArgumentMatchers.any())
+            .executeJavaScript(any(), same(element), any())
         events.fireEvent(driver, element, "input", "keyup", "change")
         Mockito.verify(events).executeJavaScript(driver, element, "input", "keyup", "change")
         Mockito.verifyNoMoreInteractions(log)
@@ -28,7 +29,7 @@ internal class EventsTest {
     @Test
     fun ignoresStaleElementReferenceException() = runBlockingTest {
         Mockito.doThrow(StaleElementReferenceException::class.java).`when`(events)
-            .executeJavaScript(ArgumentMatchers.any(), ArgumentMatchers.same(element), ArgumentMatchers.any())
+            .executeJavaScript(any(), same(element), any())
         events.fireEvent(driver, element, "change")
         Mockito.verify(events).executeJavaScript(driver, element, "change")
         Mockito.verifyNoMoreInteractions(log)
@@ -38,7 +39,7 @@ internal class EventsTest {
     fun ignoresButLogs_anyOtherExceptions() = runBlockingTest {
         Mockito.doThrow(UnsupportedOperationException("webdriver does not support JS"))
             .`when`(events)
-            .executeJavaScript(ArgumentMatchers.any(), ArgumentMatchers.same(element), ArgumentMatchers.any())
+            .executeJavaScript(any(), same(element), any())
         events.fireEvent(driver, element, "input", "change")
         Mockito.verify(events).executeJavaScript(driver, element, "input", "change")
         Mockito.verify(log).warn(

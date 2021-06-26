@@ -31,6 +31,6 @@ abstract class PredicateCollectionCondition protected constructor(
     }
 
     override fun toString(): String {
-        return "${matcher} match [{description}] predicate"
+        return "${matcher} match [${description}] predicate"
     }
 }

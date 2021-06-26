@@ -269,12 +269,12 @@ internal class CollectionMethodsTest : ITest() {
     }
 
     @Test
-    fun userCanFindMatchingElementFromList() {
+    fun userCanFindMatchingElementFromList() = runBlockingTest {
         `$$`("#multirowTable tr").findBy(text("Norris")).shouldHave(text("Norris"))
     }
 
     @Test
-    fun findWaitsUntilElementMatches() {
+    fun findWaitsUntilElementMatches() = runBlockingTest {
         withLongTimeout {
             `$$`("#dynamic-content-container span").findBy(text("dynamic content2")).shouldBe(Condition.visible)
             `$$`("#dynamic-content-container span").findBy(text("unexisting")).shouldNot(Condition.exist)
@@ -296,7 +296,7 @@ internal class CollectionMethodsTest : ITest() {
     }
 
     @Test
-    fun canGetCollectionElementByIndex() {
+    fun canGetCollectionElementByIndex() = runBlockingTest {
         `$$`("#radioButtons input").get(0).shouldHave(value("master"))
         `$$`("#radioButtons input").get(1).shouldHave(value("margarita"))
         `$$`("#radioButtons input").get(2).shouldHave(value("cat"))
@@ -304,12 +304,12 @@ internal class CollectionMethodsTest : ITest() {
     }
 
     @Test
-    fun canGetCollectionFirstElement() {
+    fun canGetCollectionFirstElement() = runBlockingTest {
         `$$`("#radioButtons input").first().shouldHave(value("master"))
     }
 
     @Test
-    fun canGetCollectionLastElement() {
+    fun canGetCollectionLastElement() = runBlockingTest {
         `$$`("#radioButtons input").last().shouldHave(value("woland"))
     }
 
@@ -597,7 +597,7 @@ internal class CollectionMethodsTest : ITest() {
     }
 
     @Test
-    fun errorWhenFindInLastElementOfEmptyCollection() {
+    fun errorWhenFindInLastElementOfEmptyCollection() = runBlockingTest {
         assertThat { `$$`("#not_exist").last().`$`("#multirowTable").should(Condition.exist) }
             .isFailure()
             .all {
@@ -649,7 +649,7 @@ internal class CollectionMethodsTest : ITest() {
                 messageContains(
                     String.format(
                         "Collection matcher error" +
-                            "%nExpected: any of elements to match [value==dog] predicate"
+                            "\nExpected: any of elements to match [value==dog] predicate"
                     )
                 )
             }
@@ -676,7 +676,7 @@ internal class CollectionMethodsTest : ITest() {
                 messageContains(
                     String.format(
                         "Collection matcher error" +
-                            "%nExpected: all of elements to match [value==cat] predicate"
+                            "\nExpected: all of elements to match [value==cat] predicate"
                     )
                 )
             }
@@ -703,7 +703,7 @@ internal class CollectionMethodsTest : ITest() {
                 messageContains(
                     String.format(
                         "Collection matcher error" +
-                            "%nExpected: none of elements to match [value==cat] predicate"
+                            "\nExpected: none of elements to match [value==cat] predicate"
                     )
                 )
             }
@@ -725,8 +725,8 @@ internal class CollectionMethodsTest : ITest() {
                 messageContains(
                     String.format(
                         "Element with text not found" +
-                            "%nActual: %s" +
-                            "%nExpected: %s", Arrays.asList("Bob", "John"), listOf(expectedText)
+                            "\nActual: %s" +
+                            "\nExpected: %s", Arrays.asList("Bob", "John"), listOf(expectedText)
                     )
                 )
             }
@@ -757,9 +757,9 @@ internal class CollectionMethodsTest : ITest() {
                 isInstanceOf(DoesNotContainTextsError::class.java)
                 messageContains(
                     String.format(
-                        "The collection with text elements: %s%n" +
-                            "should contain all of the following text elements: %s%n" +
-                            "but could not find these elements: %s%n",
+                        "The collection with text elements: %s\n" +
+                            "should contain all of the following text elements: %s\n" +
+                            "but could not find these elements: %s\n",
                         actualTexts, expectedTexts, difference
                     )
                 )

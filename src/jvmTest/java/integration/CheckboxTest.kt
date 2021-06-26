@@ -22,7 +22,7 @@ internal class CheckboxTest : ITest() {
     }
 
     @Test
-    fun userCanSelectCheckbox() {
+    fun userCanSelectCheckbox() = runBlockingTest {
         `$`(By.name("rememberMe")).shouldNotBe(Condition.selected)
         `$`(By.name("rememberMe")).shouldNotBe(Condition.checked)
         `$`(By.name("rememberMe")).click()
@@ -33,7 +33,7 @@ internal class CheckboxTest : ITest() {
     }
 
     @Test
-    fun userCanCheckCheckbox() {
+    fun userCanCheckCheckbox() = runBlockingTest {
         `$`(By.name("rememberMe")).isSelected = true
         `$`(By.name("rememberMe")).shouldBe(Condition.selected)
         `$`(By.name("rememberMe")).shouldBe(Condition.checked)
@@ -43,7 +43,7 @@ internal class CheckboxTest : ITest() {
     }
 
     @Test
-    fun userCanUnCheckCheckbox() {
+    fun userCanUnCheckCheckbox() = runBlockingTest {
         `$`(By.name("rememberMe")).isSelected = true
         `$`(By.name("rememberMe")).shouldBe(Condition.selected)
         `$`(By.name("rememberMe")).isSelected = false

@@ -35,7 +35,7 @@ internal class ConditionsTest : ITest() {
     }
 
     @Test
-    fun andShouldCheckConditions() {
+    fun andShouldCheckConditions() = runBlockingTest {
         `$`("#multirowTable").should(
             and(
                 "visible && table",
@@ -67,7 +67,7 @@ internal class ConditionsTest : ITest() {
     }
 
     @Test
-    fun orShouldCheckConditions() {
+    fun orShouldCheckConditions() = runBlockingTest {
         `$`("#multirowTable").should(
             or(
                 "visible || table",
@@ -99,7 +99,7 @@ internal class ConditionsTest : ITest() {
     }
 
     @Test
-    fun orShouldReportAllConditions() {
+    fun orShouldReportAllConditions() = runBlockingTest {
         assertThat {
             `$`("#multirowTable").shouldBe(
                 or(
@@ -116,7 +116,7 @@ internal class ConditionsTest : ITest() {
     }
 
     @Test
-    fun orShouldReportAllConditionsWithActualValues() {
+    fun orShouldReportAllConditionsWithActualValues() = runBlockingTest {
         assertThat {
             `$`("#multirowTable").shouldHave(
                 or(
@@ -136,13 +136,13 @@ internal class ConditionsTest : ITest() {
     }
 
     @Test
-    fun notShouldCheckConditions() {
+    fun notShouldCheckConditions() = runBlockingTest {
         `$`("#multirowTable").should(be(Condition.visible))
         `$`("#multirowTable").should(not(be(Condition.hidden)))
     }
 
     @Test
-    fun userCanUseOrCondition() {
+    fun userCanUseOrCondition() = runBlockingTest {
         val one_of_conditions = or("baskerville", text("Basker"), text("Walle"))
         `$`("#baskerville").shouldBe(one_of_conditions)
         val all_of_conditions = or("baskerville", text("Basker"), text("rville"))
@@ -152,14 +152,14 @@ internal class ConditionsTest : ITest() {
     }
 
     @Test
-    fun matchWithCustomPredicateShouldCheckCondition() {
+    fun matchWithCustomPredicateShouldCheckCondition() = runBlockingTest {
         `$`("#multirowTable").should(match("border=1") { el ->
             el.getAttribute("border").equals("1")
         })
     }
 
     @Test
-    fun matchWithPredicateShouldReportErrorMessage() {
+    fun matchWithPredicateShouldReportErrorMessage() = runBlockingTest {
         assertThat {
             `$`("#multirowTable").should(match("tag=input") { el ->
                 el.getTagName().equals("input1")
@@ -171,7 +171,7 @@ internal class ConditionsTest : ITest() {
     }
 
     @Test
-    fun matchWithShouldNotPredicateReportErrorMessage() {
+    fun matchWithShouldNotPredicateReportErrorMessage() = runBlockingTest {
         assertThat {
             `$`("#multirowTable").shouldNot(match("border=1") { el ->
                 el.getAttribute(

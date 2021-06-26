@@ -12,7 +12,7 @@ class OwnText(private val expectedText: String) : Condition("own text") {
     }
 
     override fun toString(): String {
-        return "${name} '{expectedText}'"
+        return "${name} '${expectedText}'"
     }
 
     override suspend fun actualValue(driver: Driver, element: org.openqa.selenium.WebElement): String {

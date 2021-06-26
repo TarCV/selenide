@@ -14,7 +14,7 @@ internal class HoverTest : ITest() {
     }
 
     @Test
-    fun canEmulateHover() {
+    fun canEmulateHover() = runBlockingTest {
         `$`("#hoverable").hover().shouldHave(text("It's hover"))
         `$`("h1").hover()
         `$`("#hoverable").shouldHave(text("It's not hover"))

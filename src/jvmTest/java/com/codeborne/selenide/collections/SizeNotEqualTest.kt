@@ -51,7 +51,7 @@ internal class SizeNotEqualTest : WithAssertions {
             .message()
             .isNotNull()
             .all {
-                startsWith(String.format("List size mismatch: expected: <> 10, actual: 0, collection: Collection description%nElements: []"))
+                startsWith(String.format("List size mismatch: expected: <> 10, actual: 0, collection: Collection description\nElements: []"))
             }
     }
 

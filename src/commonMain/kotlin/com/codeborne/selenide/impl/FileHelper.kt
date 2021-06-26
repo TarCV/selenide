@@ -55,7 +55,7 @@ object FileHelper {
     @ExperimentalFileSystem
     @JvmStatic
     fun ensureFolderExists(folder: Path): Path {
-        if (!exists(canonicalPath(folder))) {
+        if (!exists(folder)) {
             log.info { "Creating folder: $folder" }
             try {
                 fileSystem.createDirectories(folder)

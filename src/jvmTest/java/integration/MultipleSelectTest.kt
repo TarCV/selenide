@@ -32,14 +32,14 @@ internal class MultipleSelectTest : ITest() {
     @Test
     fun userCanSelectMultipleOptionsByText() = runBlockingTest {
         select.selectOption("Маргарита", "Theodor Woland")
-        select.selectedOptions.shouldHave(
+        select.getSelectedOptions().shouldHave(
             texts("Маргарита", "Theodor Woland")
         )
     }
 
     @Test
     fun reportsElementNotFound_ifThereIsNoSelectedOptions() = runBlockingTest {
-        assertThat { select.selectedOptions.shouldHave(texts("Кот", "Бегемот")) }.isFailure()
+        assertThat { select.getSelectedOptions().shouldHave(texts("Кот", "Бегемот")) }.isFailure()
             .all {
                 isInstanceOf(ElementNotFound::class.java)
                 message().isNotNull().startsWith("Element not found {#character selected options}")
@@ -48,7 +48,7 @@ internal class MultipleSelectTest : ITest() {
 
     @Test
     fun canGiveHumanReadableNameToSelectedOptions() = runBlockingTest {
-        val namedCollection = select.selectedOptions.`as`("my animals")
+        val namedCollection = select.getSelectedOptions().`as`("my animals")
         assertThat { namedCollection.shouldHave(texts("Кот", "Бегемот")) }.isFailure()
             .all {
                 isInstanceOf(ElementNotFound::class.java)
@@ -59,16 +59,16 @@ internal class MultipleSelectTest : ITest() {
     @Test
     fun userCanSelectMultipleOptionsByIndex() = runBlockingTest {
         select.selectOption(0, 2, 3)
-        select.selectedOptions.shouldHave(texts("Мастер", "Кот \"Бегемот\"", "Theodor Woland"))
-        select.selectedOptions.get(0).shouldHave(text("Мастер"))
-        select.selectedOptions.get(1).shouldHave(text("Кот \"Бегемот\""))
-        select.selectedOptions.get(2).shouldHave(text("Theodor Woland"))
+        select.getSelectedOptions().shouldHave(texts("Мастер", "Кот \"Бегемот\"", "Theodor Woland"))
+        select.getSelectedOptions().get(0).shouldHave(text("Мастер"))
+        select.getSelectedOptions().get(1).shouldHave(text("Кот \"Бегемот\""))
+        select.getSelectedOptions().get(2).shouldHave(text("Theodor Woland"))
     }
 
     @Test
     fun userCanSelectMultipleOptionsByValue() = runBlockingTest {
         select.selectOptionByValue("cat", "woland")
-        select.selectedOptions.shouldHave(
+        select.getSelectedOptions().shouldHave(
             size(2),
             texts("Кот \"Бегемот\"", "Theodor Woland")
         )
@@ -77,11 +77,11 @@ internal class MultipleSelectTest : ITest() {
     @Test
     fun userCanUseSetSelectedOnOptions() = runBlockingTest {
         select.`$`("option[value=cat]").isSelected = true
-        select.selectedOptions.shouldHave(
+        select.getSelectedOptions().shouldHave(
             size(1),
             texts("Кот \"Бегемот\"")
         )
         select.`$`("option[value=cat]").isSelected = false
-        select.selectedOptions.shouldHave(size(0))
+        select.getSelectedOptions().shouldHave(size(0))
     }
 }

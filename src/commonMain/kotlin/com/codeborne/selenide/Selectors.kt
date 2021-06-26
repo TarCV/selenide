@@ -1,7 +1,6 @@
 package com.codeborne.selenide
 
 import com.codeborne.selenide.selector.ByShadow
-import org.openqa.selenium.By
 import org.openqa.selenium.By.ByXPath
 import org.openqa.selenium.support.ui.Quotes
 import kotlin.jvm.JvmStatic

@@ -19,31 +19,29 @@ internal class ImageTest : ITest() {
     }
 
     @Test
-    fun userCanCheckIfImageIsLoadedCorrectlyUsingCondition() {
+    fun userCanCheckIfImageIsLoadedCorrectlyUsingCondition() = runBlockingTest {
         `$`("#valid-image img").shouldBe(Condition.image)
         `$`("#valid-image").shouldNotBe(Condition.image)
         `$`("h1").shouldNotBe(Condition.image)
     }
 
-    @get:Test
-    val isImageConditionFailsForNonImages: Unit
-        get() {
-            assertThat { `$`("h1").shouldBe(Condition.image) }.isFailure()
-                .isInstanceOf(ElementShould::class.java)
-        }
+    @Test
+    fun isImageConditionFailsForNonImages() = runBlockingTest {
+        assertThat { `$`("h1").shouldBe(Condition.image) }.isFailure()
+            .isInstanceOf(ElementShould::class.java)
+    }
 
     @Test
-    fun userCanCheckIfImageIsLoadedCorrectly() {
-        Assertions.assertThat(`$`("#valid-image img").isImage)
+    fun userCanCheckIfImageIsLoadedCorrectly() = runBlockingTest {
+        Assertions.assertThat(`$`("#valid-image img").isImage())
             .isTrue
-        Assertions.assertThat(`$`("#invalid-image img").isImage)
+        Assertions.assertThat(`$`("#invalid-image img").isImage())
             .isFalse
     }
 
-    @get:Test
-    val isImageIsOnlyApplicableForImages: Unit
-        get() {
-            assertThat { `$`("h1").isImage }.isFailure()
-                .isInstanceOf(IllegalArgumentException::class.java)
-        }
+    @Test
+    fun isImageIsOnlyApplicableForImages() = runBlockingTest {
+        assertThat { `$`("h1").isImage() }.isFailure()
+            .isInstanceOf(IllegalArgumentException::class.java)
+    }
 }

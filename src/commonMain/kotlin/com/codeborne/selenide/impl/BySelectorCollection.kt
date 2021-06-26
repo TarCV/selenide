@@ -2,7 +2,6 @@ package com.codeborne.selenide.impl
 
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
-import org.openqa.selenium.By
 import org.openqa.selenium.SearchContext
 import org.openqa.selenium.WebElement
 
@@ -27,9 +26,15 @@ class BySelectorCollection(private val driver: Driver, private val parent: org.o
     }
 
     private fun composeDescription(): String {
-        return if (parent == null) describe.selector(selector) else if (parent is SelenideElement) parent.searchCriteria + "/" + describe.selector(
-            selector
-        ) else describe.selector(selector)
+        return parent.let { it ->
+            when (it) {
+                null -> describe.selector(selector)
+                is SelenideElement -> it.searchCriteria + "/" + describe.selector(
+                    selector
+                )
+                else -> describe.selector(selector)
+            }
+        }
     }
     override fun driver(): Driver {
         return driver
@@ -40,8 +45,6 @@ class BySelectorCollection(private val driver: Driver, private val parent: org.o
     }
 
     companion object {
-        private val describe = Plugins.injectA(
-            ElementDescriber::class
-        )
+        private val describe = Plugins.elementDescriber
     }
 }

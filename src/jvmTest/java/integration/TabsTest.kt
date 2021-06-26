@@ -56,7 +56,7 @@ internal class TabsTest : ITest() {
     }
 
     @Test
-    fun canSwitchToWindowByTitle() {
+    fun canSwitchToWindowByTitle() = runBlockingTest {
         `$`(byText("Page2: alerts")).click()
         `$`(byText("Page1: uploads")).click()
         `$`(byText("Page3: jquery")).click()
@@ -143,7 +143,7 @@ internal class TabsTest : ITest() {
     }
 
     @Test
-    fun throwsNoSuchWindowExceptionWhenSwitchingToAbsentWindowByTitle() {
+    fun throwsNoSuchWindowExceptionWhenSwitchingToAbsentWindowByTitle() = runBlockingTest {
         Assertions.assertThat(driver().title())
             .isEqualTo("Test::tabs")
         assertThat { switchTo().window("absentWindow") }.isFailure().all {

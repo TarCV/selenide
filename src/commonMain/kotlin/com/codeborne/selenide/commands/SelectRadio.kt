@@ -19,7 +19,7 @@ class SelectRadio : Command<SelenideElement> {
         this.click = click
     }
 
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): SelenideElement {
         val value = Util.firstOf<String>(args)
         val matchingRadioButtons = locator.findAll()
         for (radio in matchingRadioButtons) {

@@ -5,7 +5,6 @@ import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.ex.ElementNotFound
 import org.openqa.selenium.WebElement
-import support.reflect.Proxy
 
 class CollectionElement internal constructor(private val collection: CollectionSource, private val index: Int) :
     WebElementSource() {
@@ -17,8 +16,8 @@ class CollectionElement internal constructor(private val collection: CollectionS
         return collection.getElement(index)
     }
 
-    override suspend fun getSearchCriteria(): String {
-        return collection.description() + '[' + index + ']'
+    override fun getSearchCriteria(): String {
+        return "$collection[$index]"
     }
     override suspend fun createElementNotFoundError(condition: Condition, lastError: Throwable?): ElementNotFound {
         return if (collection.getElements().isEmpty()) {
@@ -33,10 +32,9 @@ class CollectionElement internal constructor(private val collection: CollectionS
 
     companion object {
         fun wrap(collection: CollectionSource, index: Int): SelenideElement {
-            return Proxy.newProxyInstance(
-                 null, arrayOf<kotlin.reflect.KClass<*>>(SelenideElement::class),
+            return SelenideElement(
                 SelenideElementProxy(CollectionElement(collection, index))
-            ) as SelenideElement
+            )
         }
     }
 }

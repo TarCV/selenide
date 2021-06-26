@@ -11,6 +11,6 @@ class MatchText(private val regex: String) : Condition("match text") {
     }
 
     override fun toString(): String {
-        return "${name} '{regex}'"
+        return "${name} '${regex}'"
     }
 }

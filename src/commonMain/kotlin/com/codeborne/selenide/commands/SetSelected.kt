@@ -3,6 +3,7 @@ package com.codeborne.selenide.commands
 import com.codeborne.selenide.Command
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.ex.InvalidStateException
+import com.codeborne.selenide.impl.SelenideElementProxy.Companion.NO_ARGS
 import com.codeborne.selenide.impl.WebElementSource
 
 class SetSelected : Command<SelenideElement> {
@@ -16,7 +17,7 @@ class SetSelected : Command<SelenideElement> {
         this.click = click
     }
 
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): SelenideElement {
         val selected = Util.firstOf<Boolean>(args)
         val element = locator.getWebElement()
         if (!element.isDisplayed) {
@@ -37,7 +38,7 @@ class SetSelected : Command<SelenideElement> {
             throw InvalidStateException(locator.driver(), "Cannot change value of readonly/disabled element")
         }
         if (element.isSelected != selected) {
-            click.execute(proxy, locator, Command.NO_ARGS)
+            click.execute(proxy, locator, NO_ARGS)
         }
         return proxy
     }

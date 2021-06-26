@@ -6,8 +6,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.WithAssertions
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.openqa.selenium.By
 
 @ExperimentalCoroutinesApi
@@ -18,7 +19,7 @@ internal class GetPrecedingCommandTest : WithAssertions {
     private val getPrecedingCommand = GetPreceding()
     @Test
     fun testExecuteMethod() = runBlockingTest {
-        Mockito.`when`(locator.find(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyInt()))
+        Mockito.`when`(locator.find(any(), any(), anyInt()))
             .thenReturn(mockedElement)
         assertThat<Any>(getPrecedingCommand.execute(proxy, locator, arrayOf<Any>(0))).isEqualTo(mockedElement)
         Mockito.verify(locator).find(proxy, By.xpath("preceding-sibling::*[1]"), 0)

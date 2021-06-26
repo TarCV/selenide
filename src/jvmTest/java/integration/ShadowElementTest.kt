@@ -32,7 +32,7 @@ internal class ShadowElementTest : ITest() {
     }
 
     @Test
-    fun sendKeysInsideShadowHost() {
+    fun sendKeysInsideShadowHost() = runBlockingTest {
         Assumptions.assumeThat(false)
             .`as`("Firefox doesn't support sendKeys() inside shadow dom, see https://bugzilla.mozilla.org/show_bug.cgi?id=1503860")
             .isFalse
@@ -42,7 +42,7 @@ internal class ShadowElementTest : ITest() {
     }
 
     @Test
-    fun setValueInsideShadowHost() {
+    fun setValueInsideShadowHost() = runBlockingTest {
         val input = `$`(shadowCss("#inputInShadow", "#shadow-host"))
         withFastSetValue {
             input.setValue("I can type text inside of shadow dom")
@@ -51,7 +51,7 @@ internal class ShadowElementTest : ITest() {
     }
 
     @Test
-    fun sendKeysInsideInnerShadowHost() {
+    fun sendKeysInsideInnerShadowHost() = runBlockingTest {
         Assumptions.assumeThat(false)
             .`as`("Firefox doesn't support sendKeys() inside shadow dom, see https://bugzilla.mozilla.org/show_bug.cgi?id=1503860")
             .isFalse
@@ -61,7 +61,7 @@ internal class ShadowElementTest : ITest() {
     }
 
     @Test
-    fun setValueInsideInnerShadowHost() {
+    fun setValueInsideInnerShadowHost() = runBlockingTest {
         val input = `$`(shadowCss("#inputInInnerShadow", "#shadow-host", "#inner-shadow-host"))
         withFastSetValue {
             input.setValue("I can type text inside of shadow dom")
@@ -70,7 +70,7 @@ internal class ShadowElementTest : ITest() {
     }
 
     @Test
-    fun clickInsideShadowHost() {
+    fun clickInsideShadowHost() = runBlockingTest {
         val button = `$`(shadowCss("#buttonInShadow", "#shadow-host"))
         button.shouldHave(exactText("Button 1"))
         button.click()
@@ -78,7 +78,7 @@ internal class ShadowElementTest : ITest() {
     }
 
     @Test
-    fun clickInsideInnerShadowHost() {
+    fun clickInsideInnerShadowHost() = runBlockingTest {
         val button = `$`(shadowCss("#buttonInInnerShadow", "#shadow-host", "#inner-shadow-host"))
         button.shouldHave(exactText("Button 2"))
         button.click()
@@ -86,28 +86,26 @@ internal class ShadowElementTest : ITest() {
     }
 
     @Test
-    fun clickInsideShadowHostInsideOfElement() {
+    fun clickInsideShadowHostInsideOfElement() = runBlockingTest {
         `$`("#shadow-host")
             .find(shadowCss("p", "#inner-shadow-host"))
             .shouldHave(text("The Shadow-DOM inside another shadow tree"))
     }
 
-    @get:Test
-    val targetElementViaShadowHost: Unit
-        get() {
-            `$`(shadowCss("p", "#shadow-host"))
-                .shouldHave(text("Inside Shadow-DOM"))
-        }
-
-    @get:Test
-    val elementInsideInnerShadowHost: Unit
-        get() {
-            `$`(shadowCss("p", "#shadow-host", "#inner-shadow-host"))
-                .shouldHave(text("The Shadow-DOM inside another shadow tree"))
-        }
+    @Test
+    fun getTargetElementViaShadowHost() = runBlockingTest {
+        `$`(shadowCss("p", "#shadow-host"))
+            .shouldHave(text("Inside Shadow-DOM"))
+    }
 
     @Test
-    fun throwErrorWhenGetNonExistingTargetInsideShadowRoot() {
+    fun getElementInsideInnerShadowHost() = runBlockingTest {
+        `$`(shadowCss("p", "#shadow-host", "#inner-shadow-host"))
+            .shouldHave(text("The Shadow-DOM inside another shadow tree"))
+    }
+
+    @Test
+    fun throwErrorWhenGetNonExistingTargetInsideShadowRoot() = runBlockingTest {
         assertThat { `$`(shadowCss("#nonexistent", "#shadow-host")).text }.isFailure()
             .isInstanceOf(ElementNotFound::class.java)
     }

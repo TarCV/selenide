@@ -28,20 +28,20 @@ internal class LastChildTest : ITest() {
     }
 
     @Test
-    fun canFindLastChildOnAGivenElement() {
+    fun canFindLastChildOnAGivenElement() = runBlockingTest {
         `$x`("//table[@id='user-table']/thead/tr").lastChild().shouldHave(text("Age"))
     }
 
     @Test
-    fun chainingLastChildFunctionsCorrectly() {
+    fun chainingLastChildFunctionsCorrectly() = runBlockingTest {
         `$`("#multirowTable").lastChild().lastChild().shouldHave(attribute("id", "multirowTableSecondRow"))
     }
 
     @Test
-    fun throwsExceptionWhenNoChildrenExist() {
+    fun throwsExceptionWhenNoChildrenExist() = runBlockingTest {
         val expectedError = String.format(
             "Element not found {By.xpath: //span[@id='hello-world']" +
-                    "/By.xpath: *[last()]}%nExpected: be visible"
+                    "/By.xpath: *[last()]}\nExpected: be visible"
         )
         assertThat { `$x`("//span[@id='hello-world']").lastChild().should(be(Condition.visible)) }.isFailure()
             .all {

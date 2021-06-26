@@ -58,7 +58,7 @@ internal class FramesTest : ITest() {
     }
 
     @Test
-    fun canSwitchBetweenFramesByTitle() {
+    fun canSwitchBetweenFramesByTitle() = runBlockingTest {
         Assertions.assertThat(driver().title()).isEqualTo("Test::frames")
         switchTo().frame("topFrame")
         Assertions.assertThat(driver().source()).contains("Hello, WinRar!")
@@ -71,7 +71,7 @@ internal class FramesTest : ITest() {
     }
 
     @Test
-    fun canSwitchBetweenFramesByIndex() {
+    fun canSwitchBetweenFramesByIndex() = runBlockingTest {
         Assumptions.assumeFalse(browser().isChrome)
         Assertions.assertThat(driver().title()).isEqualTo("Test::frames")
         switchTo().frame(0)

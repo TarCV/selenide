@@ -3,13 +3,12 @@ package com.codeborne.selenide.commands
 import com.codeborne.selenide.Command
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.impl.WebElementSource
-import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.Quotes
 import org.openqa.selenium.support.ui.Select
 
-class SelectOptionContainingText : Command<Nothing?> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Nothing? {
+class SelectOptionContainingText : Command<Unit> {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): Unit {
         val text = Util.firstOf<String>(args)
         val element = locator.getWebElement()
         val select = Select(element)
@@ -19,7 +18,7 @@ class SelectOptionContainingText : Command<Nothing?> {
             )
         )
         if (options.isEmpty()) {
-            throw NoSuchElementException("Cannot locate option containing text: $text")
+            throw org.openqa.selenium.NoSuchElementException("Cannot locate option containing text: $text")
         }
         for (option in options) {
             setSelected(option)
@@ -27,7 +26,6 @@ class SelectOptionContainingText : Command<Nothing?> {
                 break
             }
         }
-        return null
     }
 
     private suspend fun setSelected(option: org.openqa.selenium.WebElement) {

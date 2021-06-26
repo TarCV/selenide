@@ -25,18 +25,18 @@ internal class SiblingTest : ITest() {
     }
 
     @Test
-    fun canGetSiblingElement() {
+    fun canGetSiblingElement() = runBlockingTest {
         `$`("#multirowTableFirstRow").sibling(0).shouldHave(id("multirowTableSecondRow"))
         `$`(".first_row").sibling(0).shouldHave(text("Norris"))
     }
 
     @Test
-    fun canGetSiblingOfParent() {
+    fun canGetSiblingOfParent() = runBlockingTest {
         `$`(".first_row").parent().sibling(0).find("td", 1).shouldHave(id("baskerville"))
     }
 
     @Test
-    fun errorWhenSiblingAbsent() {
+    fun errorWhenSiblingAbsent() = runBlockingTest {
         assertThat { `$`("#multirowTableFirstRow").sibling(3).click() }.isFailure().all {
             isInstanceOf(ElementNotFound::class.java)
             message().isNotNull().startsWith("Element not found {#multirowTableFirstRow/By.xpath: following-sibling::*[4]}")
@@ -44,18 +44,18 @@ internal class SiblingTest : ITest() {
     }
 
     @Test
-    fun canGetPrecedingElement() {
+    fun canGetPrecedingElement() = runBlockingTest {
         `$`("#multirowTableSecondRow").preceding(0).shouldHave(id("multirowTableFirstRow"))
         `$`("#baskerville").preceding(0).shouldHave(text("Chack"))
     }
 
     @Test
-    fun canGetPrecedingElementOfParent() {
+    fun canGetPrecedingElementOfParent() = runBlockingTest {
         `$`(".second_row").parent().preceding(0).find("td", 0).shouldHave(cssClass("first_row"))
     }
 
     @Test
-    fun errorWhenPrecedingElementAbsent() {
+    fun errorWhenPrecedingElementAbsent() = runBlockingTest {
         assertThat { `$`("#multirowTableSecondRow").preceding(3).click() }.isFailure().all {
             isInstanceOf(ElementNotFound::class.java)
             message().isNotNull().startsWith("Element not found {#multirowTableSecondRow/By.xpath: preceding-sibling::*[4]}")

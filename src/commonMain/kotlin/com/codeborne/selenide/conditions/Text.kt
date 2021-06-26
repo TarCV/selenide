@@ -23,11 +23,11 @@ class Text(protected val text: String) : Condition("text") {
     }
 
     override fun toString(): String {
-        return "$name '{text}'"
+        return "$name '${text}'"
     }
 
     init {
-        require(text.isNotBlank()) {
+        require(text.isNotEmpty()) {
             "Argument must not be null or empty string. " +
                     "Use $.shouldBe(empty) or $.shouldHave(exactText(\"\")."
         }

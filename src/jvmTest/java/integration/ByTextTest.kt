@@ -26,20 +26,20 @@ internal class ByTextTest : ITest() {
     }
 
     @Test
-    fun userCanFindElementByText() {
+    fun userCanFindElementByText() = runBlockingTest {
         `$`(byText("Page with selects")).shouldHave(text("Page with selects"))
         `$`(byText("Dropdown list")).shouldHave(text("Dropdown list"))
         `$`(byText("@livemail.ru")).shouldHave(text("@livemail.ru"))
     }
 
     @Test
-    fun spacesInTextAreIgnored() {
+    fun spacesInTextAreIgnored() = runBlockingTest {
         `$`(byText("L'a Baskerville")).shouldHave(text("L'a Baskerville"))
         `$`(withText("L'a Baskerville")).shouldHave(text("L'a Baskerville"))
     }
 
     @Test
-    fun nonBreakableSpacesInTextAreIgnored() {
+    fun nonBreakableSpacesInTextAreIgnored() = runBlockingTest {
         `$`("#hello-world").shouldHave(text("Hello world"))
         `$`(byText("Hello world")).shouldHave(attribute("id", "hello-world"))
         `$`(withText("Hello world")).shouldHave(text("Hello world"))
@@ -58,7 +58,7 @@ internal class ByTextTest : ITest() {
     }
 
     @Test
-    fun canFindElementContainingText() {
+    fun canFindElementContainingText() = runBlockingTest {
         `$`(withText("age with s")).shouldHave(text("Page with selects"))
         `$`(withText("Dropdown")).shouldHave(text("Dropdown list"))
         `$`(withText("@livemail.r")).shouldHave(text("@livemail.ru"))
@@ -72,14 +72,14 @@ internal class ByTextTest : ITest() {
     }
 
     @Test
-    fun canFindElementsByI18nText() {
+    fun canFindElementsByI18nText() = runBlockingTest {
         `$`(byText("Маргарита")).shouldHave(text("Маргарита"))
         `$`(withText("Марг")).shouldHave(text("Маргарита"))
         `$`(byText("Кот \"Бегемот\"")).click()
     }
 
     @Test
-    fun quotesInText() {
+    fun quotesInText() = runBlockingTest {
         `$`(byText("Arnold \"Schwarzenegger\"")).shouldBe(Condition.visible)
         `$`("#hero").find(byText("Arnold \"Schwarzenegger\""))!!.shouldBe(Condition.visible)
         `$`("#apostrophes-and-quotes").find(By.linkText("Options with 'apostrophes' and \"quotes\""))!!

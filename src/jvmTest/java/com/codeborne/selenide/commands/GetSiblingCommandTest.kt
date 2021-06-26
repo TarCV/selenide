@@ -6,8 +6,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.WithAssertions
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.openqa.selenium.By
 
 @ExperimentalCoroutinesApi
@@ -18,7 +19,7 @@ internal class GetSiblingCommandTest : WithAssertions {
     private val getSiblingCommand = GetSibling()
     @Test
     fun executeMethod() = runBlockingTest {
-        Mockito.`when`(locator.find(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyInt()))
+        Mockito.`when`(locator.find(any(), any(), anyInt()))
             .thenReturn(mockedElement)
         assertThat<Any>(getSiblingCommand.execute(proxy, locator, arrayOf<Any>(0))).isEqualTo(mockedElement)
         Mockito.verify(locator).find(proxy, By.xpath("following-sibling::*[1]"), 0)

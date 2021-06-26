@@ -18,6 +18,6 @@ class SelectedText(private val expectedText: String) : Condition("selectedText")
     }
 
     override fun toString(): String {
-        return "${name} '{expectedText}'"
+        return "${name} '${expectedText}'"
     }
 }

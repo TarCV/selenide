@@ -24,19 +24,19 @@ class AttributeTest : ITest() {
     }
 
     @Test
-    fun canVerifyAttributeExistence() {
+    fun canVerifyAttributeExistence() = runBlockingTest {
         `$`("#domain-container").shouldHave(attribute("class"))
         `$`("#domain-container").shouldNotHave(attribute("foo"))
     }
 
     @Test
-    fun canVerifyAttributeValue() {
+    fun canVerifyAttributeValue() = runBlockingTest {
         `$`("#domain-container").shouldHave(attribute("class", "container"))
         `$`("#domain-container").shouldNotHave(attribute("class", "kopli"))
     }
 
     @Test
-    fun canVerifyAttributeMatching() {
+    fun canVerifyAttributeMatching() = runBlockingTest {
         `$`("#multirowTable").shouldHave(attributeMatching("class", ".*multirow_table.*"))
         `$`("#domain-container").shouldHave(attributeMatching("class", "contain.*"))
         `$`("#domain-container").shouldNotHave(attributeMatching("class", ".*another.*"))
@@ -44,7 +44,7 @@ class AttributeTest : ITest() {
     }
 
     @Test
-    fun canCheckAttributeExistence() {
+    fun canCheckAttributeExistence() = runBlockingTest {
         Assertions.assertThat(`$`("#domain-container").has(attribute("class")))
             .isTrue
         Assertions.assertThat(`$`("#domain-container").has(attribute("foo")))
@@ -68,7 +68,7 @@ class AttributeTest : ITest() {
     }
 
     @Test
-    fun userCanGetAttr() {
+    fun userCanGetAttr() = runBlockingTest {
         val element = `$`(by("readonly", "readonly"))
         Assertions.assertThat(element.attr("name")).isEqualTo("username")
         Assertions.assertThat(element.attr("value")).isEqualTo("")
@@ -76,13 +76,13 @@ class AttributeTest : ITest() {
     }
 
     @Test
-    fun userCanGetNameAttribute() {
+    fun userCanGetNameAttribute() = runBlockingTest {
         Assertions.assertThat(`$`(by("readonly", "readonly")).name()).isEqualTo("username")
         Assertions.assertThat(`$`("h2").name()).isNull()
     }
 
     @Test
-    fun userCanGetDataAttributes() {
+    fun userCanGetDataAttributes() = runBlockingTest {
         Assertions.assertThat(`$`(byValue("livemail.ru")).getAttribute("data-mailServerId"))
             .isEqualTo("111")
         Assertions.assertThat(`$`(byValue("livemail.ru")).data("mailServerId"))
@@ -96,7 +96,7 @@ class AttributeTest : ITest() {
     }
 
     @Test
-    fun userCanSearchElementByDataAttribute() {
+    fun userCanSearchElementByDataAttribute() = runBlockingTest {
         Assertions.assertThat(`$`(by("data-mailServerId", "111")).data("mailServerId"))
             .isEqualTo("111")
         Assertions.assertThat(`$`(by("data-mailServerId", "222A")).data("mailServerId"))

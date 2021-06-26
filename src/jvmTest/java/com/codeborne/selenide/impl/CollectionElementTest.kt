@@ -70,9 +70,9 @@ internal class CollectionElementTest : WithAssertions {
         assertThat(elementNotFoundError)
             .hasMessage(
                 String.format(
-                    "Element not found {Collection description[33]}%n" +
-                            "Expected: visible%n" +
-                            "Timeout: 0 ms.%n" +
+                    "Element not found {Collection description[33]}\n" +
+                            "Expected: visible\n" +
+                            "Timeout: 0 ms.\n" +
                             "Caused by: java.lang.Error: Error message"
                 )
             )
@@ -98,9 +98,9 @@ internal class CollectionElementTest : WithAssertions {
         assertThat(elementNotFoundError)
             .hasMessage(
                 String.format(
-                    "Element not found {Collection description[1]}%n" +
-                            "Expected: Reason description%n" +
-                            "Timeout: 0 ms.%n" +
+                    "Element not found {Collection description[1]}\n" +
+                            "Expected: Reason description\n" +
+                            "Timeout: 0 ms.\n" +
                             "Caused by: java.lang.Error: Error message"
                 )
             )

@@ -14,21 +14,21 @@ internal class InputFieldTest : ITest() {
     }
 
     @Test
-    fun selenideClearTest() {
+    fun selenideClearTest() = runBlockingTest {
         val input = `$`("#id1")
-        Assertions.assertThat(input.value).isNullOrEmpty()
+        Assertions.assertThat(input.getValue()).isNullOrEmpty()
         input.clear()
         input.setValue(",.123")
         input.clear()
         input.setValue("456")
-        Assertions.assertThat(input.value).isEqualTo("456")
+        Assertions.assertThat(input.getValue()).isEqualTo("456")
         input.clear()
         input.setValue(",.123")
         input.clear()
         input.setValue("456")
-        Assertions.assertThat(input.value).isEqualTo("456")
+        Assertions.assertThat(input.getValue()).isEqualTo("456")
         input.setValue("456")
         input.setValue("")
-        Assertions.assertThat(input.value).isEqualTo("")
+        Assertions.assertThat(input.getValue()).isEqualTo("")
     }
 }

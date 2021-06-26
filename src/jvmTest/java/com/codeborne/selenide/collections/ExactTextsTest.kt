@@ -69,8 +69,8 @@ internal class ExactTextsTest : WithAssertions {
             .isInstanceOf(ElementNotFound::class.java)
             .hasMessage(
                 String.format(
-                    "Element not found {Collection description}%nExpected: Exact texts [One]%n" +
-                            "Timeout: 10 s.%n" +
+                    "Element not found {Collection description}\nExpected: Exact texts [One]\n" +
+                            "Timeout: 10 s.\n" +
                             "Caused by: java.lang.IllegalArgumentException: bad thing happened"
                 )
             )
@@ -95,13 +95,14 @@ internal class ExactTextsTest : WithAssertions {
                 10000
             )
         }
+            .isFailure()
             .isInstanceOf(TextsMismatch::class.java)
             .hasMessage(
                 String.format(
-                    "Texts mismatch%n" +
-                            "Actual: [Hello]%n" +
-                            "Expected: [One]%n" +
-                            "Collection: Collection description%n" +
+                    "Texts mismatch\n" +
+                            "Actual: [Hello]\n" +
+                            "Expected: [One]\n" +
+                            "Collection: Collection description\n" +
                             "Timeout: 10 s."
                 )
             )
@@ -125,7 +126,7 @@ internal class ExactTextsTest : WithAssertions {
             .all {
                 contains("Actual: [One], List size: 1")
                 contains("Expected: [One, Two], List size: 2")
-                endsWith(String.format("Collection: Collection description%nTimeout: 10 s."))
+                endsWith(String.format("Collection: Collection description\nTimeout: 10 s."))
             }
     }
 

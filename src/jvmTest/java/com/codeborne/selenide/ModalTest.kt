@@ -66,7 +66,7 @@ internal class ModalTest {
             .all {
                 isInstanceOf(DialogTextMismatch::class)
                 message().isNotNull().all {
-                    contains(String.format("Actual: %s%nExpected: Are you sure?%n", ALERT_TEXT))
+                    contains(String.format("Actual: %s\nExpected: Are you sure?\n", ALERT_TEXT))
                     contains("Screenshot: $reportsBaseUri")
                 }
             }
@@ -105,7 +105,7 @@ internal class ModalTest {
             .all {
                  isInstanceOf(DialogTextMismatch::class)
                 message().isNotNull().all {
-                    contains(String.format("Actual: %s%nExpected: Are you sure?%n", ALERT_TEXT))
+                    contains(String.format("Actual: %s\nExpected: Are you sure?\n", ALERT_TEXT))
                     contains("Screenshot: " + convertFilePath(System.getProperty("user.dir") + "/" + config.reportsFolder() + "/"))
                 }
             }
@@ -136,7 +136,7 @@ internal class ModalTest {
             .all {
                 isInstanceOf(DialogTextMismatch::class)
                 message().isNotNull().all {
-                    contains(String.format("Actual: %s%nExpected: Are you sure?%n", ALERT_TEXT))
+                    contains(String.format("Actual: %s\nExpected: Are you sure?\n", ALERT_TEXT))
                     contains("Screenshot: " + convertFilePath(System.getProperty("user.dir") + "/" + config.reportsFolder() + "/"))
                 }
             }

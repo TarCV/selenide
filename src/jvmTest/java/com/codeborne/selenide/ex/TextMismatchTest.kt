@@ -26,10 +26,10 @@ internal class TextMismatchTest : WithAssertions {
         val textsMismatch = TextsMismatch.TextsMismatch(collection, actualTexts, expectedTexts, null, timeoutMs)
         assertThat(textsMismatch).hasMessage(
             String.format(
-                "Texts mismatch%n" +
-                        "Actual: [One, Two, Three]%n" +
-                        "Expected: [Four, Five, Six]%n" +
-                        "Collection: Collection description%n" +
+                "Texts mismatch\n" +
+                        "Actual: [One, Two, Three]\n" +
+                        "Expected: [Four, Five, Six]\n" +
+                        "Collection: Collection description\n" +
                         "Timeout: 1 s."
             )
         )
@@ -40,11 +40,11 @@ internal class TextMismatchTest : WithAssertions {
         val textsMismatch = TextsMismatch.TextsMismatch(collection, actualTexts, expectedTexts, "it's said in doc", timeoutMs)
         assertThat(textsMismatch).hasMessage(
             String.format(
-                "Texts mismatch%n" +
-                        "Actual: [One, Two, Three]%n" +
-                        "Expected: [Four, Five, Six]%n" +
-                        "Because: it's said in doc%n" +
-                        "Collection: Collection description%n" +
+                "Texts mismatch\n" +
+                        "Actual: [One, Two, Three]\n" +
+                        "Expected: [Four, Five, Six]\n" +
+                        "Because: it's said in doc\n" +
+                        "Collection: Collection description\n" +
                         "Timeout: 1 s."
             )
         )

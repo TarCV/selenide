@@ -10,11 +10,11 @@ import com.codeborne.selenide.impl.WebElementSource
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.Select
 
-class GetSelectedOptions : Command<ElementsCollection?> {
+class GetSelectedOptions : Command<ElementsCollection> {
     override suspend fun execute(
-      proxy: SelenideElement,
-      locator: WebElementSource,
-      args: Array<out Any>
+        proxy: SelenideElement,
+        locator: WebElementSource,
+        args: Array<out Any?>
     ): ElementsCollection {
         return ElementsCollection(SelectedOptionsCollection(locator))
     }

@@ -7,9 +7,7 @@ import com.codeborne.selenide.impl.Plugins
 import org.openqa.selenium.WebElement
 
 class Focused : Condition("focused") {
-    private val describe = Plugins.injectA(
-        ElementDescriber::class
-    )
+    private val describe = Plugins.elementDescriber
 
     private suspend fun getFocusedElement(driver: Driver): org.openqa.selenium.WebElement? {
         return driver.executeJavaScript("return document.activeElement")

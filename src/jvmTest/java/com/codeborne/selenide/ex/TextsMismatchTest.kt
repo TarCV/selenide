@@ -21,10 +21,10 @@ internal class TextsMismatchTest : WithAssertions {
         )
         assertThat(textsMismatch).hasMessage(
             String.format(
-                "Texts mismatch%n" +
-                        "Actual: [Niff, Naff, Nuff]%n" +
-                        "Expected: [Piff, Paff, Puff]%n" +
-                        "Collection: .characters%n" +
+                "Texts mismatch\n" +
+                        "Actual: [Niff, Naff, Nuff]\n" +
+                        "Expected: [Piff, Paff, Puff]\n" +
+                        "Collection: .characters\n" +
                         "Timeout: 9 s."
             )
         )
@@ -40,11 +40,11 @@ internal class TextsMismatchTest : WithAssertions {
         )
         assertThat(textsMismatch).hasMessage(
             String.format(
-                "Texts mismatch%n" +
-                        "Actual: [Niff, Naff, Nuff]%n" +
-                        "Expected: [Piff, Paff, Puff]%n" +
-                        "Because: we expect favorite characters%n" +
-                        "Collection: .characters%n" +
+                "Texts mismatch\n" +
+                        "Actual: [Niff, Naff, Nuff]\n" +
+                        "Expected: [Piff, Paff, Puff]\n" +
+                        "Because: we expect favorite characters\n" +
+                        "Collection: .characters\n" +
                         "Timeout: 9 s."
             )
         )

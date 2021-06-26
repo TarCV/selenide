@@ -2,13 +2,12 @@ package com.codeborne.selenide.ex
 
 import com.codeborne.selenide.Condition
 import com.codeborne.selenide.Driver
-import com.codeborne.selenide.impl.ElementDescriber
-import com.codeborne.selenide.impl.Plugins.injectA
+import com.codeborne.selenide.impl.Plugins
 import org.openqa.selenium.WebElement
 
 class ElementShouldNot internal constructor(driver: Driver, message: String?, lastError: Throwable?) : UIAssertionError(driver, message, lastError) {
     companion object {
-        private val describe = injectA(ElementDescriber::class)
+        private val describe = Plugins.elementDescriber
 
         suspend fun ElementShouldNot(
             driver: Driver, searchCriteria: String?, prefix: String?, expectedCondition: Condition,

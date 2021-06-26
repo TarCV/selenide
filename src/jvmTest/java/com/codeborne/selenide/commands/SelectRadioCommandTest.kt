@@ -53,7 +53,7 @@ internal class SelectRadioCommandTest : WithAssertions {
                 .all {
                     startsWith(
                         String.format(
-                            "Element not found {null}%nExpected: value '%s'",
+                            "Element not found {null}\nExpected: value '%s'",
                             defaultElementValue
                         )
                     )

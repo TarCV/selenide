@@ -21,32 +21,32 @@ internal class InvisibleElementTest : ITest() {
     }
 
     @Test
-    fun shouldBeHidden() {
+    fun shouldBeHidden() = runBlockingTest {
         `$`("#hide").shouldBe(Condition.hidden)
     }
 
     @Test
-    fun shouldNotBeVisible() {
+    fun shouldNotBeVisible() = runBlockingTest {
         `$`("#hide").shouldNotBe(Condition.visible)
     }
 
     @Test
-    fun shouldNotHaveTextHide() {
+    fun shouldNotHaveTextHide() = runBlockingTest {
         `$`("#hide").shouldNotHave(text("Hide me").because("Text should disappear"))
     }
 
     @Test
-    fun shouldHaveAttribute() {
+    fun shouldHaveAttribute() = runBlockingTest {
         `$`("#hide").shouldHave(attribute("id", "hide").because("Attributes don't disappear"))
     }
 
     @Test
-    fun shouldHaveCssClasses() {
+    fun shouldHaveCssClasses() = runBlockingTest {
         `$`("#hide").shouldHave(cssClass("someclass").because("Attributes don't disappear"))
     }
 
     @Test
-    fun shouldNotHaveTextRemove() {
+    fun shouldNotHaveTextRemove() = runBlockingTest {
         `$`("#hide").shouldNotHave(text("Remove me").because("Text never existed."))
     }
 }

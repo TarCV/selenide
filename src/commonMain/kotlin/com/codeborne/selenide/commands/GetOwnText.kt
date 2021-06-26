@@ -7,7 +7,7 @@ import com.codeborne.selenide.impl.WebElementSource
 import org.openqa.selenium.WebElement
 
 class GetOwnText : Command<String> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): String {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): String {
         return getOwnText(locator.driver(), locator.getWebElement())
     }
 

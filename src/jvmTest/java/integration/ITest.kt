@@ -17,11 +17,11 @@ abstract class ITest : BaseIntegrationTest() {
 
     @BeforeEach
     fun resetShortTimeout() {
-        config.get().timeout(1)
+        getConfig().timeout(1)
     }
 
     protected fun setTimeout(timeoutMs: Long) {
-        config.get().timeout(timeoutMs)
+        getConfig().timeout(timeoutMs)
     }
 
     protected inline fun withLongTimeout(test: () -> Unit) {
@@ -33,12 +33,12 @@ abstract class ITest : BaseIntegrationTest() {
         }
     }
 
-    protected fun withFastSetValue(test: Runnable) {
-        config.get().fastSetValue(true)
+    protected inline fun withFastSetValue(test: () -> Unit) {
+        getConfig().fastSetValue(true)
         try {
-            test.run()
+            test()
         } finally {
-            config.get().fastSetValue(false)
+            getConfig().fastSetValue(false)
         }
     }
 
@@ -99,6 +99,8 @@ abstract class ITest : BaseIntegrationTest() {
 
         private val config =
             ThreadLocal.withInitial { SelenideConfig().browser(browser).baseUrl(getBaseUrl()).timeout(1) }
-        private val driver = ThreadLocal.withInitial { SelenideDriver(config.get()) }
+        protected fun getConfig(): SelenideConfig = config.get()
+
+        private val driver = ThreadLocal.withInitial { SelenideDriver(getConfig()) }
     }
 }

@@ -21,7 +21,7 @@ internal class CollectionReloadingTest : ITest() {
     }
 
     @Test
-    fun reloadsCollectionOnEveryCall() {
+    fun reloadsCollectionOnEveryCall() = runBlockingTest {
         val collection = `$$`("#collection li")
         collection.get(0).shouldHave(text("Element #0"))
         collection.get(10).shouldHave(text("Element #10"))

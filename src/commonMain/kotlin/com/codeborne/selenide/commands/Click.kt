@@ -9,8 +9,8 @@ import com.codeborne.selenide.filecontent.ClickJs.clickJs
 import com.codeborne.selenide.impl.WebElementSource
 import org.openqa.selenium.WebElement
 
-open class Click : Command<Nothing?> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Nothing? {
+open class Click : Command<Unit> {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): Unit {
         val driver = locator.driver()
         val webElement = locator.findAndAssertElementIsInteractable()
         if (args == null || args.isEmpty()) {
@@ -23,7 +23,6 @@ open class Click : Command<Nothing?> {
             val offsetY = args[1] as Int
             click(driver, webElement, offsetX, offsetY)
         }
-        return null
     }
 
     open suspend fun click(driver: Driver, element: org.openqa.selenium.WebElement) {

@@ -22,12 +22,10 @@ class DownloadFile internal constructor(
     private val downloadFileToFolder: DownloadFileToFolder
 ) : Command<Path> {
     constructor() : this(
-        null, null, Plugins.injectA<DownloadFileToFolder>(
-            DownloadFileToFolder::class
-        )
+        null, null, Plugins.downloadFileToFolder
     ) {
     }
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Path {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): Path {
         val link = locator.findAndAssertElementIsInteractable()
         val config = locator.driver().config()
         val options = getDownloadOptions(config, args)

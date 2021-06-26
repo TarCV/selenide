@@ -17,7 +17,7 @@ internal class PseudoTest : ITest() {
     }
 
     @Test
-    fun shouldHavePseudo() {
+    fun shouldHavePseudo() = runBlockingTest {
         `$`("h1").shouldHave(pseudo(":first-letter", "color", "rgb(255, 0, 0)"))
         `$`("h2").shouldNotHave(pseudo(":first-letter", "color", "rgb(255, 0, 0)"))
         `$`("abbr").shouldHave(pseudo(":before", "content", "\"beforeContent\""))
@@ -26,13 +26,12 @@ internal class PseudoTest : ITest() {
         `$`("p").shouldNotHave(pseudo(":before", "\"beforeContent\""))
     }
 
-    @get:Test
-    val pseudo: Unit
-        get() {
-            Assertions.assertThat(`$`("h1").pseudo(":first-letter", "color")).isEqualTo("rgb(255, 0, 0)")
-            Assertions.assertThat(`$`("abbr").pseudo(":before", "content")).isEqualTo("\"beforeContent\"")
-            Assertions.assertThat(`$`("p").pseudo(":after", "content")).isEqualTo("none")
-            Assertions.assertThat(`$`("abbr").pseudo(":before")).isEqualTo("\"beforeContent\"")
-            Assertions.assertThat(`$`("p").pseudo(":after")).isEqualTo("none")
-        }
+    @Test
+    fun getPseudo() = runBlockingTest {
+        Assertions.assertThat(`$`("h1").pseudo(":first-letter", "color")).isEqualTo("rgb(255, 0, 0)")
+        Assertions.assertThat(`$`("abbr").pseudo(":before", "content")).isEqualTo("\"beforeContent\"")
+        Assertions.assertThat(`$`("p").pseudo(":after", "content")).isEqualTo("none")
+        Assertions.assertThat(`$`("abbr").pseudo(":before")).isEqualTo("\"beforeContent\"")
+        Assertions.assertThat(`$`("p").pseudo(":after")).isEqualTo("none")
+    }
 }

@@ -5,7 +5,7 @@ import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.impl.WebElementSource
 
 class GetPseudoValue : Command<String> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): String {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): String {
         val pseudoElement = Util.firstOf<String>(args)
         if (args.size > 1) {
             val propertyName = args[1] as String

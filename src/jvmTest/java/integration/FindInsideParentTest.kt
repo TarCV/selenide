@@ -19,7 +19,7 @@ internal class FindInsideParentTest : ITest() {
     }
 
     @Test
-    fun findWaitsForParentAndChildElements() {
+    fun findWaitsForParentAndChildElements() = runBlockingTest {
         `$`(byText("Result 1")).find("#result-1").shouldNotBe(Condition.visible)
         `$`("#results li", 1).find("#result-2").shouldNotBe(Condition.visible)
         `$`(byText("Run long request")).click()
@@ -30,7 +30,7 @@ internal class FindInsideParentTest : ITest() {
     }
 
     @Test
-    fun findWaitsForParentAndChildElementsMeetsCondition() {
+    fun findWaitsForParentAndChildElementsMeetsCondition() = runBlockingTest {
         `$`("#unexisting-parent").shouldNotBe(Condition.visible)
         `$`("#unexisting-parent").find("#unexisting-child").shouldNotBe(Condition.visible)
     }

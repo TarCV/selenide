@@ -63,7 +63,7 @@ internal class SetValueCommandTest : WithAssertions {
 
     @Test
     fun testElementGetClearedWhenArgsTextIsNull() = runBlockingTest {
-        val returnedElement: WebElement = setValueCommand.execute(proxy, locator, arrayOf())
+        val returnedElement: WebElement = setValueCommand.execute(proxy, locator, arrayOf(null))
         assertThat(returnedElement)
             .isEqualTo(proxy)
     }

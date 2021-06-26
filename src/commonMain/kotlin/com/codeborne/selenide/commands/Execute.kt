@@ -6,7 +6,7 @@ import com.codeborne.selenide.impl.WebElementSource
 import okio.IOException
 
 class Execute<ReturnType> : Command<ReturnType?> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): ReturnType? {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): ReturnType? {
         val command: Command<ReturnType> = Util.firstOf(args)
         return try {
             command.execute(proxy, locator, args)

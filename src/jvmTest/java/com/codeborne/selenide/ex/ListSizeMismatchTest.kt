@@ -41,13 +41,13 @@ internal class ListSizeMismatchTest : WithAssertions {
         assertThat(listSizeMismatch)
             .hasMessage(
                 String.format(
-                    "List size mismatch: expected: <= 10, actual: 3, collection: Collection description%n" +
-                            "Elements: [%n" +
-                            "\t<div displayed:false>Niff</div>,%n" +
-                            "\t<div displayed:false>Naff</div>,%n" +
-                            "\t<div displayed:false>Nuff</div>%n" +
-                            "]%n" +
-                            "Timeout: 1 s.%n" +
+                    "List size mismatch: expected: <= 10, actual: 3, collection: Collection description\n" +
+                            "Elements: [\n" +
+                            "\t<div displayed:false>Niff</div>,\n" +
+                            "\t<div displayed:false>Naff</div>,\n" +
+                            "\t<div displayed:false>Nuff</div>\n" +
+                            "]\n" +
+                            "Timeout: 1 s.\n" +
                             "Caused by: java.lang.Exception: Something happened"
                 )
             )
@@ -68,13 +68,13 @@ internal class ListSizeMismatchTest : WithAssertions {
             .hasMessage(
                 String.format(
                     "List size mismatch: expected: > 10" +
-                            " (because it's said in customer requirement #12345), actual: 3, collection: Collection description%n" +
-                            "Elements: [%n" +
-                            "\t<div displayed:false>Niff</div>,%n" +
-                            "\t<div displayed:false>Naff</div>,%n" +
-                            "\t<div displayed:false>Nuff</div>%n" +
-                            "]%n" +
-                            "Timeout: 1 s.%n" +
+                            " (because it's said in customer requirement #12345), actual: 3, collection: Collection description\n" +
+                            "Elements: [\n" +
+                            "\t<div displayed:false>Niff</div>,\n" +
+                            "\t<div displayed:false>Naff</div>,\n" +
+                            "\t<div displayed:false>Nuff</div>\n" +
+                            "]\n" +
+                            "Timeout: 1 s.\n" +
                             "Caused by: java.lang.Exception: Something happened"
                 )
             )

@@ -11,6 +11,6 @@ class ExactText(private val expectedText: String) : Condition("exact text") {
     }
 
     override fun toString(): String {
-        return "${name} '{expectedText}'"
+        return "$name '$expectedText'"
     }
 }

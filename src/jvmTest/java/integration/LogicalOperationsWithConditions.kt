@@ -30,7 +30,7 @@ class LogicalOperationsWithConditions : ITest() {
     }
 
     @Test
-    fun not_be() {
+    fun not_be() = runBlockingTest {
         `$`(".lolkek").shouldNotBe(Condition.visible)
         `$`(".lolkek").shouldBe(not(Condition.visible))
         `$`(".lolkek").shouldNot(be(Condition.visible))
@@ -39,7 +39,7 @@ class LogicalOperationsWithConditions : ITest() {
     }
 
     @Test
-    fun andRevertsMissingElementTolerance() {
+    fun andRevertsMissingElementTolerance() = runBlockingTest {
         `$`(".lolkek").shouldNotBe(and("visible&visible", Condition.visible, Condition.visible))
         assertThat { `$`(".lolkek").shouldNotHave(text("Lasnamäe")) }.isFailure()
             .isInstanceOf(ElementNotFound::class.java)
@@ -87,7 +87,7 @@ class LogicalOperationsWithConditions : ITest() {
     }
 
     @Test
-    fun orRevertsMissingElementTolerance() {
+    fun orRevertsMissingElementTolerance() = runBlockingTest {
         `$`(".lolkek").shouldNotBe(or("visible||exist", Condition.visible, Condition.exist))
         assertThat {
             `$`(".lolkek").shouldNotBe(
@@ -112,7 +112,7 @@ class LogicalOperationsWithConditions : ITest() {
     }
 
     @Test
-    fun andRevertsExistingElement() {
+    fun andRevertsExistingElement() = runBlockingTest {
         `$`("h1").shouldHave(text("Element removed"), text("from DOM"))
         `$`("h1").shouldHave(and("2 texts", text("Element removed"), text("from DOM")))
         `$`("h1").shouldNotHave(and("2 texts", text("Lasnamäe"), text("from DOM")))
@@ -130,7 +130,7 @@ class LogicalOperationsWithConditions : ITest() {
     }
 
     @Test
-    fun orRevertsExistingElement() {
+    fun orRevertsExistingElement() = runBlockingTest {
         val text1 = "Element removed"
         val text2 = "from DOM"
         `$`("h1").shouldHave(or("2 texts", text(text1), text(text2)))

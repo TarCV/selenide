@@ -7,7 +7,7 @@ import com.codeborne.selenide.impl.WebElementWrapper
 import org.openqa.selenium.support.ui.Select
 
 class GetSelectedOption : Command<SelenideElement> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): SelenideElement {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): SelenideElement {
         return WebElementWrapper.wrap(locator.driver(), Select(locator.getWebElement()).firstSelectedOption)
     }
 }

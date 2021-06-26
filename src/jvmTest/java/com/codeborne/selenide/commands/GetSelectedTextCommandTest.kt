@@ -1,15 +1,15 @@
 package com.codeborne.selenide.commands
 
-import com.codeborne.selenide.Command
 import com.codeborne.selenide.Mocks.mockElement
 import com.codeborne.selenide.SelenideElement
+import com.codeborne.selenide.impl.SelenideElementProxy.Companion.NO_ARGS
 import com.codeborne.selenide.impl.WebElementSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.WithAssertions
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
+import org.mockito.kotlin.any
 
 @ExperimentalCoroutinesApi
 internal class GetSelectedTextCommandTest : WithAssertions {
@@ -22,12 +22,12 @@ internal class GetSelectedTextCommandTest : WithAssertions {
         val option = mockElement("option", "Option text")
         Mockito.`when`<Any>(
             getSelectedOptionCommand.execute(
-                ArgumentMatchers.any(),
-                ArgumentMatchers.any(),
-                ArgumentMatchers.any<Array<Any>>()
+                any(),
+                any(),
+                any()
             )
         ).thenReturn(option)
         assertThat<Any>(command.execute(proxy, selectElement, arrayOf())).isEqualTo("Option text")
-        Mockito.verify(getSelectedOptionCommand).execute(proxy, selectElement, Command.NO_ARGS)
+        Mockito.verify(getSelectedOptionCommand).execute(proxy, selectElement, NO_ARGS)
     }
 }

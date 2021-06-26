@@ -11,6 +11,6 @@ class CaseSensitiveText(private val expectedText: String) : Condition("textCaseS
     }
 
     override fun toString(): String {
-        return "${name} '{expectedText}'"
+        return "${name} '${expectedText}'"
     }
 }

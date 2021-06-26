@@ -22,7 +22,6 @@ import com.codeborne.selenide.logevents.SelenideLogger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
@@ -444,9 +443,7 @@ class ElementsCollection(private val collection: CollectionSource) {
     suspend fun isEmpty(): Boolean = getElements().isEmpty()
 
     companion object {
-        private val describe = Plugins.injectA(
-            ElementDescriber::class
-        )
+        private val describe = Plugins.elementDescriber
 
         /**
          * Fail-safe method for retrieving texts of given elements.

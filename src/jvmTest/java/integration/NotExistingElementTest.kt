@@ -34,37 +34,37 @@ internal class NotExistingElementTest : ITest() {
     }
 
     @Test
-    fun shouldNotExist() {
+    fun shouldNotExist() = runBlockingTest {
         `$`("#not_exist").shouldNot(Condition.exist)
     }
 
     @Test
-    fun shouldNotExist_because() {
+    fun shouldNotExist_because() = runBlockingTest {
         `$`("#not_exist").shouldNot(Condition.exist.because("it was removed in last release"))
     }
 
     @Test
-    fun should_not_exist() {
+    fun should_not_exist() = runBlockingTest {
         `$`("#not_exist").should(not(Condition.exist))
     }
 
     @Test
-    fun should_not_exist_because() {
+    fun should_not_exist_because() = runBlockingTest {
         `$`("#not_exist").should(not(Condition.exist).because("it was removed in last release"))
     }
 
     @Test
-    fun shouldNot_be_exist() {
+    fun shouldNot_be_exist() = runBlockingTest {
         `$`("#not_exist").shouldNot(be(Condition.exist))
     }
 
     @Test
-    fun shouldNot_be_exist_because() {
+    fun shouldNot_be_exist_because() = runBlockingTest {
         `$`("#not_exist").shouldNot(be(Condition.exist).because("it was removed in last release"))
     }
 
     @Test
-    fun shouldNot_match() {
+    fun shouldNot_match() = runBlockingTest {
         assertThat {
             `$`("#not_exist").shouldNot(match("border=1") { el ->
                 el.getAttribute(
@@ -79,22 +79,22 @@ internal class NotExistingElementTest : ITest() {
     }
 
     @Test
-    fun shouldNotExistIfParentDoesNotExist() {
+    fun shouldNotExistIfParentDoesNotExist() = runBlockingTest {
         `$$`("#not_exist").first().`$`("#multirowTable").shouldNot(Condition.exist)
     }
 
     @Test
-    fun shouldBeHidden() {
+    fun shouldBeHidden() = runBlockingTest {
         `$`("#not_exist").shouldBe(Condition.hidden)
     }
 
     @Test
-    fun shouldNotBeVisible() {
+    fun shouldNotBeVisible() = runBlockingTest {
         `$`("#not_exist").shouldNotBe(Condition.visible)
     }
 
     @Test
-    fun toWebElement_shouldNotWait() {
+    fun toWebElement_shouldNotWait() = runBlockingTest {
         setTimeout(4000)
         val start = System.nanoTime()
         try {
@@ -110,30 +110,29 @@ internal class NotExistingElementTest : ITest() {
         }
     }
 
-    @get:Test
-    val wrappedElement_waits_untilElementApears: Unit
-        get() {
-            setTimeout(1000)
-            val start = System.nanoTime()
-            try {
-                assertThat { `$`("#not_exist").wrappedElement }.isFailure().all {
-                    isInstanceOf(ElementNotFound::class.java)
-                    message().isNotNull().startsWith("Element not found {#not_exist}")
-                    cause().isNotNull().all {
-                        isInstanceOf(NoSuchElementException::class.java)
-                        messageContains("Unable to locate element:")
-                        messageContains("#not_exist")
-                    }
+    @Test
+    fun getWrappedElement_waits_untilElementApears() = runBlockingTest {
+        setTimeout(1000)
+        val start = System.nanoTime()
+        try {
+            assertThat { `$`("#not_exist").wrappedElement }.isFailure().all {
+                isInstanceOf(ElementNotFound::class.java)
+                message().isNotNull().startsWith("Element not found {#not_exist}")
+                cause().isNotNull().all {
+                    isInstanceOf(NoSuchElementException::class.java)
+                    messageContains("Unable to locate element:")
+                    messageContains("#not_exist")
                 }
-            } finally {
-                val end = System.nanoTime()
-                Assertions.assertThat(TimeUnit.NANOSECONDS.toMillis(end - start))
-                    .isBetween(1000L, 3000L)
             }
+        } finally {
+            val end = System.nanoTime()
+            Assertions.assertThat(TimeUnit.NANOSECONDS.toMillis(end - start))
+                .isBetween(1000L, 3000L)
         }
+    }
 
     @Test
-    fun shouldNotHaveText_fails_ifElementIsNotFound() {
+    fun shouldNotHaveText_fails_ifElementIsNotFound() = runBlockingTest {
         assertThat { `$`("#not_exist").shouldNotHave(text("Remove me")) }.isFailure().all {
             isInstanceOf(ElementNotFound::class.java)
             message().isNotNull().startsWith("Element not found {#not_exist}")
@@ -141,7 +140,7 @@ internal class NotExistingElementTest : ITest() {
     }
 
     @Test
-    fun shouldNotHaveText_withBecause_fails_ifElementIsNotFound() {
+    fun shouldNotHaveText_withBecause_fails_ifElementIsNotFound() = runBlockingTest {
         assertThat { `$`("#not_exist").shouldNotHave(text("Remove me").because("it was removed in last release")) }.isFailure().all {
             isInstanceOf(ElementNotFound::class.java)
             message().isNotNull().startsWith("Element not found {#not_exist}")
@@ -150,7 +149,7 @@ internal class NotExistingElementTest : ITest() {
     }
 
     @Test
-    fun shouldNotHaveAttribute_fails_ifElementIsNotFound() {
+    fun shouldNotHaveAttribute_fails_ifElementIsNotFound() = runBlockingTest {
         assertThat { `$`("#not_exist").shouldNotHave(attribute("abc")) }.isFailure().all {
             isInstanceOf(ElementNotFound::class.java)
             message().isNotNull().startsWith("Element not found {#not_exist}")

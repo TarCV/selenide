@@ -10,9 +10,7 @@ class ElementShould internal constructor(
     driver: Driver, message: String, lastError: Throwable?
 ): UIAssertionError(driver, message, lastError) {
     companion object {
-        internal val describe = Plugins.injectA(
-            ElementDescriber::class
-        )
+        internal val describe = Plugins.elementDescriber
 
         suspend fun ElementShould(
             driver: Driver, searchCriteria: String?, prefix: String?, expectedCondition: Condition,

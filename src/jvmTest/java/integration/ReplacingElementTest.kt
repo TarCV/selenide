@@ -31,19 +31,17 @@ internal class ReplacingElementTest : ITest() {
         }
     }
 
-    @get:Test
-    val innerText: Unit
-        get() {
-            Assertions.assertThat(`$`("#dynamic-element").innerText())
-                .isEmpty()
-        }
+    @Test
+    fun getInnerText() = runBlockingTest {
+        Assertions.assertThat(`$`("#dynamic-element").innerText())
+            .isEmpty()
+    }
 
-    @get:Test
-    val innerHtml: Unit
-        get() {
-            Assertions.assertThat(`$`("#dynamic-element").innerHtml())
-                .isEmpty()
-        }
+    @Test
+    fun getInnerHtml() = runBlockingTest {
+        Assertions.assertThat(`$`("#dynamic-element").innerHtml())
+            .isEmpty()
+    }
 
     @Test
     fun findAll() = runBlockingTest {

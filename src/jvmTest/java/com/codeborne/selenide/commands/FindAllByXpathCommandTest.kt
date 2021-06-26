@@ -12,8 +12,8 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.WithAssertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.openqa.selenium.By
 
 @ExperimentalCoroutinesApi
@@ -25,7 +25,7 @@ internal class FindAllByXpathCommandTest : WithAssertions {
     private val selenideElement = mockElement("div", "Default Text")
     private val findAllByXpathCommand = FindAllByXpath()
     @BeforeEach
-    fun setup() {
+    fun setup() = runBlockingTest {
         Mockito.`when`<Any>(parentSelenideElement.toWebElement()).thenReturn(parentWebElement)
         Mockito.`when`<Any>(selenideElement.toWebElement()).thenReturn(webElement)
         Mockito.`when`(selenideElement.isSelected).thenReturn(true)
@@ -42,20 +42,20 @@ internal class FindAllByXpathCommandTest : WithAssertions {
 
     @Test
     fun executeMethodWithZeroLengthArgs() = runBlockingTest {
-        Mockito.`when`(parentWebElement.findElement(ArgumentMatchers.any())).thenReturn(webElement)
+        Mockito.`when`(parentWebElement.findElement(any())).thenReturn(webElement)
         val findAllCommandCollection = findAllByXpathCommand.execute(parentSelenideElement, locator, arrayOf("."))
         assertThat(findAllCommandCollection.first().text).isEqualTo("Default Text")
         Mockito.verify(parentWebElement).findElement(By.xpath("."))
-        Mockito.verify(parentSelenideElement, Mockito.never()).findElements(ArgumentMatchers.any())
+        Mockito.verify(parentSelenideElement, Mockito.never()).findElements(any())
     }
 
     @Test
     fun executeMethodWithMoreThenOneArgsList() = runBlockingTest {
-        Mockito.`when`(parentWebElement.findElement(ArgumentMatchers.any())).thenReturn(webElement)
+        Mockito.`when`(parentWebElement.findElement(any())).thenReturn(webElement)
         val findAllCommandCollection =
             findAllByXpathCommand.execute(parentSelenideElement, locator, arrayOf(".", "/.."))
         assertThat(findAllCommandCollection.first().text).isEqualTo("Default Text")
         Mockito.verify(parentWebElement).findElement(By.xpath("."))
-        Mockito.verify(parentSelenideElement, Mockito.never()).findElements(ArgumentMatchers.any())
+        Mockito.verify(parentSelenideElement, Mockito.never()).findElements(any())
     }
 }

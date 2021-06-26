@@ -24,59 +24,59 @@ internal class LongRunningAjaxRequestTest : ITest() {
     }
 
     @Test
-    fun dollarWaitsForElement() {
+    fun dollarWaitsForElement() = runBlockingTest {
         `$`(byText("Result 1")).shouldBe(Condition.visible)
     }
 
     @Test
-    fun dollarWaitsForElementWithIndex() {
+    fun dollarWaitsForElementWithIndex() = runBlockingTest {
         `$`("#results li", 1).shouldHave(text("Result 2"))
     }
 
     @Test
-    fun dollarWaitsUntilElementDisappears() {
+    fun dollarWaitsUntilElementDisappears() = runBlockingTest {
         `$`(byText("Loading...")).should(Condition.exist)
         `$`(byText("Loading...")).should(Condition.disappear)
         `$`(byText("Loading...")).shouldNot(Condition.exist)
     }
 
     @Test
-    fun userCanWaitUntilConditionIsMet() {
+    fun userCanWaitUntilConditionIsMet() = runBlockingTest {
         `$`(byText("Result 2")).waitUntil(Condition.visible, 3000)
         Assertions.assertThat(`$`(byText("Result 2")).isDisplayed).isTrue
     }
 
     @Test
-    fun dollarWithParentWaitsUntilElementDisappears() {
+    fun dollarWithParentWaitsUntilElementDisappears() = runBlockingTest {
         `$`("#results").`$`("span#loading").should(Condition.exist)
         `$`("#results").`$`("span#loading").shouldNot(Condition.exist)
     }
 
     @Test
-    fun dollarWithParentAndIndexWaitsUntilElementDisappears() {
+    fun dollarWithParentAndIndexWaitsUntilElementDisappears() = runBlockingTest {
         `$`("#results").`$`("span#loading", 0).should(Condition.exist)
         `$`("#results").`$`("span#loading", 0).shouldNot(Condition.exist)
         `$`("#results").`$`("span#loading", 666).shouldNot(Condition.exist)
     }
 
     @Test
-    fun waitingTimeout() {
+    fun waitingTimeout() = runBlockingTest {
         assertThat { `$`("#non-existing-element").should(Condition.exist) }.isFailure()
             .isInstanceOf(AssertionError::class.java)
     }
 
     @Test
-    fun shouldWaitsForCondition() {
+    fun shouldWaitsForCondition() = runBlockingTest {
         `$`("#results").shouldHave(text("Result 1"))
     }
 
     @Test
-    fun shouldWaitsForAllConditions() {
+    fun shouldWaitsForAllConditions() = runBlockingTest {
         `$`("#results").shouldHave(text("Result 1"), text("Result 2"))
     }
 
     @Test
-    fun shouldNotExist() {
+    fun shouldNotExist() = runBlockingTest {
         `$`("#non-existing-element").shouldNot(Condition.exist)
         `$`("#non-existing-element", 7).shouldNot(Condition.exist)
         `$`(By.linkText("non-existing-link")).shouldNot(Condition.exist)
@@ -84,7 +84,7 @@ internal class LongRunningAjaxRequestTest : ITest() {
     }
 
     @Test
-    fun findWaitsForConditions() {
+    fun findWaitsForConditions() = runBlockingTest {
         `$`("#results").find(byText("non-existing element"))!!.shouldNot(Condition.exist)
         `$`("#results").find(byText("non-existing element"), 3).shouldNot(Condition.exist)
         `$`("#results").find(byText("Loading..."))!!.shouldNot(Condition.exist)
@@ -92,13 +92,13 @@ internal class LongRunningAjaxRequestTest : ITest() {
     }
 
     @Test
-    fun shouldNotExistWithinParentElement() {
+    fun shouldNotExistWithinParentElement() = runBlockingTest {
         `$`("body").`$`("#non-existing-element").shouldNot(Condition.exist)
         `$`("body").`$`("#non-existing-element", 4).shouldNot(Condition.exist)
     }
 
     @Test
-    fun shouldNotBeVisible() {
+    fun shouldNotBeVisible() = runBlockingTest {
         `$`("#non-existing-element").shouldNotBe(Condition.visible)
         `$`("#non-existing-element", 7).shouldNotBe(Condition.visible)
         `$`(By.linkText("non-existing-link")).shouldNotBe(Condition.visible)
@@ -106,7 +106,7 @@ internal class LongRunningAjaxRequestTest : ITest() {
     }
 
     @Test
-    fun shouldNotBeVisibleWithinParentElement() {
+    fun shouldNotBeVisibleWithinParentElement() = runBlockingTest {
         `$`("body").`$`("#non-existing-element").shouldNotBe(Condition.visible)
         `$`("body").`$`("#non-existing-element", 4).shouldNotBe(Condition.visible)
     }

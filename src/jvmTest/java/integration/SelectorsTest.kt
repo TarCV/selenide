@@ -26,29 +26,29 @@ internal class SelectorsTest : ITest() {
     }
 
     @Test
-    fun canFindElementByName() {
+    fun canFindElementByName() = runBlockingTest {
         `$`(byName("domain")).should(Condition.exist)
     }
 
     @Test
-    fun canFindElementByXPath() {
+    fun canFindElementByXPath() = runBlockingTest {
         `$`(byXpath("//h1")).shouldHave(text("Page with selects"))
         `$`(byXpath("//*[@name='domain']")).shouldBe(Condition.visible)
     }
 
     @Test
-    fun canFindElementByLinkText() {
+    fun canFindElementByLinkText() = runBlockingTest {
         `$`(byLinkText("Options with 'apostrophes' and \"quotes\"")).shouldHave(text("Options with 'apostrophes' and \"quotes\""))
     }
 
     @Test
-    fun canFindElementByPartialLinkText() {
+    fun canFindElementByPartialLinkText() = runBlockingTest {
         `$`(byPartialLinkText("'apostrophes")).shouldHave(text("Options with 'apostrophes' and \"quotes\""))
         `$`(byPartialLinkText("quotes\"")).shouldHave(text("Options with 'apostrophes' and \"quotes\""))
     }
 
     @Test
-    fun byAttributeEscapesQuotes() {
+    fun byAttributeEscapesQuotes() = runBlockingTest {
         `$`(byAttribute("value", "john mc'lain")).shouldHave(attribute("value", "john mc'lain"))
         `$`(byAttribute("value", "arnold \"schwarzenegger\"")).shouldHave(
             attribute(
@@ -63,26 +63,26 @@ internal class SelectorsTest : ITest() {
     }
 
     @Test
-    fun canFindElementById() {
+    fun canFindElementById() = runBlockingTest {
         `$`(byId("status")).shouldHave(text("Username:"))
     }
 
     @Test
-    fun canFindSelenideElementByXpath() {
+    fun canFindSelenideElementByXpath() = runBlockingTest {
         `$x`("//h1").shouldHave(text("Page with selects"))
         `$x`("//*[@id='status']").shouldHave(text("Username:"))
         `$x`("//*[@name='domain']").shouldBe(Condition.visible)
     }
 
     @Test
-    fun canFindElementsCollectionByXpath() {
+    fun canFindElementsCollectionByXpath() = runBlockingTest {
         `$$x`("//h1").get(0).shouldHave(text("Page with selects"))
         `$$x`("//*[@id='status']").get(0).shouldHave(text("Username:"))
         `$$x`("//*[@name='domain']").get(0).shouldBe(Condition.visible)
     }
 
     @Test
-    fun canFindChildSelenideElementByXpath() {
+    fun canFindChildSelenideElementByXpath() = runBlockingTest {
         val parent = `$x`("//div[@id='radioButtons']")
         parent.`$x`("./h2").shouldHave(text("Radio buttons"))
     }
@@ -94,7 +94,7 @@ internal class SelectorsTest : ITest() {
     }
 
     @Test
-    fun canFindNthChildSelenideElementByXpath() {
+    fun canFindNthChildSelenideElementByXpath() = runBlockingTest {
         val parent = `$x`("//table[@id='multirowTable']")
         parent.`$x`(".//tr", 0).shouldHave(text("Chack Norris"))
     }

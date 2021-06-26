@@ -32,7 +32,7 @@ internal class TimeoutTest : ITest() {
     }
 
     @Test
-    fun timeoutShouldBetoLongMilliseconds() {
+    fun timeoutShouldBetoLongMilliseconds() = runBlockingTest {
         try {
             `$`(By.xpath("//h16")).waitUntil(Condition.visible, 15)
         } catch (expectedException: ElementNotFound) {
@@ -48,7 +48,7 @@ internal class TimeoutTest : ITest() {
     }
 
     @Test
-    fun timeoutShouldBeFormattedInErrorMessage() {
+    fun timeoutShouldBeFormattedInErrorMessage() = runBlockingTest {
         try {
             `$`(By.xpath("//h19")).waitUntil(Condition.visible, 1500)
             Assertions.fail<Any>("Expected ElementNotFound")
@@ -65,7 +65,7 @@ internal class TimeoutTest : ITest() {
     }
 
     @Test
-    fun timeoutLessThanSecond() {
+    fun timeoutLessThanSecond() = runBlockingTest {
         try {
             `$`(By.xpath("//h18")).waitUntil(Condition.visible, 800)
             Assertions.fail<Any>("Expected ElementNotFound")

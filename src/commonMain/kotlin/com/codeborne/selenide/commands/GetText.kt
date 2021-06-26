@@ -14,7 +14,7 @@ class GetText : Command<String> {
     constructor(getSelectedtext: GetSelectedText) {
         getSelectedText = getSelectedtext
     }
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): String {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): String {
         val element = locator.getWebElement()
         return if ("select".equals(element.tagName, ignoreCase = true)) getSelectedText.execute(
             proxy,

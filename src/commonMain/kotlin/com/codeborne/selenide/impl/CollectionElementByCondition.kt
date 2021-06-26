@@ -5,7 +5,6 @@ import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.ex.ElementNotFound
 import org.openqa.selenium.WebElement
-import support.reflect.Proxy
 import kotlin.jvm.JvmStatic
 
 class CollectionElementByCondition internal constructor(
@@ -26,17 +25,16 @@ class CollectionElementByCondition internal constructor(
         throw ElementNotFound(driver(), description(), condition)
     }
 
-    override suspend fun getSearchCriteria(): String {
-        return collection.description() + ".findBy(" + condition + ")"
+    override fun getSearchCriteria(): String {
+        return "$collection.findBy($condition)"
     }
 
     companion object {
         @JvmStatic
         fun wrap(collection: CollectionSource, condition: Condition): SelenideElement {
-            return Proxy.newProxyInstance(
-                 null, arrayOf<kotlin.reflect.KClass<*>>(SelenideElement::class),
+            return SelenideElement(
                 SelenideElementProxy(CollectionElementByCondition(collection, condition))
-            ) as SelenideElement
+            )
         }
     }
 }

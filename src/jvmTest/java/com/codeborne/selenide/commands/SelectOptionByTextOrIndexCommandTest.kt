@@ -1,6 +1,7 @@
 package com.codeborne.selenide.commands
 
 import assertk.all
+import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import assertk.assertions.message
@@ -64,7 +65,7 @@ internal class SelectOptionByTextOrIndexCommandTest : WithAssertions {
                 .all {
                     startsWith(
                         String.format(
-                            "Element not found {null/option[text:%s]}%nExpected: exist",
+                            "Element not found {null/option[text:%s]}\nExpected: exist",
                             defaultElementText
                         )
                     )
@@ -83,8 +84,8 @@ internal class SelectOptionByTextOrIndexCommandTest : WithAssertions {
             assertThat<ElementNotFound>(exception)
                 .withFailMessage(
                     String.format(
-                        "Element not found {null/option[text:]}%nExpected: exist%n" +
-                                "Timeout: 0 ms.%n" +
+                        "Element not found {null/option[text:]}\nExpected: exist\n" +
+                                "Timeout: 0 ms.\n" +
                                 "Caused by: NoSuchElementException: Cannot locate element with text:"
                     )
                 )
@@ -109,7 +110,7 @@ internal class SelectOptionByTextOrIndexCommandTest : WithAssertions {
                 .all {
                     startsWith(
                         String.format(
-                            "Element not found {null/option[index:%d]}%nExpected: exist",
+                            "Element not found {null/option[index:%d]}\nExpected: exist",
                             defaultIndex
                         )
                     )
@@ -120,6 +121,6 @@ internal class SelectOptionByTextOrIndexCommandTest : WithAssertions {
     @Test
     fun executeMethodWhenArgIsNotStringOrInt() = runBlockingTest {
         assertk.assertThat(selectOptionByTextOrIndexCommand.execute(proxy, selectField, arrayOf<Any>(arrayOf(1.0))))
-            .isNull()
+            .isInstanceOf(Unit::class)
     }
 }

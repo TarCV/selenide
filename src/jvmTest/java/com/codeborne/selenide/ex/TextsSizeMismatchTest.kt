@@ -21,10 +21,10 @@ internal class TextsSizeMismatchTest : WithAssertions {
         )
         assertThat(textsMismatch).hasMessage(
             String.format(
-                "Texts size mismatch%n" +
-                        "Actual: [Niff, Naff, Nuff%%], List size: 3%n" +
-                        "Expected: [Piff, Paff, Puff'\"bro], List size: 3%n" +
-                        "Collection: .characters%n" +
+                "Texts size mismatch\n" +
+                        "Actual: [Niff, Naff, Nuff%%], List size: 3\n" +
+                        "Expected: [Piff, Paff, Puff'\"bro], List size: 3\n" +
+                        "Collection: .characters\n" +
                         "Timeout: 9 s."
             )
         )
@@ -40,11 +40,11 @@ internal class TextsSizeMismatchTest : WithAssertions {
         )
         assertThat(textsMismatch).hasMessage(
             String.format(
-                "Texts size mismatch%n" +
-                        "Actual: [Niff, Naff, Nuff%%], List size: 3%n" +
-                        "Expected: [Piff, Paff, Puff'\"bro], List size: 3%n" +
-                        "Because: we expect favorite characters%n" +
-                        "Collection: .characters%n" +
+                "Texts size mismatch\n" +
+                        "Actual: [Niff, Naff, Nuff%%], List size: 3\n" +
+                        "Expected: [Piff, Paff, Puff'\"bro], List size: 3\n" +
+                        "Because: we expect favorite characters\n" +
+                        "Collection: .characters\n" +
                         "Timeout: 9 s."
             )
         )

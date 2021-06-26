@@ -69,7 +69,7 @@ internal class SizeGreaterThanOrEqualTest : WithAssertions {
                 startsWith(
                     String.format(
                         "List size mismatch: " +
-                            "expected: >= 10, actual: 0, collection: Collection description%n" +
+                            "expected: >= 10, actual: 0, collection: Collection description\n" +
                             "Elements: []"
                     )
                 )

@@ -10,7 +10,7 @@ import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 
 class Matches : Command<Boolean> {
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Boolean {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): Boolean {
         val condition = Util.firstOf<Condition>(args)
         val element = getElementOrNull(locator)
         return if (element != null) {

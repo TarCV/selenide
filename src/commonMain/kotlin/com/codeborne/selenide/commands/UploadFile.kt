@@ -5,7 +5,6 @@ import com.codeborne.selenide.Config
 import com.codeborne.selenide.Driver
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.Stopwatch
-import com.codeborne.selenide.impl.ElementDescriber
 import com.codeborne.selenide.impl.FileHelper
 import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementSource
@@ -17,11 +16,10 @@ import okio.Path
 
 @ExperimentalFileSystem
 class UploadFile : Command<Path> {
-    private val describe = Plugins.injectA(
-        ElementDescriber::class
-    )
+    private val describe = Plugins.elementDescriber
+
     @kotlin.time.ExperimentalTime
-    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any>): Path {
+    override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): Path {
         checkNotNull(args)
         val file = getFiles(args)
         checkFilesGiven(file)

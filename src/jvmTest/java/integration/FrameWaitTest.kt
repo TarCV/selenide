@@ -30,14 +30,14 @@ internal class FrameWaitTest : ITest() {
 
     @Test
     @Video
-    fun waitsUntilFrameAppears_byTitle() {
+    fun waitsUntilFrameAppears_byTitle() = runBlockingTest {
         switchTo().frame("leftFrame")
         `$`("h1").shouldHave(text("Page with dynamic select"))
     }
 
     @Test
     @Video
-    fun waitsUntilFrameAppears_byIndex() {
+    fun waitsUntilFrameAppears_byIndex() = runBlockingTest {
         switchTo().frame(2)
         `$`("h1").shouldHave(text("Page with JQuery"))
         Assertions.assertThat(driver().source()).contains("Test::jquery")

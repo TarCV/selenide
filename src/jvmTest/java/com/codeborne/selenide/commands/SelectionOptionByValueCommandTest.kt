@@ -54,7 +54,7 @@ internal class SelectionOptionByValueCommandTest : WithAssertions {
     @Test
     fun selectByValueWithArgNotString() = runBlockingTest {
         assertk.assertThat(selectOptionByValueCommand.execute(proxy, selectField, arrayOf<Any>(intArrayOf(1))))
-            .isNull()
+            .isInstanceOf(Unit::class)
     }
 
     @Test
@@ -67,7 +67,7 @@ internal class SelectionOptionByValueCommandTest : WithAssertions {
             .message()
             .isNotNull()
             .all {
-                startsWith(String.format("Element not found {By.tagName{select}/option[value:walue]}%nExpected: exist"))
+                startsWith(String.format("Element not found {By.tagName{select}/option[value:walue]}\nExpected: exist"))
             }
     }
 }

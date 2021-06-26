@@ -2,7 +2,6 @@ package com.codeborne.selenide.selector
 
 import com.codeborne.selenide.filecontent.FindInShadowRootsJs.findInShadowRootsJs
 import com.codeborne.selenide.impl.Cleanup
-import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.SearchContext

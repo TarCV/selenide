@@ -11,7 +11,7 @@ class CssClass(private val expectedCssClass: String) : Condition("css class") {
     }
 
     override fun toString(): String {
-        return "${name} '{expectedCssClass}'"
+        return "${name} '${expectedCssClass}'"
     }
 
     private fun <T> contains(objects: Array<T>, `object`: T): Boolean {

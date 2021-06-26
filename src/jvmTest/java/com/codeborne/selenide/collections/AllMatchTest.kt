@@ -65,8 +65,8 @@ internal class AllMatchTest {
                 startsWith(
                     String.format(
                         "Collection matcher error" +
-                            "%nExpected: all of elements to match [Predicate description] predicate" +
-                            "%nCollection: Collection description"
+                            "\nExpected: all of elements to match [Predicate description] predicate" +
+                            "\nCollection: Collection description"
                     )
                 )
             }

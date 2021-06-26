@@ -11,7 +11,6 @@ import com.codeborne.selenide.ex.ElementNotFound
 import com.codeborne.selenide.ex.ElementShould.Companion.ElementShould
 import com.codeborne.selenide.ex.ElementShouldNot.Companion.ElementShouldNot
 import com.codeborne.selenide.impl.ElementFinder.Companion.wrap
-import org.openqa.selenium.By
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
 
@@ -20,7 +19,7 @@ abstract class WebElementSource {
         private set
     abstract fun driver(): Driver
     abstract suspend fun getWebElement(): org.openqa.selenium.WebElement
-    abstract suspend fun getSearchCriteria(): String
+    abstract fun getSearchCriteria(): String
     fun setAlias(alias: String) {
         this.alias = Alias(alias)
     }

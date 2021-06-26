@@ -29,7 +29,9 @@ internal class ExistsCommandTest : WithAssertions {
     private val existsCommand = Exists()
 
     @TempDir
+    @JvmField
     var tempDir: File? = null
+
     @Test
     fun testExistExecuteMethod() = runBlockingTest {
         Mockito.`when`<Any>(locator.getWebElement()).thenReturn(element)
