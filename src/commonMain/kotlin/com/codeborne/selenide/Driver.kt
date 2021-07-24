@@ -21,11 +21,11 @@ interface Driver {
         return hasWebDriverStarted() && webDriver is org.openqa.selenium.JavascriptExecutor
     }
 
-    suspend fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T {
+    suspend fun <T> executeJavaScript(jsCode: String, vararg arguments: Any?): T {
         return (webDriver as org.openqa.selenium.JavascriptExecutor).executeScript(jsCode, *arguments) as T
     }
 
-    suspend fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T {
+    suspend fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any?): T {
         return (webDriver as org.openqa.selenium.JavascriptExecutor).executeAsyncScript(jsCode, *arguments) as T
     }
 

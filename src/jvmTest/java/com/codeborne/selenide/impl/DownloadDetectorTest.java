@@ -69,6 +69,7 @@ final class DownloadDetectorTest {
   private Path fileCreatedSecondsAgo(String name, int secondsAgo) {
     File file = mock(File.class);
     when(file.getName()).thenReturn(name);
+    when(file.toString()).thenReturn(name);
     when(file.lastModified()).thenReturn(now - 1000L * secondsAgo);
     return Path.get(file);
   }

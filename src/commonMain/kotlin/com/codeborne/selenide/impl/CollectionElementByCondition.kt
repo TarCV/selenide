@@ -26,7 +26,7 @@ class CollectionElementByCondition internal constructor(
     }
 
     override fun getSearchCriteria(): String {
-        return "$collection.findBy($condition)"
+        return "${collection.description()}.findBy($condition)"
     }
 
     companion object {

@@ -43,7 +43,7 @@ class CiReportUrl {
         get() {
             val build_url = System.getProperty("BUILD_URL")
             return if (!build_url.isNullOrBlank()) {
-              val workspace = System.getProperty("WORKSPACE", System.getenv("WORKSPACE"))
+              val workspace = System.getProperty("WORKSPACE", System.getenv("WORKSPACE") ?: "")
               var reportRelativePath = ""
               if (workspace.isNotBlank()) { // we have a workspace folder. Calculate the report relative path
                 val pathAbsoluteReportsFolder = FileHelper.canonicalPath(FileHelper.pathOf(""))

@@ -6,6 +6,7 @@ import com.codeborne.selenide.impl.CollectionSource
 class ElementWithTextNotFound internal constructor(
     driver: Driver,
     message: String,
+    timeoutMs: Long,
     lastError: Throwable?
 ) : UIAssertionError(
     driver,
@@ -28,6 +29,7 @@ class ElementWithTextNotFound internal constructor(
                 "\n" + "Expected: " + expectedTexts +
                 (if (explanation == null) "" else "\nBecause: $explanation") +
                 "\n" + "Collection: " + collection.description(),
+            timeoutMs,
             lastError
         )
     }

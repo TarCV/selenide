@@ -101,7 +101,7 @@ class SelenideElementProxy(protected val webElementSource: WebElementSource) {
                 dispatchAndRetry(timeoutMs, pollingIntervalMs) {
                     command.invokeAsync(
                         webElementSource.getWebElement(),
-                        args2 ?: emptyArray<Any>()
+                        *(args2 ?: emptyArray<Any>())
                     )
                 }
             commitStep(log, EventStatus.PASS)

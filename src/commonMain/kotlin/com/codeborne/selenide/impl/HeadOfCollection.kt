@@ -19,8 +19,8 @@ class HeadOfCollection(private val originalCollection: CollectionSource, private
         }
         return originalCollection.getElement(index)
     }
-    override suspend fun description(): String {
-        return alias.getOrElseAsync { originalCollection.description() + ":first(" + size + ')' }
+    override fun description(): String {
+        return alias.getOrElse { originalCollection.description() + ":first(" + size + ')' }
     }
 
     override fun setAlias(alias: String) {

@@ -16,7 +16,9 @@ class DurationFormat {
         } else {
             val seconds = (milliseconds / 1000.0).toString()
             val exact = seconds.substringBefore('.')
-            val fractional = seconds.substringAfter('.').substring(0, 3)
+            val fractional = seconds.substringAfter('.')
+                .padEnd(3, '0')
+                .take(3)
             "$exact.$fractional s."
         }
     }

@@ -19,7 +19,7 @@ class Cleanup {
     }
 
     private fun extractFirstLine(text: String): String {
-        return REGEX_FIRST_LINE.replaceFirst(text, "$1")
+        return text.lineSequence().firstOrNull() ?: ""
     }
 
     private fun cleanupSeleniumWarning(firstLine: String): String {
@@ -57,7 +57,6 @@ class Cleanup {
     }
 
     companion object {
-        private val REGEX_FIRST_LINE = Regex("([^\\n]*)\\n.*", RegexOption.MULTILINE)
         private val REGEX_SELENIUM_WARNING =
             Regex("(.*)\\(WARNING: The server did not provide any stacktrace.*")
         private val REGEX_SELENIUM_PACKAGE = Regex("org\\.openqa\\.selenium\\.(.*)")

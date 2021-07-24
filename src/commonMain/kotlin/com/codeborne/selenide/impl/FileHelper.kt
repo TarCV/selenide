@@ -69,7 +69,8 @@ object FileHelper {
     @ExperimentalFileSystem
     fun moveFile(srcFile: Path, destFile: Path) {
         try {
-            fileSystem.atomicMove(srcFile, destFile)
+            fileSystem.copy(srcFile, destFile)
+            fileSystem.delete(srcFile)
         } catch (e: IOException) {
             throw IllegalStateException(
                 "Failed to move file $srcFile to $destFile", e

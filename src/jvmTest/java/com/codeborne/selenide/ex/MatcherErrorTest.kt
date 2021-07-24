@@ -26,14 +26,14 @@ internal class MatcherErrorTest {
                 4000
             ).message
         ).isEqualTo(
-            "Collection matcher error" + System.lineSeparator() +
-                    "Expected: foo of elements to match [blah] predicate" + System.lineSeparator() +
-                    "Collection: .rows" + System.lineSeparator() +
-                    "Elements: [" + System.lineSeparator() +
-                    "\t<div displayed:false>mr. %First</div>," + System.lineSeparator() +
-                    "\t<div displayed:false>mr. %Second</div>" + System.lineSeparator() +
-                    "]" + System.lineSeparator() +
-                    "Timeout: 4 s." + System.lineSeparator() +
+            "Collection matcher error\n" +
+                    "Expected: foo of elements to match [blah] predicate\n" +
+                    "Collection: .rows\n" +
+                    "Elements: [\n" +
+                    "\t<div displayed:false>mr. %First</div>,\n" +
+                    "\t<div displayed:false>mr. %Second</div>\n" +
+                    "]\n" +
+                    "Timeout: 4 s.\n" +
                     "Caused by: NoSuchElementException: .third"
         )
     }
@@ -51,15 +51,15 @@ internal class MatcherErrorTest {
                 4000
             ).message
         ).isEqualTo(
-            "Collection matcher error" + System.lineSeparator() +
-                    "Expected: foo of elements to match [blah] predicate" + System.lineSeparator() +
-                    "Because: I think so" + System.lineSeparator() +
-                    "Collection: .rows" + System.lineSeparator() +
-                    "Elements: [" + System.lineSeparator() +
-                    "\t<div displayed:false>mr. %First</div>," + System.lineSeparator() +
-                    "\t<div displayed:false>mr. %Second</div>" + System.lineSeparator() +
-                    "]" + System.lineSeparator() +
-                    "Timeout: 4 s." + System.lineSeparator() +
+            "Collection matcher error\n" +
+                    "Expected: foo of elements to match [blah] predicate\n" +
+                    "Because: I think so\n" +
+                    "Collection: .rows\n" +
+                    "Elements: [\n" +
+                    "\t<div displayed:false>mr. %First</div>,\n" +
+                    "\t<div displayed:false>mr. %Second</div>\n" +
+                    "]\n" +
+                    "Timeout: 4 s.\n" +
                     "Caused by: NoSuchElementException: .third"
         )
     }

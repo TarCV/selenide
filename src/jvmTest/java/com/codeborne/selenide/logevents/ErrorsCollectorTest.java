@@ -99,10 +99,10 @@ final class ErrorsCollectorTest implements WithAssertions {
         .hasMessageContaining("2 checks failed");
       assertThat(error)
         .as("First event message")
-        .hasMessageContaining(String.format("FAIL #1: org.openqa.StaleElementReferenceException: %s", defaultErrorMessage));
+        .hasMessageContaining(String.format("FAIL #1: org.openqa.selenium.StaleElementReferenceException: %s", defaultErrorMessage));
       assertThat(error)
         .as("Second event message is missing")
-        .hasMessageContaining(String.format("FAIL #2: org.openqa.StaleElementReferenceException: %s", failedEvent2Message));
+        .hasMessageContaining(String.format("FAIL #2: org.openqa.selenium.StaleElementReferenceException: %s", failedEvent2Message));
     }
   }
 }

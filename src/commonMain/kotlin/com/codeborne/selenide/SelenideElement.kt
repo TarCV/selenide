@@ -23,14 +23,15 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class SelenideElement private constructor(
     proxy: SelenideElementProxy,
+    private val webElementMethodsImpl:  WebElementMethods,
     private val selenideElementMethodsImpl: SelenideElementMethodsImpl
 ) :
-    WebElementMethods by WebElementMethodsImpl(proxy),
+    WebElementMethods by webElementMethodsImpl,
     SelenideElementMethods by selenideElementMethodsImpl,
     WrapsElement
 {
     constructor(proxy: SelenideElementProxy): this(
-        proxy, SelenideElementMethodsImpl(proxy)
+        proxy,  WebElementMethodsImpl(proxy), SelenideElementMethodsImpl(proxy)
     )
 
     init {
@@ -42,6 +43,10 @@ class SelenideElement private constructor(
     }
 
     suspend fun getWrappedElement(unused: Nothing? = null): WebElement = selenideElementMethodsImpl.getWrappedElementAsync()
+
+    // TODO: this implementation probably means equals/hashCode are not stable
+    override fun equals(other: Any?): Boolean = webElementMethodsImpl == other
+    override fun hashCode(): Int = webElementMethodsImpl.hashCode() // TODO: ..thus consider throwing Not Supported Exception here
 
     @Deprecated(
         replaceWith = ReplaceWith("getWrappedElement"),

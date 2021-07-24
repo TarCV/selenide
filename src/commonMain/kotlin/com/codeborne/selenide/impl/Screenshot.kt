@@ -7,7 +7,7 @@ class Screenshot(val image: String?, val source: String?) {
 
     fun summary(): String {
         return if (image != null && source != null) {
-            "\nScreenshot: ${image}\nPage source: {source}"
+            "\nScreenshot: ${image}\nPage source: ${source}"
         } else if (source != null) {
             "\nPage source: ${source}"
         } else if (image != null) {

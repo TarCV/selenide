@@ -68,11 +68,11 @@ class DriverStub(
         return hasWebDriverStarted() && getAndCheckWebDriver is JavascriptExecutor
     }
 
-    override suspend fun <T> executeJavaScript(jsCode: String, vararg arguments: Any): T {
+    override suspend fun <T> executeJavaScript(jsCode: String, vararg arguments: Any?): T {
         return (getAndCheckWebDriver as JavascriptExecutor?)!!.executeScript(jsCode, *arguments) as T
     }
 
-    override suspend fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any): T {
+    override suspend fun <T> executeAsyncJavaScript(jsCode: String, vararg arguments: Any?): T {
         return (getAndCheckWebDriver as JavascriptExecutor?)!!.executeAsyncScript(jsCode, *arguments) as T
     }
 

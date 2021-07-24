@@ -21,7 +21,7 @@ class BySelectorCollection(private val driver: Driver, private val parent: org.o
             WebElementSelector.instance.findElement(driver, searchContext, selector)
         } else WebElementSelector.instance.findElements(driver, searchContext, selector)[index]
     }
-    override suspend fun description(): String {
+    override fun description(): String {
         return alias.getOrElse { composeDescription() }
     }
 

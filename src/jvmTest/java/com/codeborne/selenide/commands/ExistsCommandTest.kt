@@ -45,10 +45,14 @@ internal class ExistsCommandTest : WithAssertions {
     }
 
     private suspend fun <T : Throwable?> checkExecuteMethodWithException(exception: T) {
-        Mockito.doThrow(exception).`when`(locator).getWebElement()
-        assertk.assertThat { existsCommand.execute(proxy, locator, arrayOf()) }
+        assertk.assertThat { executeMethodWithException(exception) }
             .isSuccess()
             .isFalse()
+    }
+
+    private suspend fun <T : Throwable?> executeMethodWithException(exception: T): Boolean {
+        Mockito.doThrow(exception).`when`(locator).getWebElement()
+        return existsCommand.execute(proxy, locator, arrayOf())
     }
 
     @Test
@@ -59,7 +63,7 @@ internal class ExistsCommandTest : WithAssertions {
 
     @Test
     fun testExistsExecuteMethodInvalidSelectorException() = runBlockingTest {
-        assertk.assertThat { checkExecuteMethodWithException(InvalidSelectorException("Element is not selectable")) }
+        assertk.assertThat { executeMethodWithException(InvalidSelectorException("Element is not selectable")) }
             .isFailure()
             .isInstanceOf(InvalidSelectorException::class.java)
     }

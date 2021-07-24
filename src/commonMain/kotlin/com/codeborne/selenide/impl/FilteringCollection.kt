@@ -18,8 +18,8 @@ class FilteringCollection(private val originalCollection: CollectionSource, priv
             .firstOrNull()
             ?: throw IndexOutOfBoundsException("Index: $index")
     }
-    override suspend fun description(): String {
-        return alias.getOrElseAsync { originalCollection.description() + ".filter(" + filter + ')' }
+    override fun description(): String {
+        return alias.getOrElse { originalCollection.description() + ".filter(" + filter + ')' }
     }
     override fun driver(): Driver {
         return originalCollection.driver()

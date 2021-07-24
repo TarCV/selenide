@@ -6,5 +6,5 @@ actual object System {
     actual fun nanoTime(): Long = TODO()
     actual fun currentTimeMillis(): Long = TODO()
     actual fun currentThreadId(): Long = TODO()
-    actual fun getenv(key: String): String = TODO("Not yet implemented")
+    actual fun getenv(key: String): String? = TODO("Not yet implemented")
 }

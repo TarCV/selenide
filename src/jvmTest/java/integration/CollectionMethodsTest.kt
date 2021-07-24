@@ -341,22 +341,24 @@ internal class CollectionMethodsTest : ITest() {
 
     @Test
     fun canIterateCollection_withListIterator() = runBlockingTest {
-        val it: ListIterator<SelenideElement> = `$$`("[name=domain] option").asFlow(3).toList().listIterator()
+        val it: ListIterator<SelenideElement> = `$$`("[name=domain] option")
+            .asReversedFlow(3)
+            .toList().listIterator()
         Assertions.assertThat(it.hasNext())
             .isTrue
         Assertions.assertThat(it.hasPrevious())
-            .isTrue
-        it.previous().shouldHave(text("@rusmail.ru"))
-        Assertions.assertThat(it.hasPrevious())
-            .isTrue
-        it.previous().shouldHave(text("@myrambler.ru"))
-        Assertions.assertThat(it.hasPrevious())
-            .isTrue
-        it.previous().shouldHave(text("@livemail.ru"))
-        Assertions.assertThat(it.hasPrevious())
             .isFalse
+        it.next().shouldHave(text("@rusmail.ru"))
+        Assertions.assertThat(it.hasNext())
+            .isTrue
+        it.next().shouldHave(text("@myrambler.ru"))
+        Assertions.assertThat(it.hasNext())
+            .isTrue
         it.next().shouldHave(text("@livemail.ru"))
-        Assertions.assertThat(it.hasPrevious())
+        Assertions.assertThat(it.hasNext())
+            .isFalse
+        it.previous().shouldHave(text("@livemail.ru"))
+        Assertions.assertThat(it.hasNext())
             .isTrue
     }
 
@@ -767,15 +769,15 @@ internal class CollectionMethodsTest : ITest() {
     }
 
     @Test
-    fun collectionToString() {
-        Assertions.assertThat(`$$`("not-existing-locator"))
-            .hasToString("not-existing-locator []")
-        Assertions.assertThat(`$$`("input[type=checkbox].red").`as`("red checkboxes"))
-            .hasToString("red checkboxes []")
-        Assertions.assertThat(`$$`(".active").first(42))
-            .hasToString(".active:first(42) []")
-        Assertions.assertThat(`$$`(".parent").first(2).filterBy(cssClass("child")))
-            .hasToString(".parent:first(2).filter(css class 'child') []")
+    fun collectionDescribe() = runBlockingTest {
+        Assertions.assertThat(`$$`("not-existing-locator").describe())
+            .isEqualTo("not-existing-locator []")
+        Assertions.assertThat(`$$`("input[type=checkbox].red").`as`("red checkboxes").describe())
+            .isEqualTo("red checkboxes []")
+        Assertions.assertThat(`$$`(".active").first(42).describe())
+            .isEqualTo(".active:first(42) []")
+        Assertions.assertThat(`$$`(".parent").first(2).filterBy(cssClass("child")).describe())
+            .isEqualTo(".parent:first(2).filter(css class 'child') []")
     }
 }
 

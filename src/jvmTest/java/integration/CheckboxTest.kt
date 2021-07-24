@@ -28,8 +28,8 @@ internal class CheckboxTest : ITest() {
         `$`(By.name("rememberMe")).click()
         `$`(By.name("rememberMe")).shouldBe(Condition.selected)
         `$`(By.name("rememberMe")).shouldBe(Condition.checked)
-        Assertions.assertThat(`$`(By.name("rememberMe")))
-            .hasToString("<input name=\"rememberMe\" type=\"checkbox\" value=\"on\" selected:true></input>")
+        Assertions.assertThat(`$`(By.name("rememberMe")).describe())
+            .isEqualTo("<input name=\"rememberMe\" type=\"checkbox\" value=\"on\" selected:true></input>")
     }
 
     @Test

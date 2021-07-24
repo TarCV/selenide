@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition
  */
 class FrameByIdOrName(frame: String?) : ExpectedCondition<org.openqa.selenium.WebDriver> {
     private val locator: org.openqa.selenium.By =
-      org.openqa.selenium.By.cssSelector("frame#${frame}\$s,frame[name=${frame}\$s],iframe#${frame}\$s,iframe[name=${frame}\$s]")
+      org.openqa.selenium.By.cssSelector("frame#${frame},frame[name=${frame}],iframe#${frame},iframe[name=${frame}]")
 
   override fun apply(driver: org.openqa.selenium.WebDriver?): org.openqa.selenium.WebDriver? {
         return try {

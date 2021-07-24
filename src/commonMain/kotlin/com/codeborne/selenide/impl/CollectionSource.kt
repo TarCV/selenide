@@ -13,7 +13,7 @@ interface CollectionSource {
      * get Nth element of this collection
      */
     suspend fun getElement(index: Int): org.openqa.selenium.WebElement
-    suspend fun description(): String
+    fun description(): String
     fun driver(): Driver
 
     fun setAlias(alias: String)

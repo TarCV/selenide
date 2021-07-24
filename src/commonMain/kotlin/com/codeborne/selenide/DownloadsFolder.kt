@@ -15,7 +15,7 @@ abstract class DownloadsFolder protected constructor(protected val folder: Path)
 
     abstract fun cleanupBeforeDownload()
     fun file(fileName: String): Path {
-        return FileHelper.canonicalPath(folder / fileName)
+        return (folder / fileName)
     }
 
     override fun toString(): String {

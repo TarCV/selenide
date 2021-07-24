@@ -18,11 +18,11 @@ suspend fun ListSizeMismatch(
         ", actual: " + (actualElements?.size ?: 0) +
         ", collection: " + collection.description() +
         "\n" + "Elements: " + elementsToString(collection.driver(), actualElements)
-    return ListSizeMismatch(driver, message, lastError)
+    return ListSizeMismatch(driver, message, lastError, timeoutMs)
 }
 
 class ListSizeMismatch internal constructor(
-    driver: Driver, message: String, lastError: Exception?
+    driver: Driver, message: String, lastError: Exception?, timeoutMs: Long
 ) : UIAssertionError(
   driver, message, lastError
 ) {

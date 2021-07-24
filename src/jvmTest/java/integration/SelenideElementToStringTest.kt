@@ -14,27 +14,27 @@ import org.openqa.selenium.By
 @ExperimentalFileSystem
 internal class SelenideElementToStringTest : ITest() {
     @Test
-    fun toStringMethodShowsElementDetails() = runBlockingTest {
+    fun describeMethodShowsElementDetails() = runBlockingTest {
         openFile("page_with_selects_without_jquery.html")
-        Assertions.assertThat(`$`("h1"))
-            .hasToString("<h1>Page with selects</h1>")
-        Assertions.assertThat(`$`("h2"))
-            .hasToString("<h2>Dropdown list</h2>")
-        Assertions.assertThat(`$`(By.name("rememberMe")))
-            .hasToString("<input name=\"rememberMe\" type=\"checkbox\" value=\"on\"></input>")
-        Assertions.assertThat(`$`(By.name("domain")).find("option"))
-            .hasToString("<option data-mailserverid=\"111\" value=\"livemail.ru\" selected:true>@livemail.ru</option>")
-        Assertions.assertThat(`$`(byText("Want to see ajax in action?")).toString())
+        Assertions.assertThat(`$`("h1").describe())
+            .isEqualTo("<h1>Page with selects</h1>")
+        Assertions.assertThat(`$`("h2").describe())
+            .isEqualTo("<h2>Dropdown list</h2>")
+        Assertions.assertThat(`$`(By.name("rememberMe")).describe())
+            .isEqualTo("<input name=\"rememberMe\" type=\"checkbox\" value=\"on\"></input>")
+        Assertions.assertThat(`$`(By.name("domain")).find("option").describe())
+            .isEqualTo("<option data-mailserverid=\"111\" value=\"livemail.ru\" selected:true>@livemail.ru</option>")
+        Assertions.assertThat(`$`(byText("Want to see ajax in action?")).describe())
             .contains("<a href=")
-        Assertions.assertThat(`$`(byText("Want to see ajax in action?")).toString())
+        Assertions.assertThat(`$`(byText("Want to see ajax in action?")).describe())
             .contains(">Want to see ajax in action?</a>")
     }
 
     @Test
-    fun toStringShowsAllAttributesButStyleSortedAlphabetically() = runBlockingTest {
+    fun describeShowsAllAttributesButStyleSortedAlphabetically() = runBlockingTest {
         openFile("page_with_selects_without_jquery.html")
-        Assertions.assertThat(`$`("#gopher"))
-            .hasToString(
+        Assertions.assertThat(`$`("#gopher").describe())
+            .isEqualTo(
                 "<div class=\"invisible-with-multiple-attributes\" " +
                         "data-animal-id=\"111\" id=\"gopher\" ng-class=\"widget\" ng-click=\"none\" " +
                         "onchange=\"console.log(this);\" onclick=\"void(0);\" placeholder=\"Животное\" " +
@@ -43,22 +43,22 @@ internal class SelenideElementToStringTest : ITest() {
     }
 
     @Test
-    fun toStringShowsValueAttributeThatHasBeenUpdatedDynamically() = runBlockingTest {
+    fun describeShowsValueAttributeThatHasBeenUpdatedDynamically() = runBlockingTest {
         openFile("page_with_selects_without_jquery.html")
         `$`("#age").clear()
         `$`("#age").sendKeys("21")
-        Assertions.assertThat(`$`("#age"))
-            .hasToString("<input id=\"age\" name=\"age\" type=\"text\" value=\"21\"></input>")
+        Assertions.assertThat(`$`("#age").describe())
+            .isEqualTo("<input id=\"age\" name=\"age\" type=\"text\" value=\"21\"></input>")
     }
 
     @Test
-    fun toStringShowsCurrentValue_evenIfItWasDynamicallyChanged() = runBlockingTest {
+    fun describeShowsCurrentValue_evenIfItWasDynamicallyChanged() = runBlockingTest {
         openFile("page_with_double_clickable_button.html")
-        Assertions.assertThat(`$`("#double-clickable-button").toString())
+        Assertions.assertThat(`$`("#double-clickable-button").describe())
             .contains("value=\"double click me\"")
         `$`("#double-clickable-button").shouldBe(Condition.enabled).doubleClick()
         `$`("#double-clickable-button").shouldHave(value("do not click me anymore"))
-        Assertions.assertThat(`$`("#double-clickable-button").toString())
+        Assertions.assertThat(`$`("#double-clickable-button").describe())
             .contains("value=\"do not click me anymore\"")
     }
 }

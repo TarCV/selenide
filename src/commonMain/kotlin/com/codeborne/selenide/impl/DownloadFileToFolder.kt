@@ -63,7 +63,7 @@ class DownloadFileToFolder internal constructor(
     @ExperimentalFileSystem
     private fun archiveFile(config: Config, downloadedFile: Path): Path {
         val uniqueFolder = downloader.prepareTargetFolder(config)
-        val archivedFile = FileHelper.canonicalPath(uniqueFolder / downloadedFile.name)
+        val archivedFile = (uniqueFolder / downloadedFile.name)
         FileHelper.moveFile(downloadedFile, archivedFile)
         return archivedFile
     }

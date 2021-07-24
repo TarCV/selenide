@@ -155,6 +155,9 @@ class Describe(private val driver: Driver, private val element: org.openqa.selen
         } catch (e: RuntimeException) {
             log.error(e) { "Failed to get $name" }
             "?"
+        } catch (e: NullPointerException) {
+            log.error(e) { "Failed to get $name" }
+            "?"
         }
     }
 

@@ -18,7 +18,7 @@ import java.util.Arrays
 internal class CollectionElementByConditionTest : WithAssertions {
     private val driver: Driver = DriverStub()
     @Test
-    fun wrap() {
+    fun wrap() = runBlockingTest {
         val mockedWebElement = Mockito.mock(WebElement::class.java)
         Mockito.`when`(mockedWebElement.tagName).thenReturn("a")
         Mockito.`when`(mockedWebElement.isDisplayed).thenReturn(true)
@@ -26,8 +26,8 @@ internal class CollectionElementByConditionTest : WithAssertions {
         val selenideElement = wrap(
             WebElementsCollectionWrapper(driver, listOf(mockedWebElement)), Condition.visible
         )
-        assertThat(selenideElement)
-            .hasToString("<a>selenide</a>")
+        assertThat(selenideElement.describe())
+            .isEqualTo("<a>selenide</a>")
     }
 
     @Test

@@ -28,6 +28,6 @@ class And(name: String, private val conditions: List<Condition>) : Condition(
         val conditionsToString = conditions
             .map { obj: Condition -> obj.toString() }
             .joinToString(" and ")
-        return "${name}: {conditionsToString}"
+        return "${name}: ${conditionsToString}"
     }
 }

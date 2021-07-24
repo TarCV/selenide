@@ -14,7 +14,7 @@ actual fun <T: Any> KClass<T>.newInstance(arg1: Any): T {
 }
 actual fun <R> KCallable<R>.invokeAsync(target: Any?, vararg args: Any?): R {
     val allArgs = (listOf(target) + args.toList()).toTypedArray()
-    return this.call(allArgs)
+    return this.call(*allArgs)
 }
 
 actual fun KProperty<*>.isDeclaringClassAssignableTo(clazz: KClass<*>): Boolean {

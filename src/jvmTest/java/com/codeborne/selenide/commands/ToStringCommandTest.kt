@@ -36,9 +36,10 @@ internal class ToStringCommandTest : WithAssertions {
         Mockito.`when`(mockedFoundElement.isDisplayed).thenReturn(true)
         val elementText = "text"
         Mockito.`when`(mockedFoundElement.text).thenReturn(elementText)
+        Mockito.`when`(mockedFoundElement.tagName).thenReturn("tag")
         val elementString = toStringCommand.execute(proxy, locator, arrayOf())
         assertThat(elementString)
-            .isEqualTo("<null selected:true>text</null>")
+            .isEqualTo("<tag selected:true>text</tag>")
     }
 
     @Test

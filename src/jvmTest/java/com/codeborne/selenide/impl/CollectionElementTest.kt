@@ -16,15 +16,15 @@ import org.openqa.selenium.WebElement
 internal class CollectionElementTest : WithAssertions {
     private val driver: Driver = DriverStub()
     @Test
-    fun wrap() {
+    fun wrap() = runBlockingTest {
         val mockedWebElement = Mockito.mock(WebElement::class.java)
         Mockito.`when`(mockedWebElement.tagName).thenReturn("a")
         Mockito.`when`(mockedWebElement.isDisplayed).thenReturn(true)
         Mockito.`when`(mockedWebElement.text).thenReturn("selenide")
         val collection: CollectionSource = WebElementsCollectionWrapper(driver, listOf(mockedWebElement))
         val selenideElement = CollectionElement.wrap(collection, 0)
-        assertThat(selenideElement)
-            .hasToString("<a>selenide</a>")
+        assertThat(selenideElement.describe())
+            .isEqualTo("<a>selenide</a>")
     }
 
     @Test
@@ -63,6 +63,7 @@ internal class CollectionElementTest : WithAssertions {
         val collection = Mockito.mock(CollectionSource::class.java)
         Mockito.`when`(collection.driver()).thenReturn(driver)
         Mockito.`when`<Any>(collection.description()).thenReturn("Collection description")
+        Mockito.`when`<Any>(collection.getElements()).thenReturn(listOf<WebElement>())
         val collectionElement = CollectionElement(collection, 33)
         val mockedCollection = Mockito.mock(Condition::class.java)
         val elementNotFoundError =

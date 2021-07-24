@@ -49,9 +49,9 @@ internal class ReplacingElementTest : ITest() {
     }
 
     @Test
-    fun testToString() {
-        Assertions.assertThat(`$`("#dynamic-element"))
-            .hasToString("<input id=\"dynamic-element\" type=\"text\" value=\"I will be replaced soon\"></input>")
+    fun testToString() = runBlockingTest {
+        Assertions.assertThat(`$`("#dynamic-element").describe())
+            .isEqualTo("<input id=\"dynamic-element\" type=\"text\" value=\"I will be replaced soon\"></input>")
     }
 
     @Test

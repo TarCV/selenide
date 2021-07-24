@@ -13,7 +13,7 @@ class ElementShouldNot internal constructor(driver: Driver, message: String?, la
             driver: Driver, searchCriteria: String?, prefix: String?, expectedCondition: Condition,
             element: org.openqa.selenium.WebElement?, lastError: Throwable?
         ): ElementShouldNot {
-            val message = "Element should not $expectedCondition {$searchCriteria}\nElement: '${ElementShould.describe.fully(driver, element)}'${ErrorMessages.actualValue(expectedCondition, driver, element)}"
+            val message = "Element should not $prefix$expectedCondition {$searchCriteria}\nElement: '${describe.fully(driver, element)}'${ErrorMessages.actualValue(expectedCondition, driver, element)}"
             return ElementShouldNot(driver, message, lastError)
         }
     }

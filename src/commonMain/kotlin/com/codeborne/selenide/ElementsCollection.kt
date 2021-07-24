@@ -412,13 +412,16 @@ class ElementsCollection(private val collection: CollectionSource) {
     }
 
     // TODO: called into the actual driver in Java version
-    override fun toString(): String {
+    override fun toString(): String = "${collection.description()} [collection]"
+
+    suspend fun describe(): String {
         return try {
-            "$collection [snapshot]"
+            "${collection.description()} ${elementsToString(driver(), getElements())}"
         } catch (e: RuntimeException) {
-            "$collection [${Cleanup.of.webdriverExceptionMessage(e)}]"
+            "${collection.description()} [${Cleanup.of.webdriverExceptionMessage(e)}]"
         }
     }
+
     private fun driver(): Driver {
         return collection.driver()
     }

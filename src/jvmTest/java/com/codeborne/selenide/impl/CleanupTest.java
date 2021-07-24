@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 final class CleanupTest implements WithAssertions {
   @Test
   void cleansWebDriverExceptionMessage() {
-    String webDriverException = "org.openqa.NoSuchElementException: " +
+    String webDriverException = NoSuchElementException.class.getName() + ": " +
       "The element could not be found (WARNING: The server did not provide any stacktrace information)\n" +
       "Command duration or timeout: 21 milliseconds\n" +
       "For documentation on this error, please visit: http://seleniumhq.org/exceptions/no_such_element.html\n" +

@@ -27,6 +27,6 @@ class Or(name: String, private val conditions: List<Condition>) : Condition(name
     override fun toString(): String {
         val conditionsToString = conditions.map { obj: Condition -> obj.toString() }
             .joinToString(" or ")
-        return "${name}: {conditionsToString}"
+        return "${name}: ${conditionsToString}"
     }
 }

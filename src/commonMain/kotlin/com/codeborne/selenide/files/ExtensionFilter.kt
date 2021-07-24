@@ -5,7 +5,7 @@ import okio.ExperimentalFileSystem
 class ExtensionFilter(private val extension: String) : FileFilter {
     @ExperimentalFileSystem
     override fun match(file: DownloadedFile): Boolean {
-        return file.file.name.endsWith(extension)
+        return file.file.name.endsWith(".$extension")
     }
 
     override fun description(): String {

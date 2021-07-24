@@ -23,9 +23,12 @@ abstract class WebElementSource {
     fun setAlias(alias: String) {
         this.alias = Alias(alias)
     }
-    suspend fun description(): String {
-        return alias.getOrElseAsync { getSearchCriteria() }
+    fun description(): String {
+        return alias.getOrElse { getSearchCriteria() }
     }
+
+    override fun toString(): String = description()
+
     open fun find(proxy: SelenideElement, arg: Any, index: Int): SelenideElement {
         return wrap(driver(), proxy, getSelector(arg), index)
     }

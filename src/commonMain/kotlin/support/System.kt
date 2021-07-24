@@ -6,5 +6,5 @@ expect object System {
     fun nanoTime(): Long
     fun currentTimeMillis(): Long
     fun currentThreadId(): Long
-    fun getenv(key: String): String
+    fun getenv(key: String): String?
 }

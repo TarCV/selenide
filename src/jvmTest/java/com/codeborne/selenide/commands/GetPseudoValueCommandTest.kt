@@ -29,8 +29,6 @@ internal class GetPseudoValueCommandTest : WithAssertions {
         Mockito.`when`(
             driver.executeJavaScript<Any>(
                 any(),
-                any(),
-                any(),
                 any()
             )
         ).thenReturn("hello")

@@ -17,7 +17,7 @@ class Downloader constructor(private val random: Randomizer = Randomizer()) {
 
     @ExperimentalFileSystem
     fun prepareTargetFolder(config: Config): Path {
-        val uniqueFolder = FileHelper.canonicalPath(config.downloadsFolder().toPath() / random.text())
+        val uniqueFolder = (config.downloadsFolder().toPath() / random.text())
         check(!FileHelper.exists(uniqueFolder)) { "Unbelievable! Unique folder already exists: $uniqueFolder" }
         FileHelper.ensureFolderExists(uniqueFolder)
         return uniqueFolder

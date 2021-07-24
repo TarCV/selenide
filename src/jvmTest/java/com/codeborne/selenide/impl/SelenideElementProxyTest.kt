@@ -30,6 +30,7 @@ import com.codeborne.selenide.impl.SelenideElementProxy
 import com.codeborne.selenide.logevents.LogEvent
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.openqa.selenium.InvalidSelectorException
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.NotFoundException
@@ -176,7 +177,7 @@ internal class SelenideElementProxyTest : WithAssertions {
     @Test
     fun setValueShouldNotFailIfElementHasDisappearedWhileEnteringText() = runBlockingTest {
         Mockito.`when`(webdriver.findElement(By.cssSelector("#firstName"))).thenReturn(element)
-        Mockito.`when`(webdriver.executeScript(ArgumentMatchers.anyString(), *ArgumentMatchers.any()))
+        Mockito.`when`(webdriver.executeScript(ArgumentMatchers.anyString(), any()))
             .thenThrow(StaleElementReferenceException("element disappeared after entering text"))
         driver.find("#firstName").setValue("john")
     }

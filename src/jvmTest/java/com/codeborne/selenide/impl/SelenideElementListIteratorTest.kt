@@ -6,6 +6,7 @@ import com.codeborne.selenide.Mocks.mockWebElement
 import com.codeborne.selenide.SelenideElement
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.singleOrNull
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.WithAssertions
 import org.junit.jupiter.api.Test
@@ -19,7 +20,7 @@ internal class SelenideElementListIteratorTest : WithAssertions {
     @Test
     fun hasPrevious() = runBlockingTest {
         val selenideElementIterator = ElementsCollection(collection).asReversedFlow(1)
-        assertThat(selenideElementIterator.singleOrNull()).isNotNull
+        assertThat(selenideElementIterator.take(1).singleOrNull()).isNotNull
     }
 
     @Test
@@ -30,8 +31,8 @@ internal class SelenideElementListIteratorTest : WithAssertions {
         Mockito.`when`(mockedWebElement.text).thenReturn("selenide")
         Mockito.`when`<Any>(collection.getElements()).thenReturn(listOf(mockedWebElement))
         val selenideElementIterator = ElementsCollection(collection).asReversedFlow(1)
-        val previous: SelenideElement? = selenideElementIterator.singleOrNull()
+        val previous: SelenideElement? = selenideElementIterator.take(1).singleOrNull()
         assertThat(previous).isNotNull
-        assertThat(previous).hasToString("<a>click me if you can</a>")
+        assertThat(previous!!.describe()).isEqualTo("<a>click me if you can</a>")
     }
 }

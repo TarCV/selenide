@@ -45,7 +45,8 @@ internal class DurationFormatTest {
     }
 
     companion object {
+        @JvmField
         @RegisterExtension
-        var useLocale = UseLocaleExtension("en")
+        val useLocale = UseLocaleExtension("en")
     }
 }

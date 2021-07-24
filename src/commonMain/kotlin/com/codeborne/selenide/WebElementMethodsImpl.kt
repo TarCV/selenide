@@ -75,9 +75,17 @@ class WebElementMethodsImpl(val proxy: SelenideElementProxy) : WebElementMethods
         proxy.webElementInvoke(this, WebElement::getScreenshotAs, arrayOf(type))
     }
     override fun sendKeys(vararg keys: CharSequence) = runBlocking {
-        proxy.webElementInvoke(this, WebElement::sendKeys, keys)
+        proxy.webElementInvoke(this, WebElement::sendKeys, arrayOf(keys))
     }
     override fun submit() = runBlocking {
         proxy.webElementInvoke(this, WebElement::submit, NO_ARGS)
+    }
+
+    override fun equals(other: Any?): Boolean = runBlocking {
+        proxy.webElementInvoke(this, WebElement::equals, arrayOf(other))
+    }
+
+    override fun hashCode(): Int = runBlocking {
+        proxy.webElementInvoke(this, WebElement::hashCode, NO_ARGS)
     }
 }

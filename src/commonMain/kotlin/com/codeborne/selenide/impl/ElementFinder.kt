@@ -65,7 +65,7 @@ class ElementFinder internal constructor(
         return if (index == 0) describe.selector(criteria) else describe.selector(criteria) + '[' + index + ']'
     }
     override fun toString(): String {
-        return "{" + alias.getOrElse { "parent: $parent, criteria: $criteria" } + '}'
+        return "{" + description() + '}'
     }
 
     companion object {

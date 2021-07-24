@@ -17,7 +17,7 @@ class CollectionElement internal constructor(private val collection: CollectionS
     }
 
     override fun getSearchCriteria(): String {
-        return "$collection[$index]"
+        return "${collection.description()}[$index]"
     }
     override suspend fun createElementNotFoundError(condition: Condition, lastError: Throwable?): ElementNotFound {
         return if (collection.getElements().isEmpty()) {

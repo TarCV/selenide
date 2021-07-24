@@ -39,6 +39,7 @@ internal class DownloadFileToFolderTest {
     private val link = Mockito.mock(WebElement::class.java)
 
     @TempDir
+    @JvmField
     var tempDir: File? = null
 
     private val driver by lazy {
@@ -67,10 +68,8 @@ internal class DownloadFileToFolderTest {
         val downloadedFile = command.download(linkWithHref, link, 3000, none())
         Assertions.assertThat(downloadedFile.name).isEqualTo(newFileName)
         Assertions.assertThat(downloadedFile.parent).isNotEqualTo(driver.browserDownloadsFolder())
-        withContext(Dispatchers.IO) {
-            Assertions.assertThat(FileUtils.readFileToString(downloadedFile.toFile(), StandardCharsets.UTF_8))
-                .isEqualTo("Hello Bingo-Bongo")
-        }
+        Assertions.assertThat(FileUtils.readFileToString(downloadedFile.toFile(), StandardCharsets.UTF_8))
+            .isEqualTo("Hello Bingo-Bongo")
     }
 
     @Test

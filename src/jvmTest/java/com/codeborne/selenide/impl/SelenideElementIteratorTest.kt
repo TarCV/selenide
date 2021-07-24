@@ -42,7 +42,7 @@ internal class SelenideElementIteratorTest : WithAssertions {
         selenideElementIterator.collectIndexed { index, nextElement ->
             assertThat(index).isEqualTo(0)
             assertThat(nextElement).isNotNull
-            assertThat(nextElement).hasToString("<a>click me if you can</a>")
+            assertThat(nextElement.describe()).isEqualTo("<a>click me if you can</a>")
         }
     }
 }

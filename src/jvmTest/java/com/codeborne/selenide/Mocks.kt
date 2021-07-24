@@ -38,7 +38,7 @@ object Mocks {
         val collection = mock (CollectionSource::class.java)
         `when`(collection.driver()).thenReturn(driver)
         collection.stub {
-            onBlocking { description() }.thenReturn(description)
+            on { description() }.thenReturn(description)
             onBlocking { getElements() }.thenReturn(elements.toList())
             for (i in elements.indices) {
                 onBlocking {collection.getElement(i) }.thenReturn(elements[i])
