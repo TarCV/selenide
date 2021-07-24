@@ -9,7 +9,6 @@ import com.codeborne.selenide.impl.CollectionElement.Companion.wrap
 import com.codeborne.selenide.impl.CollectionElementByCondition
 import com.codeborne.selenide.impl.CollectionSnapshot
 import com.codeborne.selenide.impl.CollectionSource
-import com.codeborne.selenide.impl.ElementDescriber
 import com.codeborne.selenide.impl.FilteringCollection
 import com.codeborne.selenide.impl.HeadOfCollection
 import com.codeborne.selenide.impl.LastCollectionElement
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.flow
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
-import kotlin.jvm.JvmStatic
 import kotlin.time.Duration
 import kotlin.time.milliseconds
 
@@ -358,36 +356,21 @@ class ElementsCollection(private val collection: CollectionSource) {
     }
 
     suspend fun asFlow(startIndex: Int = 0): Flow<SelenideElement> {
-        val fetchedCollection = fetch()
         return flow {
             var index = startIndex
-            while (fetchedCollection.getElements().size > index) {
-                emit(wrap(fetchedCollection, index++))
+            while (collection.getElements().size > index) {
+                emit(wrap(collection, index++))
             }
         }
-    }
-
-    suspend fun asReversedFlow(): Flow<SelenideElement> {
-        val fetchedCollection = fetch()
-        return asReversedFlow(fetchedCollection, fetchedCollection.getElements().size)
     }
 
     suspend fun asReversedFlow(fromIndex: Int): Flow<SelenideElement> {
-        return asReversedFlow(fetch(), fromIndex)
-    }
-
-    private suspend fun asReversedFlow(fetchedCollection: WebElementsCollectionWrapper, fromIndex: Int): Flow<SelenideElement> {
         return flow {
             var i = fromIndex
             while (i >= 0) {
-                emit(wrap(fetchedCollection, --i))
+                emit(wrap(collection, --i))
             }
         }
-    }
-
-    private suspend fun fetch(): WebElementsCollectionWrapper {
-        val fetchedElements = collection.getElements()
-        return WebElementsCollectionWrapper(driver(), fetchedElements)
     }
 
     suspend fun toArray(): Array<Any?> {
