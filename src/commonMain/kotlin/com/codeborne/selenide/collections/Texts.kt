@@ -6,14 +6,14 @@ import org.openqa.selenium.WebElement
 class Texts : ExactTexts {
     constructor(vararg expectedTexts: String) : super(*expectedTexts)
     constructor(expectedTexts: List<String>) : super(expectedTexts)
-    override fun test(elements: List<org.openqa.selenium.WebElement>): Boolean {
+    override suspend fun test(elements: List<org.openqa.selenium.WebElement>): Boolean {
         if (elements.size != expectedTexts.size) {
             return false
         }
         for (i in expectedTexts.indices) {
             val element = elements[i]
             val expectedText = expectedTexts[i]
-            if (!Html.text.contains(element.text, expectedText)) {
+            if (!Html.text.contains(element.getText(), expectedText)) {
                 return false
             }
         }

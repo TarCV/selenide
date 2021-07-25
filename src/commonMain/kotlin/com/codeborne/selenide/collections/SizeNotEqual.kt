@@ -6,7 +6,7 @@ import com.codeborne.selenide.impl.CollectionSource
 import org.openqa.selenium.WebElement
 
 class SizeNotEqual(protected val expectedSize: Int) : CollectionCondition() {
-    override fun test(elements: List<org.openqa.selenium.WebElement>): Boolean {
+    override suspend fun test(elements: List<org.openqa.selenium.WebElement>): Boolean {
         return apply(elements.size)
     }
 

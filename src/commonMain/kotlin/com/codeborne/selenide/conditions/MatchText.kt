@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement
 
 class MatchText(private val regex: String) : Condition("match text") {
     override suspend fun apply(driver: Driver, element: org.openqa.selenium.WebElement): Boolean {
-        return Html.text.matches(element.text, regex)
+        return Html.text.matches(element.getText(), regex)
     }
 
     override fun toString(): String {

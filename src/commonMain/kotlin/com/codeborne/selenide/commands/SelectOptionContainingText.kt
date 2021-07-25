@@ -3,6 +3,7 @@ package com.codeborne.selenide.commands
 import com.codeborne.selenide.Command
 import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.impl.WebElementSource
+import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.support.ui.Quotes
 import org.openqa.selenium.support.ui.Select
@@ -18,7 +19,7 @@ class SelectOptionContainingText : Command<Unit> {
             )
         )
         if (options.isEmpty()) {
-            throw org.openqa.selenium.NoSuchElementException("Cannot locate option containing text: $text")
+            throw NoSuchElementException("Cannot locate option containing text: $text")
         }
         for (option in options) {
             setSelected(option)
@@ -29,7 +30,7 @@ class SelectOptionContainingText : Command<Unit> {
     }
 
     private suspend fun setSelected(option: org.openqa.selenium.WebElement) {
-        if (!option.isSelected) {
+        if (!option.isSelected()) {
             option.click()
         }
     }

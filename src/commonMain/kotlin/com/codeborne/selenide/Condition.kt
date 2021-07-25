@@ -34,7 +34,6 @@ import com.codeborne.selenide.conditions.Visible
 import org.openqa.selenium.WebElement
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
-import kotlinx.coroutines.runBlocking
 
 /**
  * Conditions to match web elements: checks for visibility, text etc.
@@ -54,10 +53,6 @@ abstract class Condition constructor(
      * @return true if element matches condition
      */
     abstract suspend fun apply(driver: Driver, element: org.openqa.selenium.WebElement): Boolean
-
-    fun applyBlocking(driver: Driver, element: org.openqa.selenium.WebElement): Boolean = runBlocking {
-        apply(driver, element)
-    }
 
     fun applyNull(): Boolean {
         return absentElementMatchesCondition

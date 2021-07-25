@@ -16,12 +16,11 @@ import com.codeborne.selenide.collections.SizeNotEqual
 import com.codeborne.selenide.collections.Texts
 import com.codeborne.selenide.collections.TextsInAnyOrder
 import com.codeborne.selenide.impl.CollectionSource
-import org.openqa.selenium.WebElement
-import support.Predicate
+import support.AsyncPredicate
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 
-abstract class CollectionCondition: Predicate<List<org.openqa.selenium.WebElement>> {
+abstract class CollectionCondition: AsyncPredicate<List<org.openqa.selenium.WebElement>> {
     protected var explanation: String? = null
     abstract suspend fun fail(
         collection: CollectionSource,
@@ -55,7 +54,7 @@ abstract class CollectionCondition: Predicate<List<org.openqa.selenium.WebElemen
             return delegate.applyNull()
         }
 
-        override fun test(input: List<org.openqa.selenium.WebElement>): Boolean {
+        override suspend fun test(input: List<org.openqa.selenium.WebElement>): Boolean {
             return delegate.test(input)
         }
     }

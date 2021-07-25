@@ -1,4 +1,14 @@
 package support.logging
 
-expect class Level
-expect val Level.ALL: Level
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
+
+expect class Level {
+    fun intValue(): Int
+
+    companion object {
+        @JvmStatic
+        @JvmField
+        val ALL: Level
+    }
+}

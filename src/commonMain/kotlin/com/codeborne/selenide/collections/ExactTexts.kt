@@ -13,14 +13,14 @@ open class ExactTexts(expectedTexts: List<String>) : CollectionCondition() {
     val expectedTexts: List<String>
 
     constructor(vararg expectedTexts: String) : this(listOf<String>(*expectedTexts))
-    override fun test(elements: List<org.openqa.selenium.WebElement>): Boolean {
-        if (elements.size != expectedTexts.size) {
+    override suspend fun test(input: List<WebElement>): Boolean {
+        if (input.size != expectedTexts.size) {
             return false
         }
         for (i in expectedTexts.indices) {
-            val element = elements[i]
+            val element = input[i]
             val expectedText = expectedTexts[i]
-            if (!Html.text.equals(element.text, expectedText)) {
+            if (!Html.text.equals(element.getText(), expectedText)) {
                 return false
             }
         }
@@ -29,7 +29,7 @@ open class ExactTexts(expectedTexts: List<String>) : CollectionCondition() {
 
     override suspend fun fail(
         collection: CollectionSource,
-        elements: List<org.openqa.selenium.WebElement>?,
+        elements: List<WebElement>?,
         lastError: Exception?,
         timeoutMs: Long
     ) {

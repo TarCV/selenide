@@ -6,7 +6,6 @@ import com.codeborne.selenide.SelenideElement
 import com.codeborne.selenide.ex.InvalidStateException
 import com.codeborne.selenide.impl.Events
 import com.codeborne.selenide.impl.WebElementSource
-import org.openqa.selenium.WebElement
 
 class SetValue : Command<SelenideElement> {
     private val selectOptionByValue: SelectOptionByValue
@@ -26,13 +25,13 @@ class SetValue : Command<SelenideElement> {
         val text = Util.firstOf<String>(args)
         val element = locator.findAndAssertElementIsInteractable()
         if (locator.driver().config().versatileSetValue()
-            && "select".equals(element.tagName, ignoreCase = true)
+            && "select".equals(element.getTagName(), ignoreCase = true)
         ) {
             selectOptionByValue.execute(proxy, locator, args)
             return proxy
         }
         if (locator.driver().config().versatileSetValue()
-            && "input".equals(element.tagName, ignoreCase = true) && "radio" == element.getAttribute("type")
+            && "input".equals(element.getTagName(), ignoreCase = true) && "radio" == element.getAttribute("type")
         ) {
             selectRadio.execute(proxy, locator, args)
             return proxy

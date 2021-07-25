@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement
 class Hidden : Condition("hidden", true) {
     override suspend fun apply(driver: Driver, element: org.openqa.selenium.WebElement): Boolean {
         return try {
-            !element.isDisplayed
+            !element.isDisplayed()
         } catch (elementHasDisappeared: org.openqa.selenium.StaleElementReferenceException) {
             true
         }

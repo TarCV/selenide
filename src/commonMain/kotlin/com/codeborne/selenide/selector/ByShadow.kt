@@ -31,14 +31,14 @@ object ByShadow {
         org.openqa.selenium.By() {
         private val shadowHostsChain: MutableList<String>
         private val target: String
-        override fun findElement(context: org.openqa.selenium.SearchContext): org.openqa.selenium.WebElement {
+        override suspend fun findElement(context: org.openqa.selenium.SearchContext): org.openqa.selenium.WebElement {
             val found = findElements(context)
             if (found.isEmpty()) {
                 throw NoSuchElementException("Cannot locate an element " + target + " in shadow roots " + describeShadowRoots())
             }
             return found[0]
         }
-        override fun findElements(context: org.openqa.selenium.SearchContext): List<org.openqa.selenium.WebElement> {
+        override suspend fun findElements(context: org.openqa.selenium.SearchContext): List<org.openqa.selenium.WebElement> {
             return try {
                 if (context is org.openqa.selenium.JavascriptExecutor) {
                     findElementsInDocument(context as org.openqa.selenium.JavascriptExecutor)

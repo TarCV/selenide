@@ -25,7 +25,7 @@ class SelenideTargetLocator(private val driver: Driver) : TargetLocator {
     private val delegate: TargetLocator = webDriver.switchTo()
 
     @kotlin.time.ExperimentalTime
-    override fun frame(index: Int): org.openqa.selenium.WebDriver {
+    override suspend fun frame(index: Int): org.openqa.selenium.WebDriver {
         return try {
             Wait().until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(index))
         } catch (e: org.openqa.selenium.NoSuchElementException) {
@@ -41,7 +41,7 @@ class SelenideTargetLocator(private val driver: Driver) : TargetLocator {
     }
 
     @kotlin.time.ExperimentalTime
-    override fun frame(nameOrId: String): org.openqa.selenium.WebDriver {
+    override suspend fun frame(nameOrId: String): org.openqa.selenium.WebDriver {
         return try {
             Wait().until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(nameOrId))
         } catch (e: org.openqa.selenium.NoSuchElementException) {
@@ -57,7 +57,7 @@ class SelenideTargetLocator(private val driver: Driver) : TargetLocator {
     }
 
     @kotlin.time.ExperimentalTime
-    override fun frame(frameElement: org.openqa.selenium.WebElement): org.openqa.selenium.WebDriver {
+    override suspend fun frame(frameElement: org.openqa.selenium.WebElement): org.openqa.selenium.WebDriver {
         return try {
             Wait().until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frameElement))
         } catch (e: org.openqa.selenium.NoSuchElementException) {
@@ -80,20 +80,20 @@ class SelenideTargetLocator(private val driver: Driver) : TargetLocator {
         return e.message?.contains("invalid argument: 'id' out of range") == true
     }
 
-    override fun parentFrame(): org.openqa.selenium.WebDriver {
+    override suspend fun parentFrame(): org.openqa.selenium.WebDriver {
         return delegate.parentFrame()
     }
 
-    override fun defaultContent(): org.openqa.selenium.WebDriver {
+    override suspend fun defaultContent(): org.openqa.selenium.WebDriver {
         return delegate.defaultContent()
     }
 
-    override fun activeElement(): org.openqa.selenium.WebElement {
+    override suspend fun activeElement(): org.openqa.selenium.WebElement {
         return delegate.activeElement()
     }
 
     @kotlin.time.ExperimentalTime
-    override fun alert(): org.openqa.selenium.Alert {
+    override suspend fun alert(): org.openqa.selenium.Alert {
         return try {
             Wait().until(ExpectedConditions.alertIsPresent())
         } catch (e: org.openqa.selenium.TimeoutException) {
@@ -156,7 +156,7 @@ class SelenideTargetLocator(private val driver: Driver) : TargetLocator {
      * @param nameOrHandleOrTitle name or handle or title of window/tab
      */
     @kotlin.time.ExperimentalTime
-    override fun window(nameOrHandleOrTitle: String): org.openqa.selenium.WebDriver {
+    override suspend fun window(nameOrHandleOrTitle: String): org.openqa.selenium.WebDriver {
         return try {
             Wait().until(WindowByNameOrHandle(nameOrHandleOrTitle))
         } catch (e: org.openqa.selenium.TimeoutException) {
@@ -174,7 +174,7 @@ class SelenideTargetLocator(private val driver: Driver) : TargetLocator {
     suspend fun window(nameOrHandleOrTitle: String, duration: Duration): org.openqa.selenium.WebDriver {
         return try {
             Wait(duration).until(WindowByNameOrHandle(nameOrHandleOrTitle))
-        } catch (e: org.openqa.selenium.TimeoutException) {
+        } catch (e: TimeoutException) {
             throw windowNotFoundError("No window found with name or handle or title: $nameOrHandleOrTitle", e)
         }
     }

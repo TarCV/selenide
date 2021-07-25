@@ -11,7 +11,7 @@ class IsDisplayed : Command<Boolean> {
     override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): Boolean {
         return try {
             val element = locator.getWebElement()
-            element.isDisplayed
+            element.isDisplayed()
         } catch (elementNotFound: org.openqa.selenium.WebDriverException) {
             if (Cleanup.of.isInvalidSelectorError(elementNotFound)) {
                 throw Cleanup.of.wrap(elementNotFound)

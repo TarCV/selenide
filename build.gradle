@@ -57,6 +57,7 @@ kotlin {
             kotlinOptions {
                 sourceMap = true
                 metaInfo = true
+                freeCompilerArgs += '-Xopt-in=okio.ExperimentalFileSystem,kotlin.time.ExperimentalTime'
             }
         }
     }
@@ -77,7 +78,7 @@ kotlin {
 //                implementation("org.lighthousegames:logging:1.0.0")
             }
         }
-/*        jsMain {
+        jsMain {
             dependencies {
                 // Version should match the version in 'appium-base-driver'
                 implementation(npm('webdriverio', '6.0.2', false))
@@ -89,7 +90,7 @@ kotlin {
                 implementation('org.kodein.di:kodein-di-js:7.5.0')
             }
         }
-        jsTest {
+/*        jsTest {
             dependencies {
                 implementation(kotlin("test-js"))
 

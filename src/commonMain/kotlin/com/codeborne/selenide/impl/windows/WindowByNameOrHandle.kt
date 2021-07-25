@@ -3,12 +3,11 @@ package com.codeborne.selenide.impl.windows
 import org.openqa.selenium.NoSuchWindowException
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedCondition
-import kotlinx.coroutines.runBlocking
 
 class WindowByNameOrHandle(private val nameOrHandleOrTitle: String) : ExpectedCondition<org.openqa.selenium.WebDriver> {
-    override fun apply(driver: org.openqa.selenium.WebDriver?): org.openqa.selenium.WebDriver? = runBlocking {
+    override suspend fun invoke(driver: WebDriver): WebDriver? {
         checkNotNull(driver)
-        try {
+        return try {
             driver.switchTo().window(nameOrHandleOrTitle)
         } catch (windowWithNameOrHandleNotFound: org.openqa.selenium.NoSuchWindowException) {
             try {

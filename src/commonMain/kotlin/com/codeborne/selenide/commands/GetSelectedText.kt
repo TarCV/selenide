@@ -18,6 +18,6 @@ class GetSelectedText : Command<String> {
     }
     override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): String {
         val option: org.openqa.selenium.WebElement = getSelectedOption.execute(proxy, locator, NO_ARGS)
-        return option.text
+        return option.getText()
     }
 }

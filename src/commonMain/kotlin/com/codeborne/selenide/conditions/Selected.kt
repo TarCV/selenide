@@ -6,10 +6,10 @@ import org.openqa.selenium.WebElement
 
 class Selected : Condition("selected") {
     override suspend fun apply(driver: Driver, element: org.openqa.selenium.WebElement): Boolean {
-        return element.isSelected
+        return element.isSelected()
     }
 
     override suspend fun actualValue(driver: Driver, element: org.openqa.selenium.WebElement): String? {
-        return element.isSelected.toString()
+        return element.isSelected().toString()
     }
 }

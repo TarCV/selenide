@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement
 class Exist : Condition("exist") {
     override suspend fun apply(driver: Driver, element: org.openqa.selenium.WebElement): Boolean {
         return try {
-            element.isDisplayed
+            element.isDisplayed()
             true
         } catch (e: org.openqa.selenium.StaleElementReferenceException) {
             false

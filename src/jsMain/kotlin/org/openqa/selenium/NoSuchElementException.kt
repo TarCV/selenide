@@ -1,4 +1,7 @@
 package org.openqa.selenium
 
-actual class NoSuchElementException: Exception() {
+actual class NoSuchElementException actual constructor(message: String) : Exception() {
+    actual constructor() : this("") {
+        TODO("Not yet implemented")
+    }
 }

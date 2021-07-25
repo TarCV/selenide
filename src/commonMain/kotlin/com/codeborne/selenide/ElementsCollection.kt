@@ -21,6 +21,7 @@ import com.codeborne.selenide.logevents.SelenideLogger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.WebDriverException
 import org.openqa.selenium.WebElement
@@ -36,16 +37,16 @@ class ElementsCollection(private val collection: CollectionSource) {
     ) {
     }
 
-    constructor(driver: Driver, cssSelector: String) : this(driver, org.openqa.selenium.By.cssSelector(cssSelector))
-    constructor(driver: Driver, seleniumSelector: org.openqa.selenium.By) : this(BySelectorCollection(driver, seleniumSelector))
-    constructor(driver: Driver, parent: org.openqa.selenium.WebElement, cssSelector: String) : this(
+    constructor(driver: Driver, cssSelector: String) : this(driver, By.cssSelector(cssSelector))
+    constructor(driver: Driver, seleniumSelector: By) : this(BySelectorCollection(driver, seleniumSelector))
+    constructor(driver: Driver, parent: WebElement, cssSelector: String) : this(
         driver,
         parent,
-        org.openqa.selenium.By.cssSelector(cssSelector)
+        By.cssSelector(cssSelector)
     ) {
     }
 
-    constructor(driver: Driver, parent: org.openqa.selenium.WebElement, seleniumSelector: org.openqa.selenium.By) : this(
+    constructor(driver: Driver, parent: org.openqa.selenium.WebElement, seleniumSelector: By) : this(
         BySelectorCollection(
             driver,
             parent,
@@ -436,13 +437,13 @@ class ElementsCollection(private val collection: CollectionSource) {
          * @param elements Any collection of WebElements
          * @return Array of texts (or exceptions in case of any WebDriverExceptions)
          */
-            fun texts(elements: Collection<org.openqa.selenium.WebElement>?): List<String> {
+        suspend fun texts(elements: Collection<org.openqa.selenium.WebElement>?): List<String> {
             return elements?.map { element: org.openqa.selenium.WebElement -> getText(element) } ?: emptyList()
         }
 
-        private fun getText(element: org.openqa.selenium.WebElement): String {
+        private suspend fun getText(element: org.openqa.selenium.WebElement): String {
             return try {
-                element.text
+                element.getText()
             } catch (elementDisappeared: org.openqa.selenium.WebDriverException) {
                 elementDisappeared.toString()
             }

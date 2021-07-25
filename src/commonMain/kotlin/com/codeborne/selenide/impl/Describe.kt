@@ -2,14 +2,28 @@ package com.codeborne.selenide.impl
 
 import com.codeborne.selenide.Driver
 import org.lighthousegames.logging.logging
-import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.StaleElementReferenceException
 import org.openqa.selenium.UnsupportedCommandException
 import org.openqa.selenium.WebDriverException
-import org.openqa.selenium.WebElement
 
 class Describe(private val driver: Driver, private val element: org.openqa.selenium.WebElement) {
-    private val sb = StringBuilder()
+    private var _sb: StringBuilder? = null
+
+    private suspend fun initIfNeeded(): StringBuilder {
+        return _sb.let {
+            if (it == null) {
+                val newBuilder = StringBuilder().apply {
+                    append('<')
+                        .append(element.getTagName())
+                }
+                _sb = newBuilder
+                newBuilder
+            } else {
+                it
+            }
+        }
+    }
+
     suspend fun appendAttributes(): Describe {
         try {
             if (supportsJavascriptAttributes()) {
@@ -90,8 +104,10 @@ class Describe(private val driver: Driver, private val element: org.openqa.selen
         }
     }
 
-    private fun attr(attributeName: String, attributeValue: String?): Describe {
+    private suspend fun attr(attributeName: String, attributeValue: String?): Describe {
         if (attributeValue != null) {
+            val sb = initIfNeeded()
+
             if (attributeValue.isNotEmpty()) {
                 sb.append(' ').append(attributeName).append("=\"").append(attributeValue).append('"')
             } else {
@@ -101,22 +117,24 @@ class Describe(private val driver: Driver, private val element: org.openqa.selen
         return this
     }
 
-    fun serialize(): String {
-        val text = safeCall("text") { element.text }
-        sb.append('>').append(text ?: "").append("</").append(safeCall("tagName") { element.tagName }).append('>')
-        return sb.toString()
-    }
-    override fun toString(): String {
+    suspend fun serialize(): String {
+        val sb = initIfNeeded()
+        val text = safeCall("text") { element.getText() }
+        sb.append('>').append(text ?: "").append("</").append(safeCall("tagName") { element.getTagName() }).append('>')
         return sb.toString()
     }
 
-    fun flush(): String {
+    override fun toString(): String = throw UnsupportedOperationException()
+
+    suspend fun flush(): String {
+        val sb = initIfNeeded()
         return sb.append('>').toString()
     }
 
-    fun isSelected(element: org.openqa.selenium.WebElement): Describe {
+    suspend fun isSelected(element: org.openqa.selenium.WebElement): Describe {
         try {
-            if (element.isSelected) {
+            if (element.isSelected()) {
+                val sb = initIfNeeded()
                 sb.append(' ').append("selected:true")
             }
         } catch (ignore: UnsupportedOperationException) {
@@ -125,9 +143,10 @@ class Describe(private val driver: Driver, private val element: org.openqa.selen
         return this
     }
 
-    fun isDisplayed(element: org.openqa.selenium.WebElement): Describe {
+    suspend fun isDisplayed(element: org.openqa.selenium.WebElement): Describe {
+        val sb = initIfNeeded()
         try {
-            if (!element.isDisplayed) {
+            if (!element.isDisplayed()) {
                 sb.append(' ').append("displayed:false")
             }
         } catch (e: UnsupportedOperationException) {
@@ -145,7 +164,7 @@ class Describe(private val driver: Driver, private val element: org.openqa.selen
         return this
     }
 
-    private fun safeCall(name: String, method: () -> String): String? {
+    private inline fun safeCall(name: String, method: () -> String): String? {
         return try {
             method()
         } catch (e: org.openqa.selenium.WebDriverException) {
@@ -163,9 +182,5 @@ class Describe(private val driver: Driver, private val element: org.openqa.selen
 
     companion object {
         private val log = logging(Describe::class.simpleName)
-    }
-
-    init {
-        sb.append('<').append(element.tagName)
     }
 }

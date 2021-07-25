@@ -6,10 +6,10 @@ import org.openqa.selenium.WebElement
 
 class Disabled : Condition("disabled") {
     override suspend fun apply(driver: Driver, element: org.openqa.selenium.WebElement): Boolean {
-        return !element.isEnabled
+        return !element.isEnabled()
     }
 
     override suspend fun actualValue(driver: Driver, element: org.openqa.selenium.WebElement): String {
-        return if (element.isEnabled) "enabled" else "disabled"
+        return if (element.isEnabled()) "enabled" else "disabled"
     }
 }

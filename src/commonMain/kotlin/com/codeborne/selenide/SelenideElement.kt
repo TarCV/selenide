@@ -3,7 +3,6 @@ package com.codeborne.selenide
 import com.codeborne.selenide.impl.SelenideElementProxy
 import okio.ExperimentalFileSystem
 import okio.Path
-import kotlinx.coroutines.runBlocking
 import org.openqa.selenium.NoSuchElementException
 import org.openqa.selenium.TakesScreenshot
 import org.openqa.selenium.WebElement
@@ -38,11 +37,7 @@ class SelenideElement private constructor(
         selenideElementMethodsImpl.linkElement(this)
     }
 
-    override fun getWrappedElement(): WebElement = runBlocking {
-        selenideElementMethodsImpl.getWrappedElementAsync()
-    }
-
-    suspend fun getWrappedElement(unused: Nothing? = null): WebElement = selenideElementMethodsImpl.getWrappedElementAsync()
+    override suspend fun getWrappedElement(): WebElement = selenideElementMethodsImpl.getWrappedElementAsync()
 
     // TODO: this implementation probably means equals/hashCode are not stable
     override fun equals(other: Any?): Boolean = webElementMethodsImpl == other

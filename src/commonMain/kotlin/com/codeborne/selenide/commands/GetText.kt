@@ -16,10 +16,10 @@ class GetText : Command<String> {
     }
     override suspend fun execute(proxy: SelenideElement, locator: WebElementSource, args: Array<out Any?>): String {
         val element = locator.getWebElement()
-        return if ("select".equals(element.tagName, ignoreCase = true)) getSelectedText.execute(
+        return if ("select".equals(element.getTagName(), ignoreCase = true)) getSelectedText.execute(
             proxy,
             locator,
             args
-        ) else element.text
+        ) else element.getText()
     }
 }

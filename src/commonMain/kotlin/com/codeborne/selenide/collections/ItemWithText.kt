@@ -7,7 +7,7 @@ import com.codeborne.selenide.impl.CollectionSource
 import org.openqa.selenium.WebElement
 
 class ItemWithText(private val expectedText: String) : CollectionCondition() {
-    override fun test(elements: List<org.openqa.selenium.WebElement>): Boolean {
+    override suspend fun test(elements: List<org.openqa.selenium.WebElement>): Boolean {
         return texts(elements)
             .contains(expectedText)
     }

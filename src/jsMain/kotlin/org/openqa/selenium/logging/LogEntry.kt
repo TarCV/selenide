@@ -2,7 +2,7 @@ package org.openqa.selenium.logging
 
 import support.logging.Level
 
-class LogEntry {
-    val level: Level
+actual class LogEntry {
+    actual val level: Level
         get() = TODO()
 }

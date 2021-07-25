@@ -7,7 +7,7 @@ import org.openqa.selenium.WebElement
 
 class CaseSensitiveText(private val expectedText: String) : Condition("textCaseSensitive") {
     override suspend fun apply(driver: Driver, element: org.openqa.selenium.WebElement): Boolean {
-        return Html.text.containsCaseSensitive(element.text, expectedText)
+        return Html.text.containsCaseSensitive(element.getText(), expectedText)
     }
 
     override fun toString(): String {

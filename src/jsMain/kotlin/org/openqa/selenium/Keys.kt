@@ -1,6 +1,6 @@
 package org.openqa.selenium
 
-enum actual class Keys {
+actual enum class Keys {
     ENTER,
     ESCAPE,
     TAB

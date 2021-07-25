@@ -74,7 +74,7 @@ open class Commands {
     open val uploadFile: Command<*>
     open val `as`: CommandSync<SelenideElement>
     open val getAlias: CommandSync<String?>
-    open val toString: Command<String>
+    open val toStringCommand: Command<String>
     open val toWebElement: Command<org.openqa.selenium.WebElement>
     open val getWrappedElement: Command<org.openqa.selenium.WebElement>
     open val getSearchCriteria: CommandSync<String>
@@ -166,7 +166,7 @@ open class Commands {
         `uploadFile` = UploadFile()
         `as` = As()
         `getAlias` = GetAlias()
-        `toString` = ToString()
+        toStringCommand = ToString()
         `toWebElement` = ToWebElement()
         `getWrappedElement` = GetWrappedElement()
         `getSearchCriteria` = GetSearchCriteria()

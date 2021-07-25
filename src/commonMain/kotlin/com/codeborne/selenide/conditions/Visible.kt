@@ -6,10 +6,10 @@ import org.openqa.selenium.WebElement
 
 class Visible : Condition("visible") {
     override suspend fun apply(driver: Driver, element: org.openqa.selenium.WebElement): Boolean {
-        return element.isDisplayed
+        return element.isDisplayed()
     }
     override suspend fun actualValue(driver: Driver, element: org.openqa.selenium.WebElement): String {
-        return "visible:${element.isDisplayed}"
+        return "visible:${element.isDisplayed()}"
     }
     override fun negate(): Condition {
         return Not(this, true)

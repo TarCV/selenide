@@ -4,7 +4,7 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.support.ui.ExpectedCondition
 
 class WindowByIndex(private val index: Int) : ExpectedCondition<org.openqa.selenium.WebDriver> {
-    override fun apply(driver: org.openqa.selenium.WebDriver?): org.openqa.selenium.WebDriver? {
+    override suspend fun invoke(driver: WebDriver): WebDriver? {
         return try {
             checkNotNull(driver)
             val windowHandles: List<String> = ArrayList(driver.windowHandles)

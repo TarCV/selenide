@@ -11,7 +11,7 @@ class WebDriverLogs internal constructor(private val driver: Driver) {
     fun logs(logType: String, logLevel: Level): List<String> {
         return listToString(getLogEntries(logType, logLevel))
     }
-    private fun getLogEntries(logType: String, logLevel: Level): List<org.openqa.selenium.logging.LogEntry> {
+    private fun getLogEntries(logType: String, logLevel: Level): List<LogEntry> {
         return try {
             filter(driver.webDriver.manage().logs().get(logType), logLevel)
         } catch (ignore: UnsupportedOperationException) {
@@ -19,7 +19,7 @@ class WebDriverLogs internal constructor(private val driver: Driver) {
         }
     }
 
-    private fun filter(entries: org.openqa.selenium.logging.LogEntries, level: Level): List<org.openqa.selenium.logging.LogEntry> {
+    private fun filter(entries: LogEntries, level: Level): List<LogEntry> {
         return entries.all
             .filter { entry -> entry.level.intValue() >= level.intValue() }
     }

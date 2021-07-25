@@ -287,7 +287,7 @@ class SelenideElementMethodsImpl(
 
     override suspend fun describe(): String = proxy.selenideElementInvoke(
         element,
-        Commands::toString,
+        Commands::toStringCommand,
         NO_ARGS
     )
 

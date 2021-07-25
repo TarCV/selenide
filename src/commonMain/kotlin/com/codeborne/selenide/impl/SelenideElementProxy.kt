@@ -20,6 +20,7 @@ import okio.FileNotFoundException
 import okio.IOException
 import org.openqa.selenium.JavascriptException
 import org.openqa.selenium.WebDriverException
+import org.openqa.selenium.WebElement
 import java.lang.reflect.InvocationTargetException
 import java.lang.ReflectiveOperationException
 import support.reflect.invokeAsync
@@ -86,23 +87,31 @@ class SelenideElementProxy(protected val webElementSource: WebElementSource) {
     @ExperimentalFileSystem
     @kotlin.time.ExperimentalTime
     suspend fun <T> webElementInvoke(
-        proxy: Any,
         command: KCallable<T>,
         args: Array<out Any?>
+    ): T {
+        return webElementInvoke(args, command.name) { element, actualArgs ->
+            command.invokeAsync(element, *actualArgs)
+        }
+    }
+
+    suspend fun <T> webElementInvoke(
+        args: Array<out Any?>,
+        methodName: String,
+        block: suspend (WebElement, Array<out Any>) -> T
     ): T {
         val args2 = args as Array<out Any>
         val arguments = Arguments(args2)
 
-        val timeoutMs = getTimeoutMs(command.name, arguments)
-        val pollingIntervalMs = getPollingIntervalMs(command.name, arguments)
-        val log = beginStep(webElementSource.description(), command.name, *args2 ?: arrayOfNulls(1))
+        val timeoutMs = getTimeoutMs(methodName, arguments)
+        val pollingIntervalMs = getPollingIntervalMs(methodName, arguments)
+        val log = beginStep(webElementSource.description(), methodName, *args2 ?: arrayOfNulls(1))
         return try {
+            val actualArgs = args2 ?: emptyArray<Any>()
+            val targetElement = webElementSource.getWebElement()
             val result =
                 dispatchAndRetry(timeoutMs, pollingIntervalMs) {
-                    command.invokeAsync(
-                        webElementSource.getWebElement(),
-                        *(args2 ?: emptyArray<Any>())
-                    )
+                    block(targetElement, actualArgs)
                 }
             commitStep(log, EventStatus.PASS)
             result

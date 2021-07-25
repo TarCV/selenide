@@ -12,16 +12,16 @@ class ContainExactTextsCaseSensitive(expectedTexts: List<String>) : CollectionCo
 
     constructor(vararg expectedTexts: String) : this(listOf<String>(*expectedTexts))
 
-    override fun test(elements: List<org.openqa.selenium.WebElement>): Boolean {
-        return if (elements.size < expectedTexts.size) {
+    override suspend fun test(input: List<WebElement>): Boolean {
+        return if (input.size < expectedTexts.size) {
             false
-        } else texts(elements)
+        } else texts(input)
             .containsAll(expectedTexts)
     }
 
     override suspend fun fail(
         collection: CollectionSource,
-        elements: List<org.openqa.selenium.WebElement>?,
+        elements: List<WebElement>?,
         lastError: Exception?,
         timeoutMs: Long
     ) {

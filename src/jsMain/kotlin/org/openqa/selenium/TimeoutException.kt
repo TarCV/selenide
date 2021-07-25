@@ -1,4 +1,4 @@
 package org.openqa.selenium
 
-class TimeoutException: Exception() {
+actual class TimeoutException: Exception() {
 }

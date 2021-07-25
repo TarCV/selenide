@@ -10,7 +10,6 @@ import com.codeborne.selenide.impl.Plugins
 import com.codeborne.selenide.impl.WebElementSource
 import okio.ExperimentalFileSystem
 import org.openqa.selenium.ElementNotInteractableException
-import org.openqa.selenium.WebElement
 import okio.IOException
 import okio.Path
 
@@ -75,7 +74,7 @@ class UploadFile : Command<Path> {
     }
 
     private suspend fun checkValidInputField(driver: Driver, inputField: org.openqa.selenium.WebElement) {
-        require("input".equals(inputField.tagName, ignoreCase = true)) {
+        require("input".equals(inputField.getTagName(), ignoreCase = true)) {
             "Cannot upload file because " +
                     describe.briefly(driver, inputField) + " is not an INPUT"
         }

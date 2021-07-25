@@ -19,31 +19,31 @@ actual class RemoteWebDriver actual constructor(url: URL, capabilities: org.open
     actual override val windowHandles: Set<String>
         get() = TODO("Not yet implemented")
 
-    override actual fun manage(): org.openqa.selenium.WebDriver.Manager {
+    actual override fun manage(): org.openqa.selenium.WebDriver.Manager {
         TODO("Not yet implemented")
     }
 
-    override actual fun navigate(): org.openqa.selenium.WebDriver.Navigator {
+    actual override fun navigate(): org.openqa.selenium.WebDriver.Navigator {
         TODO("Not yet implemented")
     }
 
-    override actual fun switchTo(): org.openqa.selenium.WebDriver.TargetLocator {
+    actual override fun switchTo(): org.openqa.selenium.WebDriver.TargetLocator {
         TODO("Not yet implemented")
     }
 
-    override actual fun quit() {
+    actual override fun quit() {
         TODO("Not yet implemented")
     }
 
-    override actual fun close() {
+    actual override fun close() {
         TODO("Not yet implemented")
     }
 
-    override actual fun findElement(by: org.openqa.selenium.By): org.openqa.selenium.WebElement {
+    actual override suspend fun findElement(by: org.openqa.selenium.By): org.openqa.selenium.WebElement {
         TODO("Not yet implemented")
     }
 
-    override actual fun findElements(by: org.openqa.selenium.By): List<org.openqa.selenium.WebElement> {
+    actual override suspend fun findElements(by: org.openqa.selenium.By): List<org.openqa.selenium.WebElement> {
         TODO("Not yet implemented")
     }
 }

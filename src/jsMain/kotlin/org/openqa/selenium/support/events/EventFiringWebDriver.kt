@@ -39,11 +39,11 @@ actual class EventFiringWebDriver actual constructor(wrappedDriver: org.openqa.s
         TODO("Not yet implemented")
     }
 
-    override actual fun findElement(by: org.openqa.selenium.By): org.openqa.selenium.WebElement {
+    override actual suspend fun findElement(by: org.openqa.selenium.By): org.openqa.selenium.WebElement {
         TODO("Not yet implemented")
     }
 
-    override actual fun findElements(by: org.openqa.selenium.By): List<org.openqa.selenium.WebElement> {
+    override actual suspend fun findElements(by: org.openqa.selenium.By): List<org.openqa.selenium.WebElement> {
         TODO("Not yet implemented")
     }
 }

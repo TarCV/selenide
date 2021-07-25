@@ -2,6 +2,7 @@ package com.codeborne.selenide
 
 import com.codeborne.selenide.selector.ByShadow
 import org.openqa.selenium.By.ByXPath
+import org.openqa.selenium.By
 import org.openqa.selenium.support.ui.Quotes
 import kotlin.jvm.JvmStatic
 
@@ -19,7 +20,7 @@ object Selectors {
      * @return standard selenium By criteria`
      */
     @JvmStatic
-    fun withText(elementText: String): org.openqa.selenium.By {
+    fun withText(elementText: String): By {
         return WithText(elementText)
     }
 
@@ -34,7 +35,7 @@ object Selectors {
      * @return standard selenium By criteria
      */
     @JvmStatic
-    fun byText(elementText: String): org.openqa.selenium.By {
+    fun byText(elementText: String): By {
         return ByText(elementText)
     }
 
@@ -75,10 +76,10 @@ object Selectors {
      * @return standard selenium By cssSelector criteria
      */
     @JvmStatic
-    fun byAttribute(attributeName: String, attributeValue: String): org.openqa.selenium.By {
+    fun byAttribute(attributeName: String, attributeValue: String): By {
         val escapedAttributeValue =
             attributeValue.replace("\\\\".toRegex(), "\\\\\\\\").replace("\"".toRegex(), "\\\\\"")
-        return org.openqa.selenium.By.cssSelector("[$attributeName=\"$escapedAttributeValue\"]")
+        return By.cssSelector("[$attributeName=\"$escapedAttributeValue\"]")
     }
 
     /**
@@ -86,7 +87,7 @@ object Selectors {
      * @since 5.10
      */
     @JvmStatic
-    fun shadowCss(target: String, shadowHost: String, vararg innerShadowHosts: String): org.openqa.selenium.By {
+    fun shadowCss(target: String, shadowHost: String, vararg innerShadowHosts: String): By {
         return ByShadow.cssSelector(target, shadowHost, *innerShadowHosts)
     }
 
@@ -94,7 +95,7 @@ object Selectors {
      * Synonym for #byAttribute
      */
     @JvmStatic
-    fun by(attributeName: String, attributeValue: String): org.openqa.selenium.By {
+    fun by(attributeName: String, attributeValue: String): By {
         return byAttribute(attributeName, attributeValue)
     }
 
@@ -102,7 +103,7 @@ object Selectors {
      * Find element with given title ("title" attribute)
      */
     @JvmStatic
-    fun byTitle(title: String): org.openqa.selenium.By {
+    fun byTitle(title: String): By {
         return byAttribute("title", title)
     }
 
@@ -110,7 +111,7 @@ object Selectors {
      * Find input element with given value ("value" attribute)
      */
     @JvmStatic
-    fun byValue(value: String): org.openqa.selenium.By {
+    fun byValue(value: String): By {
         return byAttribute("value", value)
     }
 
@@ -119,8 +120,8 @@ object Selectors {
      * @since 3.1
      */
     @JvmStatic
-    fun byName(name: String): org.openqa.selenium.By {
-        return org.openqa.selenium.By.name(name)
+    fun byName(name: String): By {
+        return By.name(name)
     }
 
     /**
@@ -128,8 +129,8 @@ object Selectors {
      * @since 3.1
      */
     @JvmStatic
-    fun byXpath(xpath: String): org.openqa.selenium.By {
-        return org.openqa.selenium.By.xpath(xpath)
+    fun byXpath(xpath: String): By {
+        return By.xpath(xpath)
     }
 
     /**
@@ -137,8 +138,8 @@ object Selectors {
      * @since 3.1
      */
     @JvmStatic
-    fun byLinkText(linkText: String): org.openqa.selenium.By {
-        return org.openqa.selenium.By.linkText(linkText)
+    fun byLinkText(linkText: String): By {
+        return By.linkText(linkText)
     }
 
     /**
@@ -146,8 +147,8 @@ object Selectors {
      * @since 3.1
      */
     @JvmStatic
-    fun byPartialLinkText(partialLinkText: String): org.openqa.selenium.By {
-        return org.openqa.selenium.By.partialLinkText(partialLinkText)
+    fun byPartialLinkText(partialLinkText: String): By {
+        return By.partialLinkText(partialLinkText)
     }
 
     /**
@@ -155,8 +156,8 @@ object Selectors {
      * @since 3.1
      */
     @JvmStatic
-    fun byId(id: String): org.openqa.selenium.By {
-        return org.openqa.selenium.By.id(id)
+    fun byId(id: String): By {
+        return By.id(id)
     }
 
     /**
@@ -164,8 +165,8 @@ object Selectors {
      * @since 3.8
      */
     @JvmStatic
-    fun byCssSelector(css: String): org.openqa.selenium.By {
-        return org.openqa.selenium.By.cssSelector(css)
+    fun byCssSelector(css: String): By {
+        return By.cssSelector(css)
     }
 
     /**
@@ -173,8 +174,8 @@ object Selectors {
      * @since 3.8
      */
     @JvmStatic
-    fun byClassName(className: String): org.openqa.selenium.By {
-        return org.openqa.selenium.By.className(className)
+    fun byClassName(className: String): By {
+        return By.className(className)
     }
 
     /**
@@ -182,8 +183,8 @@ object Selectors {
      * @since 5.11
      */
     @JvmStatic
-    fun byTagName(tagName: String): org.openqa.selenium.By {
-        return org.openqa.selenium.By.tagName(tagName)
+    fun byTagName(tagName: String): By {
+        return By.tagName(tagName)
     }
 
     class ByText(protected val elementText: String) : ByXPath(

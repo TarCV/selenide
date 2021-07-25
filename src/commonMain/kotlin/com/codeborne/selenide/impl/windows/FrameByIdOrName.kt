@@ -11,7 +11,7 @@ class FrameByIdOrName(frame: String?) : ExpectedCondition<org.openqa.selenium.We
     private val locator: org.openqa.selenium.By =
       org.openqa.selenium.By.cssSelector("frame#${frame},frame[name=${frame}],iframe#${frame},iframe[name=${frame}]")
 
-  override fun apply(driver: org.openqa.selenium.WebDriver?): org.openqa.selenium.WebDriver? {
+  override suspend fun invoke(driver: WebDriver): WebDriver? {
         return try {
             checkNotNull(driver).switchTo().frame(driver.findElement(locator))
         } catch (e: org.openqa.selenium.WebDriverException) {

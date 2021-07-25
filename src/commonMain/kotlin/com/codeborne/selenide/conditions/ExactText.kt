@@ -7,7 +7,7 @@ import com.codeborne.selenide.impl.Html
 
 class ExactText(private val expectedText: String) : Condition("exact text") {
     override suspend fun apply(driver: Driver, element: org.openqa.selenium.WebElement): Boolean {
-        return Html.text.equals(element.text, expectedText)
+        return Html.text.equals(element.getText(), expectedText)
     }
 
     override fun toString(): String {
